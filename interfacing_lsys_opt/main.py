@@ -1,5 +1,9 @@
 # Created by Like on 7 Mar 2018
-# Last modified 7 Mar 2018
+# Last modified 12 Mar 2018
+
+def estimate_age():
+    age = 4
+    return age
 
 def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
     'Pass known parameter values into L-system rules to produce Lstring output'
