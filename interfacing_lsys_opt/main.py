@@ -1,6 +1,8 @@
 # Created by Like on 7 Mar 2018
 # Last modified 12 Mar 2018
 
+from pyquaternion import Quaternion
+
 def estimate_age():
     age = 4
     return age
@@ -26,9 +28,24 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
     for t in range (1, age+1): #trunk
         output_point_list = output_point_list + [[0,0,t]]
 
+    v = [0,0,1]
+    pitch_axis = [-1,0,0]
+    roll_axis = [0,0,1]
+    pitch_angle = branching_angle_pitch/180 * 3.14 #radian
+    roll_angle = branching_angle_roll/180 * 3.14 #radian
+    pitched_v = Quaternion(axis=pitch_axis,angle=pitch_angle).rotate(v)
     if age > 2
         for t in range (3, age+1): #1st order branch
+            rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(pitched_v)
+            pitched_v = rolled_v
+            output_point_list = output_point_list + [rolled_v]
+
+    if age > 3
+        for t in range (4, age+1): #2nd order branch
             output_point_list = output_point_list + []
+
+
+
 
     return output_point_list
 
