@@ -21,3 +21,20 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
 
 
     return output_point_list
+
+def estimate_error(output_point_list, growth_space):
+
+    return cost;
+
+def optimise():
+    age = estimate_age()
+    cost = 0
+
+    if (cost>threshold)
+        #todo
+        pass
+    else
+        #todo - decide on the values of parameters by sampling the PDF
+        output_point_list = generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
+        cost = estimate_error(output_point_list, growth_space)
+    return growth_param_list
