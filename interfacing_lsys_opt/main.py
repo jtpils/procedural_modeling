@@ -24,28 +24,35 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
     #todo
     #to match with Xfrog object size
 
-    output_point_list = [[0,0,0]]
+    # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
+    # ========================
+    output_point_list = [[0,0,0]]  #ground
     for t in range (1, age+1): #trunk
-        output_point_list = output_point_list + [[0,0,t]]
+        output_point_list = output_point_list + [[0,0,2*t]]
 
     v = [0,0,1]
-    pitch_axis = [-1,0,0]
+    pitch_axis = [1,0,0]
     roll_axis = [0,0,1]
     pitch_angle = branching_angle_pitch/180 * 3.14 #radian
     roll_angle = branching_angle_roll/180 * 3.14 #radian
-    pitched_v = Quaternion(axis=pitch_axis,angle=pitch_angle).rotate(v)
     if age > 2
-        for t in range (3, age+1): #1st order branch
-            rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(pitched_v)
-            pitched_v = rolled_v
-            output_point_list = output_point_list + [rolled_v]
+        first_pitched_v = Quaternion(axis=pitch_axis,angle=pitch_angle).rotate(v)
+        for t in range (0, no_1st_ord_branches): #1st order branch
+            first_rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(first_pitched_v)
+            output_point_list = output_point_list + [first_rolled_v]
 
-    if age > 3
-        for t in range (4, age+1): #2nd order branch
-            output_point_list = output_point_list + []
+            if age > 3
+                new_pitch_axis = Quaternion(axis=roll_axis,angle=roll_angle).rotate(pitch_axis)
+                new_roll_axis = first_rolled_v
+                second_pitched_v = Quaternion(axis=new_pitch_axis,angle=pitch_angle).rotate(0.5*first_rolled_v)
+                for u in range (0, no_2nd_ord_branches): #2nd order branch
+                    second_rolled_v = Quaternion(axis=new_roll_axis,angle=roll_angle).rotate(second_pitched_v)
+                    output_point_list = output_point_list + [second_rolled_v]
+                    second_pitched_v = second_rolled_v
 
+            first_pitched_v = first_rolled_v
 
-
+    # ===========================================
 
     return output_point_list
 
