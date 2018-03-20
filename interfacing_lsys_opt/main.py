@@ -1,5 +1,4 @@
 # Created by Like on 7 Mar 2018
-# Last modified 12 Mar 2018
 
 import numpy
 from pyquaternion import Quaternion
@@ -19,11 +18,11 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
 def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
     'Translate Lstring output into a list of points of cylinder base centers and their radii forming the trunk-branch representation of a tree'
 
+    current_post = numpy.array([0,0,0])
     if age == 0:
-        return [[0,0,0]]
+        return current_post
 
     out = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
-
     #parse l-system output string
     #todo
     #to match with Xfrog object size
