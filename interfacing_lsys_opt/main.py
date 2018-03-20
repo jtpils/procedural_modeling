@@ -9,7 +9,10 @@ def estimate_age():
 
 def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
     'Pass known parameter values into L-system rules to produce Lstring output'
-    pass #todo - Peng
+    #todo - Peng
+
+    lstring_output = ''
+
     return lstring_output
 
 def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
@@ -35,16 +38,17 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
     roll_axis = [0,0,1]
     pitch_angle = branching_angle_pitch/180 * 3.14 #radian
     roll_angle = branching_angle_roll/180 * 3.14 #radian
-    if age > 2
+
+    if age > 2:
         first_pitched_v = Quaternion(axis=pitch_axis,angle=pitch_angle).rotate(v)
         for t in range (0, no_1st_ord_branches): #1st order branch
             first_rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(first_pitched_v)
             output_point_list = output_point_list + [first_rolled_v]
 
-            if age > 3
+            if age > 3:
                 new_pitch_axis = Quaternion(axis=roll_axis,angle=roll_angle).rotate(pitch_axis)
                 new_roll_axis = first_rolled_v
-                second_pitched_v = Quaternion(axis=new_pitch_axis,angle=pitch_angle).rotate(0.5*first_rolled_v)
+                second_pitched_v = Quaternion(axis=new_pitch_axis,angle=pitch_angle).rotate([0.5*x for x in first_rolled_v])
                 for u in range (0, no_2nd_ord_branches): #2nd order branch
                     second_rolled_v = Quaternion(axis=new_roll_axis,angle=roll_angle).rotate(second_pitched_v)
                     output_point_list = output_point_list + [second_rolled_v]
@@ -71,11 +75,17 @@ def optimise():
     branching_angle_roll = 0 #valid range [0,360]
     branching_angle_pitch = 20 #valid range [10,90]
 
-    if (cost>threshold)
+    if (cost>threshold):
         #backtrack
         pass
-    else  #
+    else:  #
         #todo - decide on the values of parameters by sampling the PDF
         output_point_list = generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
         cost = estimate_error(output_point_list, growth_space)
     return growth_param_list
+
+def main():
+    print generate_lsystem_tree(5, 2, 3, 30, 21)
+
+if __name__ == "__main__":
+    main()
