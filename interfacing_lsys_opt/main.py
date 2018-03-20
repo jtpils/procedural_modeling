@@ -31,9 +31,11 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
     # ========================
     output_point_list = [[0,0,0]]  #ground
     for t in range (1, age+1): #trunk
-        trunk_height = [0,0,2*t]
-        output_point_list = output_point_list + [trunk_height]
+        trunk = [0,0,2*t]
+        output_point_list = output_point_list + [trunk]
 
+    #branch
+    #note: consider current turtle orientation
     v = [0,0,1]
     pitch_axis = [1,0,0]
     roll_axis = [0,0,1]
