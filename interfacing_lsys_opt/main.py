@@ -46,7 +46,7 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
         first_pitched_v = Quaternion(axis=pitch_axis,angle=pitch_angle).rotate(v)
         for t in range (0, no_1st_ord_branches): #1st order branch
             first_rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(first_pitched_v)
-            output_point_list = output_point_list + [[a+b for a,b in zip(trunk_height,first_rolled_v)]]
+            output_point_list = output_point_list + [[a+b for a,b in zip(trunk,first_rolled_v)]]
 
             if age > 5:
                 new_pitch_axis = Quaternion(axis=roll_axis,angle=roll_angle).rotate(pitch_axis)
@@ -88,7 +88,7 @@ def optimise():
     return growth_param_list
 
 def main():
-    age = 4
+    age = 5
     no_1st_ord_branches = 2
     no_2nd_ord_branches = 3
     branching_angle_roll = 30
