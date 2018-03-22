@@ -18,10 +18,6 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
 def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
     'Translate Lstring output into a list of points of cylinder base centers and their radii forming the trunk-branch representation of a tree'
 
-    current_post = numpy.array([0,0,0])
-    if age == 0:
-        return current_post
-
     out = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
     #parse l-system output string
     #todo
@@ -29,35 +25,67 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
 
     # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
     # ========================
-    output_point_list = [[0,0,0]]  #ground
-    for t in range (1, age+1): #trunk
-        trunk = [0,0,2*t]
-        output_point_list = output_point_list + [trunk]
+    trunk_growth_rate = 2.0
+    branch_growth_rate = 1.0
+    pitch_angle = branching_angle_pitch/180.0 * 3.14159 #radian
+    roll_angle = branching_angle_roll/180.0 * 3.14159 #radian
 
-    #branch
-    #note: consider current turtle orientation
-    v = [0,0,1]
-    pitch_axis = [1,0,0]
-    roll_axis = [0,0,1]
-    pitch_angle = branching_angle_pitch/180 * 3.14 #radian
-    roll_angle = branching_angle_roll/180 * 3.14 #radian
+    current_post = numpy.array([0.0,0.0,0.0]) #tracking turtle's position
+    current_dir = numpy.array([0.0,0.0,1.0])  #tracking turtle's orientation/heading (vector H)
+    current_up = numpy.array([0.0,1.0,0.0])   #tracking turtle's up (vector U)
+    current_left = numpy.array([1.0,0.0,0.0]) #tracking turtle's left (vector L)
 
-    if age > 4:
-        first_pitched_v = Quaternion(axis=pitch_axis,angle=pitch_angle).rotate(v)
-        first_rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(first_pitched_v)
-        for t in range (0, no_1st_ord_branches): #1st order branch
-            output_point_list = output_point_list + [[a+b for a,b in zip(trunk,first_rolled_v)]]
+    branching_stack = []
 
-            if age > 5:
-                new_pitch_axis = Quaternion(axis=roll_axis,angle=roll_angle).rotate(pitch_axis)
-                new_roll_axis = first_rolled_v
-                second_pitched_v = Quaternion(axis=new_pitch_axis,angle=pitch_angle).rotate([0.5*x for x in first_rolled_v])
+    if age == 0:
+            return [current_post]
+
+    output_point_list = [current_post]  #ground
+    for t in range (1, age+1): # growing trunk
+        current_post += numpy.array([0.0,0.0,trunk_growth_rate])
+        output_point_list += [current_post]
+
+    #push state into stack
+    branching_stack.append([current_post, current_dir, current_up, current_left])
+
+    if age > 4: #1st order branches start growing
+        pitch = Quaternion(axis=current_left,angle=pitch_angle)
+        roll = Quaternion(axis=current_dir,angle=roll_angle)
+        rotation = pitch
+
+        for s in range (0, no_1st_ord_branches): #1st order branches
+            rotation = rotation*roll   #pitch, then roll
+            current_dir = rotation.rotate(current_dir)
+            current_up = rotation.rotate(current_up)
+            current_left = rotation.rotate(current_left)
+
+            for t in range(age-4): #growing 1st order branch
+                current_post += current_dir*branch_growth_rate
+                output_point_list += [current_post]
+
+            #push state into stack
+            branching_stack.append([current_post, current_dir, current_up, current_left])
+
+            if age > 5: #2nd order branches start growing
+                pitch = Quaternion(axis=current_left,angle=pitch_angle)
+                roll = Quaternion(axis=current_dir,angle=roll_angle)
+                rotation = pitch
+
                 for u in range (0, no_2nd_ord_branches): #2nd order branch
-                    second_rolled_v = Quaternion(axis=new_roll_axis,angle=roll_angle).rotate(second_pitched_v)
-                    output_point_list = output_point_list + [[a+b for a,b in zip(trunk,second_rolled_v)]]
-                    second_pitched_v = second_rolled_v
+                    rotation = rotation*roll   #pitch, then roll
+                    current_dir = rotation.rotate(current_dir)
+                    current_up = rotation.rotate(current_up)
+                    current_left = rotation.rotate(current_left)
 
-            first_rolled_v = Quaternion(axis=roll_axis,angle=roll_angle).rotate(first_rolled_v)
+                    for v in range(age-5): #growing 2nd order branch
+                        current_post += current_dir*branch_growth_rate
+                        output_point_list += [current_post]
+
+            #pop stack to previous state
+            [current_post, current_dir, current_up, current_left] = branching_stack.pop()
+
+        #pop stack to previous state
+        [current_post, current_dir, current_up, current_left] = branching_stack.pop()
 
     # ===========================================
 
@@ -75,8 +103,8 @@ def optimise():
     #parameters (with their PDFs for species X) to optimise
     no_1st_ord_branches = 3 #valid range [2,4]
     no_2nd_ord_branches = 2 #valid range [2,4]
-    branching_angle_roll = 0 #valid range [0,360]
-    branching_angle_pitch = 20 #valid range [10,90]
+    branching_angle_roll = 0.0 #valid range [0,360]
+    branching_angle_pitch = 20.0 #valid range [10,90]
 
     if (cost>threshold):
         #backtrack
@@ -88,12 +116,12 @@ def optimise():
     return growth_param_list
 
 def main():
-    age = 7
-    no_1st_ord_branches = 2
-    no_2nd_ord_branches = 3
-    branching_angle_roll = 30
-    branching_angle_pitch = 21
-    print generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
+    print generate_lsystem_tree(age=6,
+                                no_1st_ord_branches=2,
+                                no_2nd_ord_branches=3,
+                                branching_angle_roll=30.0,
+                                branching_angle_pitch=21.0
+                                )
 
 if __name__ == "__main__":
     main()
