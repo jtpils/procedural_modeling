@@ -3,7 +3,9 @@
 import numpy
 from pyquaternion import Quaternion
 
-def estimate_age():
+def estimate_age(species, size):
+    'Estimate tree age based on scanned size of tree of certain species'
+    #todo - estimate based on species, lookup table for tree size/height/dimension vs age range
     age = 4
     return age
 
@@ -15,13 +17,18 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
 
     return lstring_output
 
-def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
-    'Translate Lstring output into a list of points of cylinder base centers and their radii forming the trunk-branch representation of a tree'
-
-    out = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
-    #parse l-system output string
+def parse_lstring(lstring):
     #todo
-    #to match with Xfrog object size
+
+    return output_point_list
+
+def generate_lsystem_tree_points(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
+    'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
+
+    lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
+    # return parse_lstring(lstring)
+    #parse l-system output string into 3d points matching Xfrog object size
+    #todo
 
     # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
     # ========================
@@ -68,7 +75,7 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
 
             if age > 5: #2nd order branches start growing
                 #push state into stack
-                print("2nd order - Current_post=%s" % (current_post))
+                #print("2nd order - Current_post=%s" % (current_post))
                 branching_stack.append([current_post, current_dir, current_up, current_left])
                 #print branching_stack
 
@@ -91,8 +98,6 @@ def generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branchi
                 #pop stack to previous state
                 [current_post, current_dir, current_up, current_left] = branching_stack.pop()
                 #print branching_stack
-
-
 
         #pop stack to previous state
         [current_post, current_dir, current_up, current_left] = branching_stack.pop()
@@ -127,12 +132,17 @@ def optimise():
     return growth_param_list
 
 def main():
-    print generate_lsystem_tree(age=10,
-                                no_1st_ord_branches=2,
-                                no_2nd_ord_branches=3,
-                                branching_angle_roll=30.0,
-                                branching_angle_pitch=20.0
-                                )
+    output = generate_lsystem_tree_points( age=20,
+                                        no_1st_ord_branches=5,
+                                        no_2nd_ord_branches=8,
+                                        branching_angle_roll=75.0,
+                                        branching_angle_pitch=25.0
+                                      )
+    print output
+    file = open('output.obj', 'w')
+    for item in output:
+        file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
+    file.close()
 
 if __name__ == "__main__":
     main()
