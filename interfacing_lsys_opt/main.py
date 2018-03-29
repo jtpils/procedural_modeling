@@ -136,7 +136,7 @@ def main():
                                         no_1st_ord_branches=5,
                                         no_2nd_ord_branches=8,
                                         branching_angle_roll=75.0,
-                                        branching_angle_pitch=25.0
+                                        branching_angle_pitch=45.0
                                       )
     print output
     file = open('output.obj', 'w')
