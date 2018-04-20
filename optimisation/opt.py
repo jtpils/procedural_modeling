@@ -8,6 +8,9 @@ from os.path import isfile
 
 
 def fit_ellipse(x,y):
+# Fit_ellipse function takes in 2D points in x,y (i.e. 1D arrays)
+# and returns orientation of the ellipse (etheta), major and minor
+# axes of the ellipse (exr1, exr2)
 	# Find ellipse given points in x,y
 	x = x[:,numpy.newaxis]
  	y = y[:,numpy.newaxis]
@@ -63,30 +66,33 @@ def read_growth_space(pts):
 	eu = numpy.array([u_et1,u_e1,u_e2])
 	return bbox,trunk_height,crown_height,mu_c,el,eu
 
+def load_target_points():
+    tpts = numpy.genfromtxt(target_filename,delimiter=' ',usecols=(1,2,3))
+    return tpts
 
 
-def estimate_error(params,fname):
+def estimate_error(params):
 # Estimate_error function takes in:
 # params: parameters used to create tree from L-System
 # fname: filename of obj file (comparison data)
-	tpts = numpy.genfromtxt(fname,delimiter=' ',usecols=(1,2,3))
-	targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = read_growth_space(tpts)
+    tpts = load_target_points()
+    targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = read_growth_space(tpts)
 	# Generate L-system points for params
-	ls_pts = generate_lsystem_tree_points(params)
-	ls_pts = numpy.asarray(ls_pts)
-        ls_bbox, ls_th, ls_ch, ls_mu, ls_el, ls_eu = read_growth_space(ls_pts)
+    ls_pts = generate_lsystem_tree_points(params)
+    ls_pts = numpy.asarray(ls_pts)
+    ls_bbox, ls_th, ls_ch, ls_mu, ls_el, ls_eu = read_growth_space(ls_pts)
 	# Calculate error
-	Ebbox = numpy.sqrt((((ls_bbox[1]-ls_bbox[0])-(targ_bbox[1]-targ_bbox[0]))/(targ_bbox[1]-targ_bbox[0]))**2 + \
+    Ebbox = numpy.sqrt((((ls_bbox[1]-ls_bbox[0])-(targ_bbox[1]-targ_bbox[0]))/(targ_bbox[1]-targ_bbox[0]))**2 + \
 			(((ls_bbox[3]-ls_bbox[2])-(targ_bbox[3]-targ_bbox[2]))/(targ_bbox[3]-targ_bbox[2]))**2) #BBox error
-	Eth = numpy.sqrt(((ls_th-targ_th)/targ_th)**2) # Trunk height error
-	Ech = numpy.sqrt(((ls_ch-targ_ch)/targ_ch)**2) # Crown height error
+    Eth = numpy.sqrt(((ls_th-targ_th)/targ_th)**2) # Trunk height error
+    Ech = numpy.sqrt(((ls_ch-targ_ch)/targ_ch)**2) # Crown height error
 	#Eel_theta = (ls_el[0]-targ_el[0])/(2*numpy.pi)
-	Eel_radii = numpy.mean(((ls_el[1:2]-targ_el[1:2])/(targ_el[1:2]))**2)
+    Eel_radii = numpy.mean(((ls_el[1:2]-targ_el[1:2])/(targ_el[1:2]))**2)
 	#Eeu_theta = (ls_eu[0]-targ_eu[0])/(2*numpy.pi)
-	Eeu_radii = numpy.mean(((ls_eu[1:2]-targ_eu[1:2])/(targ_eu[1:2]))**2)
-	E_total = numpy.mean(numpy.array(\
+    Eeu_radii = numpy.mean(((ls_eu[1:2]-targ_eu[1:2])/(targ_eu[1:2]))**2)
+    E_total = numpy.mean(numpy.array(\
 		[Eth,Ech,Eel_radii,Eeu_radii]))
-	return E_total
+    return E_total
 
 def optimise(npts,params):
 # Optimise function takes in:
@@ -106,6 +112,15 @@ def optimise(npts,params):
         except:
             pass
     return result,error
+
+# Global variable
+target_filename='../../obj_files/target.obj'
+
+def main():
+    print "Running main function of opt.py"
+
+if __name__ == "__main__":
+    main()
 
 #def main():
 #	result = [];
