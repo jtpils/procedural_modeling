@@ -23,12 +23,12 @@ def parse_lstring(lstring):
     return output_point_list
 
 def generate_lsystem_tree_points(params):
-	'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
-	age = params[0]
-	no_1st_ord_branches=params[1]
-	no_2nd_ord_branches=params[2]
-	branching_angle_roll=params[3]
-	branching_angle_pitch=params[4]
+    'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
+    age = int(params[0])
+    no_1st_ord_branches=int(params[1])
+    no_2nd_ord_branches=int(params[2])
+    branching_angle_roll=params[3]
+    branching_angle_pitch=params[4]
     lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
     # return parse_lstring(lstring)
     #parse l-system output string into 3d points matching Xfrog object size
@@ -136,12 +136,7 @@ def optimise():
     return growth_param_list
 
 def main():
-    output = generate_lsystem_tree_points( age=20,
-                                        no_1st_ord_branches=5,
-                                        no_2nd_ord_branches=8,
-                                        branching_angle_roll=75.0,
-                                        branching_angle_pitch=45.0
-                                      )
+    output = generate_lsystem_tree_points(numpy.asarray([20,5,8,75.0,45.0]))
     print output
     file = open('output.obj', 'w')
     for item in output:
