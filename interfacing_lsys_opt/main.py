@@ -22,13 +22,9 @@ def parse_lstring(lstring):
 
     return output_point_list
 
-def generate_lsystem_tree_points(params):
-	'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
-	age = params[0]
-	no_1st_ord_branches=params[1]
-	no_2nd_ord_branches=params[2]
-	branching_angle_roll=params[3]
-	branching_angle_pitch=params[4]
+def generate_lsystem_tree_points(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
+    'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
+
     lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
     # return parse_lstring(lstring)
     #parse l-system output string into 3d points matching Xfrog object size
@@ -49,7 +45,7 @@ def generate_lsystem_tree_points(params):
     branching_stack = []
 
     if age == 0:
-            return [current_post]
+        return [current_post]
 
     output_point_list = [current_post]  #ground
     for t in range (1, age+1): # growing trunk
