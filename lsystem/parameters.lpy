@@ -9,7 +9,7 @@ leafduration = 15
 leafold =      2
 
 # maximum number of branching order 
-# age =     4 
+age =     4 
 
 # increment of radius through time
 #radinc =    0.025 
@@ -22,10 +22,10 @@ sobindex = 0
 maxduration = lambda order : int(10./(order*10+1))+5 
 #pitch_angle = lambda order : 30 # branching angle
 #roll_angle = lambda order : 20 # branching angle
-#pitch_angle = 30
-#roll_angle = 20
-#nb1 = 4
-#nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4]) 
+pitch_angle = 30
+roll_angle = 20
+nb1 = 4
+nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4]) 
 # number of axe at a ramification
 nb_axes = lambda order : rd.randint(3, 6-order)  
 up_angle = lambda t,order : -20        # up angle for lateral branches
@@ -49,7 +49,7 @@ production:
 
 A(t,o) :
   if t < maxduration(o):
-     produce I(1, 0.1)L(0, t)A(t+1, o) 
+     produce I(o, 1, 0.1)L(0, t)A(t+1, o) 
   else:      
       nbaxe = nb1
       for i in xrange(nbaxe):
@@ -62,7 +62,7 @@ B(t,o, idx) :
      # simply produces a metamer and ages the apex
      # reorient smoothly the branch toward the up
      #produce ^(up_angle(t,o)+rd.random()*5)I(1,0.1)L(0,t)B(t+1,o)
-     produce I(1, 0.1)L(0, t)B(t+1, o, idx)
+     produce I(o, 1, 0.1)L(0, t)B(t+1, o, idx)
   else:
       # produce a whorl of sympodial branches
       if o==1:
@@ -82,11 +82,11 @@ L(t,n) :
   else:   produce *
 
 # Increment radius of internodes
-I(s,r) --> I(s, r*1.06)
+I(o,s,r) --> I(o, s*(1.0+(o+1.0)/100.0), r*1.06)
 _(r) --> _(r*1.06)
 
 homomorphism:
-
+I(o,a,r) --> F(a, r)
 I(a,r) --> F(a, r)
 
 L(t,p) :
