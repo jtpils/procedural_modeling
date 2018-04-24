@@ -33,8 +33,8 @@ scene = l.sceneInterpretation(axialtree)
 
 axialtree2mtg(axialtree, scale, scene)
 mtg = read_lsystem_string(str(axialtree), scale)
-plot2d(mtg, mtg2d_file, scale)
-plot3d(mtg, scale)
+plot2d(mtg, mtg2d_file)
+plot3d(mtg)
 
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
