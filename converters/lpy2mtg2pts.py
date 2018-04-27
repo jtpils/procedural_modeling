@@ -7,6 +7,7 @@ mtg2d_file = os.path.join(current_path, 'mtg2d.png')
 #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
 
 import openalea.lpy as lpy
+import openalea.mtg #for PlantFrame??
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import time
@@ -25,8 +26,8 @@ l.plot(axialtree)
 Viewer.frameGL.saveImage(output_file, 'png')
 
 scale = {'F':1,'X':1}
-scene = l.sceneInterpretation(axialtree)
-#scene = l.Tree2Scene(axialtree)
+#scene = l.sceneInterpretation(axialtree)
+scene = l.Tree2Scene(axialtree)
 
 #mtg = lpy2mtg(axialtree, l)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
