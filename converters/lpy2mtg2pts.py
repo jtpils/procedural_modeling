@@ -26,6 +26,7 @@ Viewer.frameGL.saveImage(output_file, 'png')
 
 scale = {'F':1,'X':1}
 scene = l.sceneInterpretation(axialtree)
+#scene = l.Tree2Scene(axialtree)
 
 #mtg = lpy2mtg(axialtree, l)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
@@ -33,7 +34,7 @@ scene = l.sceneInterpretation(axialtree)
 
 axialtree2mtg(axialtree, scale, scene)
 mtg = read_lsystem_string(str(axialtree), scale)
-plot2d(mtg, mtg2d_file)
+plot2d(mtg, mtg2d_file, scale)
 plot3d(mtg)
 
 f = open(mtg_file, 'w')
