@@ -1,0 +1,108 @@
+import random as rd
+
+import numpy as np
+
+# life time of a leaf
+leafduration = 15
+
+# age at which a leaf is considered as old
+leafold =      2
+
+# maximum number of branching order
+age =     4
+
+# increment of radius through time
+#radinc =    0.025
+
+#idx for second order branches
+sobindex = 0
+
+
+# life time of an apex
+maxduration = lambda order : int(10./(order*10+1))+5
+#pitch_angle = lambda order : 30 # branching angle
+#roll_angle = lambda order : 20 # branching angle
+pitch_angle = 30
+roll_angle = 20
+nb1 = 4
+nb2 = np.array([2, 3, 1, 4])
+# number of axe at a ramification
+nb_axes = lambda order : rd.randint(3, 6-order)
+up_angle = lambda t,order : -20        # up angle for lateral branches
+
+
+
+
+# number total of iterations of the system
+nbiter = sum([maxduration(o) for o in xrange( age +1)])
+
+module A # represent trunk apical meristem
+module B # represent apical meristem of lateral branches
+module L # whorl of leaf
+module I # Internode
+
+
+def EndEach(lstring):
+    print lstring
+
+Axiom: _(0.095)A(0,0)
+
+derivation length: nbiter*1.3
+production:
+
+A(t,o) :
+  if t < maxduration(o):
+     produce I(1, 0.1)L(0, t)A(t+1, o)
+  else:
+      nbaxe = nb1
+      for i in xrange(nbaxe):
+        r1 = rd.uniform(-0.9, 0.9)
+        nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0,o+1, i)]
+
+
+B(t,o, idx) :
+  if t < maxduration(o):
+     # simply produces a metamer and ages the apex
+     # reorient smoothly the branch toward the up
+     #produce ^(up_angle(t,o)+rd.random()*5)I(1,0.1)L(0,t)B(t+1,o)
+     produce I(1, 0.1)L(0, t)B(t+1, o, idx)
+  else:
+      # produce a whorl of sympodial branches
+      if o==1:
+        nbaxe = nb2[idx]
+        for i in xrange(nbaxe):
+           r1 = rd.uniform(-0.9, 0.9)
+           nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+      else:
+        nbaxe = rd.randint(1,6)
+        for i in xrange(nbaxe):
+           r1 = rd.uniform(-0.9, 0.9)
+           nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+
+L(t,n) :
+  # ages the leaf. If too old, removes
+  if t < leafduration :  produce L(t+1, n)
+  else:   produce *
+
+# Increment radius of internodes
+I(s,r) --> I(s, r*1.06)
+_(r) --> _(r*1.06)
+
+homomorphism:
+
+I(a,r) --> F(a, r)
+
+L(t,p) :
+    phi = 0 if p % 2 == 0 else 90  # phyllotactic angle
+    col = 4 if t >= leafold else 2 # color is choosen according to age
+    produce [/(phi)^(120);(col)~l(1)][/(phi)&(120);(col)~l(1)]
+
+endlsystem
+###### INITIALISATION ######
+
+__lpy_code_version__ = 1.1
+
+def __initialiseContext__(context):
+	context.options.setSelection('Module declaration',1)
+__description__ = 'Schoute architectural model.'
+__authors__ = 'E. Costes, F. Boudon'
