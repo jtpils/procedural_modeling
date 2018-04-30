@@ -50,7 +50,6 @@ dressing_data = DressingData(DiameterUnit=5)
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
                 DressingData = dressing_data)
-#pf1.run()
 print "TopDia"
 print pf1.points
 pf1.plot(gc=True)
@@ -68,9 +67,9 @@ pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
 #axes = pf3._compute_axes(mtg, 3, pf3.points, pf3.origin)
 #axes = pf3._compute_axes()
 #diameters = pf3.algo_diameter()
-#pf3.run()
-#scene = pf3.build_scene(pf3.g, pf3.origin, axes, pf3.points, diameters, 10000)
-#Viewer.display(scene)
+#pf3.run()          #called compute_axes & algo_diameter
+#scene = pf3.build_scene(pf3.g, pf3.origin, axes, pf3.points, diameters, 10000) #obsolete function
+#Viewer.display(scene)      #called in plot()
 print "pf3"
 print pf3.points
 pf3.plot(gc=True)
