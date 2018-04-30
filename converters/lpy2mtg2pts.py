@@ -31,8 +31,8 @@ axialtree = l.iterate()
 l.plot(axialtree)
 Viewer.frameGL.saveImage(output_lpy, 'png')
 
-#scale = {'F':1,'X':1}
-scale = {'A':1,'B':1, 'L':1, 'I':1}
+scale = {'F':1,'X':1}
+#scale = {'A':1,'B':1, 'L':1, 'I':1}
 scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
 
@@ -46,7 +46,7 @@ mtg = axialtree2mtg(axialtree, scale, scene)
 plot2d(mtg, mtg2d_file, scale)
 #plot3d(mtg)
 
-dressing_data = DressingData(DiameterUnit=30)
+dressing_data = DressingData(DiameterUnit=5)
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
                 DressingData = dressing_data)
@@ -65,13 +65,16 @@ Viewer.frameGL.saveImage(output_mtg_diam, 'png')
 
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
-#pf3.plot()
-#Viewer.frameGL.saveImage(output_mtg, 'png')
 #axes = pf3._compute_axes(mtg, 3, pf3.points, pf3.origin)
-axes = pf3._compute_axes()
-diameters = pf3.algo_diameter()
-scene = pf3.build_scene(pf3.g, pf3.origin, axes, pf3.points, diameters, 10000)
-Viewer.display(scene)
+#axes = pf3._compute_axes()
+#diameters = pf3.algo_diameter()
+#pf3.run()
+#scene = pf3.build_scene(pf3.g, pf3.origin, axes, pf3.points, diameters, 10000)
+#Viewer.display(scene)
+print "pf3"
+print pf3.points
+pf3.plot(gc=True)
+Viewer.frameGL.saveImage(output_mtg, 'png')
 
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
