@@ -5,6 +5,8 @@ import scipy.optimize as optimize
 from numpy.linalg import eig, inv
 from pyquaternion import Quaternion
 from os.path import isfile
+#import sys
+#ys.path.append('../interfacing_lysys_opt')
 
 
 def fit_ellipse(x,y):
@@ -156,7 +158,7 @@ def optimise(npts,params):
 
 # Global variable
 target_filename='../../obj_files/target.obj'
-gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
+gs_filename='./growth_space.csv'
 
 def generate_lsystem_tree_points(params):
 	'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
@@ -250,8 +252,9 @@ def generate_lsystem_tree_points(params):
 def main():
 	print "Running main function of opt.py..."
 	print "Loading growth space file"
-	ET = estimate_error(numpy.asarray([20,5,8,75,25]))
-	print ET
+	#ET = estimate_error(numpy.asarray([20,5,8,75,25]))
+	load_normalised_voxel_growth_space()
+	#print ET
 
 
 if __name__ == "__main__":
