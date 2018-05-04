@@ -1,7 +1,7 @@
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-#input_file = os.path.join(current_path, 'parameters.lpy')
-input_file = os.path.join(current_path, 'example.lpy')
+input_file = os.path.join(current_path, 'parameters.lpy')
+#input_file = os.path.join(current_path, 'example.lpy')
 output_lpy = os.path.join(current_path, 'lpy_output.png')
 output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
 output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
@@ -25,26 +25,30 @@ from openalea.mtg.util import *
 
 l = lpy.Lsystem(input_file)
 
+#axialtree = l.animate()
 axialtree = l.iterate()
-#axialtree = l.iterate(7)
 
 l.plot(axialtree)
 Viewer.frameGL.saveImage(output_lpy, 'png')
 
-scale = {'F':1,'X':1}
-#scale = {'A':1,'B':1, 'L':1, 'I':1}
-scene = l.sceneInterpretation(axialtree)
+#scale = {'F':1,'X':1}
+scale = {'A':1,'B':1, 'L':1, 'I':1}
+scene = l.generateScene(axialtree)
+#scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
+parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
 
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
 #mtg_lines = write_mtg(mtg)
 
-mtg = axialtree2mtg(axialtree, scale, scene)
-#mtg = read_lsystem_string(str(axialtree), scale, scene)
+mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 #mtg = read_lsystem_string(str(axialtree), scale)
-plot2d(mtg, mtg2d_file, scale)
+#plot2d(mtg, mtg2d_file, scale)
 #plot3d(mtg)
+
+print "axialtree"
+print axialtree
 
 dressing_data = DressingData(DiameterUnit=5)
 pf1 = PlantFrame(mtg,
@@ -75,6 +79,7 @@ print pf3.points
 pf3.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg, 'png')
 
+properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
 f.write(write_mtg(g=mtg, class_at_scale=scale))
