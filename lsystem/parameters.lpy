@@ -22,10 +22,11 @@ sobindex = 0
 maxduration = lambda order : int(10./(order*10+1))+5 
 #pitch_angle = lambda order : 30 # branching angle
 #roll_angle = lambda order : 20 # branching angle
-pitch_angle = 30
-roll_angle = 20
-nb1 = 4
-nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4]) 
+#pitch_angle = 30
+roll_angle = 0
+#roll_angle_inc = 120
+#nb1 = 3
+#nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4]) 
 # number of axe at a ramification
 nb_axes = lambda order : rd.randint(3, 6-order)  
 up_angle = lambda t,order : -20        # up angle for lateral branches
@@ -53,8 +54,13 @@ A(t,o) :
   else:      
       nbaxe = nb1
       for i in xrange(nbaxe):
-        r1 = rd.uniform(-0.9, 0.9)
-        nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0,o+1, i)]
+        r1 = rd.uniform(-0.95, 0.95)
+        #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0,o+1, i)]
+        global roll_angle
+        roll_angle += roll_angle_inc
+        nproduce [/(roll_angle)&(pitch_angle)B(0,o+1, i)]
+
+
 
 
 B(t,o, idx) :
@@ -68,13 +74,19 @@ B(t,o, idx) :
       if o==1:
         nbaxe = nb2[idx]
         for i in xrange(nbaxe):
-           r1 = rd.uniform(-0.9, 0.9)
-           nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+           r1 = rd.uniform(-0.95, 0.95)
+           #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+           global roll_angle
+           roll_angle += roll_angle_inc
+           nproduce [/(roll_angle)&(pitch_angle)B(0, o+1, i)]
       else:
         nbaxe = rd.randint(1,6)
         for i in xrange(nbaxe):
-           r1 = rd.uniform(-0.9, 0.9)
-           nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+           r1 = rd.uniform(-0.95, 0.95)
+           #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+           global roll_angle
+           roll_angle += roll_angle_inc
+           nproduce [/(roll_angle)&(pitch_angle)B(0, o+1, i)]
 
 L(t,n) :
   # ages the leaf. If too old, removes

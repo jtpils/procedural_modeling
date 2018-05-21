@@ -14,8 +14,8 @@ from openalea.mtg.io import lpy2mtg, mtg2lpy, axialtree2mtg, mtg2axialtree
 from openalea.mtg.aml import *
 
 
-parameter_dict={'roll_angle':' ', 'pitch_angle':' ', 'age':' ', 'nb1':' ', 'nb2':' '}
-parameter_dict['roll_angle']=20
+parameter_dict={'roll_angle_inc':' ', 'pitch_angle':' ', 'age':' ', 'nb1':' ', 'nb2':' '}
+parameter_dict['roll_angle_inc']=120
 parameter_dict['pitch_angle']=30
 parameter_dict['age']=4
 parameter_dict['nb1']=4
