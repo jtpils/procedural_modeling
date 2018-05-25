@@ -14,6 +14,7 @@ import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+import numpy
 import openalea.lpy as lpy
 from openalea.mtg.plantframe import *
 from openalea.mtg.mtg import *
@@ -28,7 +29,7 @@ parameter_dict['roll_angle']=20
 parameter_dict['pitch_angle']=30
 parameter_dict['age']=4
 parameter_dict['nb1']=4
-parameter_dict['nb2']=np.array([2, 1, 3, 4])
+parameter_dict['nb2']=numpy.array([2, 1, 3, 4])
 
 #l = lpy.Lsystem(input_file)
 l = lpy.Lsystem(input_file, parameter_dict)
@@ -45,11 +46,11 @@ scene = l.generateScene(axialtree)
 #scene = l.Tree2Scene(axialtree)
 #parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
 
-#mtg = lpy2mtg(axialtree, l, scene)
+mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
 #mtg_lines = write_mtg(mtg)
 
-mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
+#mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
 #mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
