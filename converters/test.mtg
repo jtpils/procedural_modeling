@@ -1,0 +1,62 @@
+CODE :  	FORM-A
+
+CLASSES :
+SYMBOL	SCALE	DECOMPOSITION	INDEXATION	DEFINITION
+$	0	FREE	FREE	IMPLICIT
+P	1	FREE	FREE	EXPLICIT
+U	2	FREE	FREE	EXPLICIT
+I	3	FREE	FREE	EXPLICIT
+
+DESCRIPTION :
+LEFT	RIGHT	RELTYPE	MAX
+P	P	<	?
+P	P	+	?
+U	U	<	?
+U	U	+	?
+I	I	<	?
+I	I	+	?
+
+FEATURES :
+NAME	TYPE
+Diameter	REAL
+Length	REAL
+diameter	REAL
+
+MTG :
+ENTITY-CODE												Diameter	Length	diameter
+/P1														
+^/U1												5.9	10	
+^/I1														
+^<I2														
+^<I3														
+^<I4														
+^<I5														
+^<I6														
+	+U2													
+	^/I20											3.5	7	
+	^<I21													
+	^<I22													
+	^<I23													
+	^<I24													
+	^<U3													
+	^/I25											2.1	4	
+	^<I25													
+	^<I26													
+	^<I27													
+	^<I28													
+	^<I29													
+^<I7														
+^<I8														
+^<I9														
+^<U2														
+^/I10												4.3	8	
+^<I11														
+^<I12														
+^<I13														
+^<I14														
+^<I15														
+^<U3														
+^/I16													7.5	3.9
+^<I17														
+^<I18														
+^<I19														
