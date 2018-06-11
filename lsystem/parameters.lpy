@@ -4,7 +4,7 @@ import numpy as np
 
 
 # life time of a leaf
-leafduration = 15 
+leafduration = 15
 
 # age at which a leaf is considered as old
 leafold =      2
@@ -25,13 +25,13 @@ maxduration = lambda order : int(10./(order*10+1))+5
 roll_angle = 0
 #nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4])
 # number of axe at a ramification
-nb_axes = lambda order : rd.randint(3, 6-order)  
+nb_axes = lambda order : rd.randint(3, 6-order)
 
 
-trunk_height = 15
+trunk_height = 50
 trunk_pitch = 2
-trunk_roll = 20
-trunk_diameter = 1.2
+trunk_roll = 10
+trunk_diameter = 6
 up_angle = lambda t,order : -20        # up angle for lateral branches
 
 
@@ -47,7 +47,7 @@ module L # whorl of leaf
 module I # Internode
 
 
-Axiom: _(0.095)A(0,0) 
+Axiom: _(0.095)A(0,0)
 
 derivation length: nbiter
 production:
@@ -55,8 +55,8 @@ production:
 A(t,o) :
   if t < trunk_height:
      init_rad = trunk_diameter/(radinc_rate**nbiter)
-     produce /(trunk_roll)&(trunk_pitch)I(o, 1, init_rad - t*(init_rad-0.1)/trunk_height)L(0, t)A(t+1, o) 
-  else:      
+     produce /(trunk_roll)&(trunk_pitch)I(o, 1, init_rad - t*(init_rad-0.1)/trunk_height)L(0, t)A(t+1, o)
+  else:
       nbaxe = nb1
       for i in xrange(nbaxe):
         r1 = rd.uniform(-0.95, 0.95)
