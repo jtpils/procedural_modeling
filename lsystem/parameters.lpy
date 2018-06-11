@@ -29,13 +29,19 @@ roll_angle = 0
 #nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4])
 # number of axe at a ramification
 #nb_axes = lambda order : rd.randint(3, 6-order)
-#up_angle = lambda t,order : -20        # up angle for lateral branches
+
+
+trunk_height = 15
+trunk_pitch = 2
+trunk_roll = 20
+trunk_diameter = 1.2
+up_angle = lambda t,order : -20        # up angle for lateral branches
 
 
 
 
 # number total of iterations of the system
-nbiter = sum([maxduration(o) for o in xrange(0,age,1)])
+nbiter = sum([maxduration(o+1) for o in xrange( age +1 )]) + trunk_height+3
 
 module A # represent trunk apical meristem
 module B # represent apical meristem of lateral branches
@@ -50,21 +56,17 @@ derivation length: nbiter
 production:
 
 A(t,o) :
-  if t < maxduration(o):
-     produce I(o, 1, 0.1)L(0, t)A(t+1, o)
+  if t < < trunk_height:
+     init_rad = trunk_diameter/(radinc_rate**nbiter)
+     produce /(trunk_roll)&(trunk_pitch)I(o, 1, init_rad - t*(init_rad-0.1)/15)L(0, t)A(t+1, o) 
   else:
       nbaxe = nb1
       for i in xrange(nbaxe):
         r1 = rd.uniform(-0.95, 0.95)
         #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0,o+1, i)]
         global roll_angle
-        global pitch_angle
         roll_angle += roll_angle_inc
-        pitch_angle_factor = 1.0
-        if (roll_angle >= 360):
-           pitch_angle_factor = 0.9
-        eff_pitch_angle = pitch_angle_factor * pitch_angle
-        nproduce [/(roll_angle)&(eff_pitch_angle)B(0,o+1, i)]
+        nproduce [/(roll_angle)&(pitch_angle)B(0,o+1, i)]
 
 
 
@@ -83,26 +85,17 @@ B(t,o, idx) :
            r1 = rd.uniform(-0.95, 0.95)
            #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
            global roll_angle
-           global pitch_angle
            roll_angle += roll_angle_inc
-           pitch_angle_factor = 1.0
-           if (roll_angle >= 360):
-              pitch_angle_factor = 0.9
-           eff_pitch_angle = pitch_angle_factor * pitch_angle
-           nproduce [/(roll_angle)&(eff_pitch_angle)B(0, o+1, i)]
+           nproduce [/(roll_angle)&(pitch_angle)B(0, o+1, i)]
       else:
         nbaxe = rd.randint(1,6)
         for i in xrange(nbaxe):
            r1 = rd.uniform(-0.95, 0.95)
            #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
            global roll_angle
-           global pitch_angle
            roll_angle += roll_angle_inc
-           pitch_angle_factor = 1.0
-           if (roll_angle >= 360):
-              pitch_angle_factor = 0.9
-           eff_pitch_angle = pitch_angle_factor * pitch_angle
-           nproduce [/(roll_angle)&(eff_pitch_angle)B(0, o+1, i)]
+           nproduce [/(roll_angle)&(pitch_angle)B(0, o+1, i)]
+	   
 
 L(t,n) :
   # ages the leaf. If too old, removes
@@ -110,8 +103,31 @@ L(t,n) :
   else:   produce *
 
 # Increment radius of internodes
-I(o,s,r) --> I(o, s*(1.0+(o+1.0)/100.0), r*1.06)
-_(r) --> _(r*1.06)
+I(o,s,r)-->I(o, s*(1.0+(o+1.0)/100.0), r*radinc_rate)
+_(r) --> _(r+trunk_diameter/nbiter)if t < maxduration(o):
+     # simply produces a metamer and ages the apex
+     # reorient smoothly the branch toward the up
+     #produce ^(up_angle(t,o)+rd.random()*5)I(1,0.1)L(0,t)B(t+1,o)
+     produce I(o, 1, 0.1)L(0, t)B(t+1, o, idx)
+  else:
+      # produce a whorl of sympodial branches
+      if o==1:
+        nbaxe = nb2[idx]
+        for i in xrange(nbaxe):
+           r1 = rd.uniform(-0.95, 0.95)
+           #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+           global roll_angle
+           roll_angle += roll_angle_inc
+           nproduce [/(roll_angle)&(pitch_angle)B(0, o+1, i)]
+      else:
+        nbaxe = rd.randint(1,6)
+        for i in xrange(nbaxe):
+           r1 = rd.uniform(-0.95, 0.95)
+           #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
+           global roll_angle
+           roll_angle += roll_angle_inc
+           nproduce [/(roll_angle)&(pitch_angle)B(0, o+1, i)]
+	   
 
 homomorphism:
 I(o,a,r) --> F(a, r)
