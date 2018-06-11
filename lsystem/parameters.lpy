@@ -9,9 +9,7 @@ leafduration = 15
 # age at which a leaf is considered as old
 leafold =      2
 
-# maximum number of branching order 
 #age =     4
-
 # increment of radius through time
 radinc_rate =    1.06
 
@@ -25,8 +23,6 @@ maxduration = lambda order : int(10./(order*10+1))+5
 #roll_angle = lambda order : 20 # branching angle
 #pitch_angle = 30
 roll_angle = 0
-#roll_angle_inc = 120
-#nb1 = 3
 #nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4])
 # number of axe at a ramification
 nb_axes = lambda order : rd.randint(3, 6-order)  
@@ -59,7 +55,7 @@ production:
 A(t,o) :
   if t < trunk_height:
      init_rad = trunk_diameter/(radinc_rate**nbiter)
-     produce /(trunk_roll)&(trunk_pitch)I(o, 1, init_rad - t*(init_rad-0.1)/15)L(0, t)A(t+1, o) 
+     produce /(trunk_roll)&(trunk_pitch)I(o, 1, init_rad - t*(init_rad-0.1)/trunk_height)L(0, t)A(t+1, o) 
   else:      
       nbaxe = nb1
       for i in xrange(nbaxe):
@@ -73,8 +69,6 @@ A(t,o) :
            pitch_angle_factor = 0.9
         eff_pitch_angle = pitch_angle_factor * pitch_angle
         nproduce [/(roll_angle)&(eff_pitch_angle)B(0,o+1, i)]
-
-
 
 
 B(t,o, idx) :
@@ -111,7 +105,6 @@ B(t,o, idx) :
               pitch_angle_factor = 0.9
            eff_pitch_angle = pitch_angle_factor * pitch_angle
            nproduce [/(roll_angle)&(eff_pitch_angle)B(0, o+1, i)]
-
 L(t,n) :
   # ages the leaf. If too old, removes
   if t < leafduration :  produce L(t+1, n)
@@ -119,7 +112,7 @@ L(t,n) :
 
 # Increment radius of internodes
 I(o,s,r)-->I(o, s*(1.0+(o+1.0)/100.0), r*radinc_rate)
-    
+
 
 
 #_(r) --> _(r*radinc_rate)
