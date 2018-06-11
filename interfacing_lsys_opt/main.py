@@ -25,7 +25,6 @@ def parse_lstring(lstring):
 def generate_lsystem_tree_points(params):
     'Wrapper function to map params array to individual variables'
 
-<<<<<<< HEAD
     return ngenerate_lsystem_tree_points(   age=int(params[0]),
                                             no_1st_ord_branches=int(params[1]),
                                             no_2nd_ord_branches=int(params[2]),
@@ -33,17 +32,6 @@ def generate_lsystem_tree_points(params):
                                             branching_angle_pitch=params[4] )
 
 def ngenerate_lsystem_tree_points(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
-=======
-    age = params[0]
-    no_1st_ord_branches=params[1]
-    no_2nd_ord_branches=params[2]
-    branching_angle_roll=params[3]
-    branching_angle_pitch=params[4]
-
-    return generate_lsystem_tree_points(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
-
-def generate_lsystem_tree_points(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
->>>>>>> 947ef7e9cd5029e8de3edfc20c7f5e3eb1d60caf
     'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
 
     lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
