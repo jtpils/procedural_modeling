@@ -1,21 +1,22 @@
 import numpy
 import pyDOE
 import scipy.stats
+from scipy.stats.distributions import norm
 import scipy.optimize as optimize
 from numpy.linalg import eig, inv
 from pyquaternion import Quaternion
 from os.path import isfile
 import glob
 #import sys
-#ys.path.append('../interfacing_lysys_opt')
+#sys.path.append('../interfacing_lysys_opt')
 
 def generate_lsystem_tree_points(p):
 	'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
-	age = int(60*p[0]);
-	no_1st_ord_branches = int(10*p[1]);
-	no_2nd_ord_branches = int(10*p[2]);
-	branching_angle_roll = 180*p[3];
-	branching_angle_pitch = 10+80*p[4];
+	age = int(p[0]);
+	no_1st_ord_branches = int(p[1]);
+	no_2nd_ord_branches = int(p[2]);
+	branching_angle_roll = p[3];
+	branching_angle_pitch = p[4];
     #lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
     #parse l-system output string into 3d points matching Xfrog object size
     #todo
@@ -204,16 +205,15 @@ def load_normalised_voxel_growth_space():
 
 # Global variable
 target_filename='../../obj_files/target.obj'
-gs_filename='./growth_space.csv'
+gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
 
 tpts = load_normalised_voxel_growth_space()
+targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_vx(tpts)
 
 def estimate_error(params):
 # Estimate_error function takes in:
 # params: parameters used to create tree from L-System
 # fname: filename of obj file (comparison data)
-	tpts = load_normalised_voxel_growth_space()
-	targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_vx(tpts)
 	# Generate L-system points for params
 	ls_pts = generate_lsystem_tree_points(params)
 	ls_pts = numpy.asarray(ls_pts)
@@ -227,40 +227,99 @@ def estimate_error(params):
 	Eel_radii = numpy.mean(((ls_el[1:2]-targ_el[1:2])/(targ_el[1:2]))**2)
 	#Eeu_theta = (ls_eu[0]-targ_eu[0])/(2*numpy.pi)
 	Eeu_radii = numpy.mean(((ls_eu[1:2]-targ_eu[1:2])/(targ_eu[1:2]))**2)
-	E_total = numpy.mean(numpy.array(\
+	E_total = numpy.sum(numpy.array(\
 		[Eth,Ech,Eel_radii,Eeu_radii]))
 	#print params, E_total
 	return E_total
 
-def optimise(npts,nparams):
+def optimise(npts,means,stds,ranges):
 # Optimise function takes in:
 # npts:     number of sample points for Latin Hypercube sampling
-# params:   list of parameters to be optimised (range 0:1)
+# rflags:   array of flags to indicate whether we know ranges
+# ranges:   ranges of known variables (same length as rflags)
+# indices:  this should be used in a loop...
 # Returns variables:
 # result: list of optimum values obtained from each initial condition
 # error according to 'result'
-    result=[];error=[];
+    r=[];e=[];
+    nparams = len(means);
+    
+    # Construct sample points
     sample_points = pyDOE.lhs(nparams,samples=nparams*npts,criterion='center')
+    
+    # Centre around means and stds
+    for i in xrange(nparams):
+        sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
+        
+    # Test points    
     for i in range(len(sample_points)):
-		p = sample_points[i,:]
+        p = sample_points[i,:]
 		#print p
-		try:
-			print "Trying point", i
-			opt_params=optimize.minimize(estimate_error,p,method='Nelder-Mead')
-			result.append(opt_params.x); error.append(opt_params.fun)
-			print error
-		except:
-			pass
-    return result,error
+        try:
+            print "Trying point:", i
+            print "\tParameters:         ", p
+            opt_params=optimize.minimize(estimate_error,p,method='TNC',bounds=ranges)
+            print "\tOptimum parameters: ", opt_params.x
+            r.append(opt_params.x); e.append(opt_params.fun)
+            print "\tError:              ", opt_params.fun
+        except:
+            pass
+    r = numpy.asarray(r); e = numpy.asarray(e);
+    return r,e
 
 def main():
+# Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
+        # Number of params in model
+        nparams = 5;
+        # Setting of default ranges - LIMITS
+        default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60]]     
+        rflags = numpy.asarray([1,1,1,0,0]) # Array to indicate number of known ranges
+        ranges = default_ranges;
+        # Setting of known ranges (overwrite defaults)
+        ranges[0][0]=5; ranges[0][1]=30;
+        ranges[1][0]=3;  ranges[1][1]=5;
+        ranges[2][0]=1;  ranges[2][1]=4;
+        # Setting of default means
+        means = [20,4,3,90,30];
+        stds = [5,1,1,20,7];
+        
+	print "------------------------------------------------"
 	print "Running main function of opt.py..."
-	result,error = optimise(1000,5)
+	print "Target values:"
+	print "\tTree height:              ", targ_th+targ_ch
+	print "Setting the following constraints:"
+	print "\tAge:                     20-30 years"
+	print "\tNo 1st order branches:   3-5"
+	print "\tNo 2nd order branches:   1-4"
+	print "Params with unknown range:"
+	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
+
+        result,error = optimise(100,means,stds,ranges)
+
 	result = numpy.asarray(result)
 	error = numpy.asarray(numpy.abs(error))
-	loc = numpy.where(error == error.min())
+	loc = numpy.where(error == error.min())        
+        
+        print "Result of optimisation:"
+        print "\tOptimum parameters:\t",result[loc,:]
+        print "\tError:\t\t", error.min()
+        
+        res = numpy.zeros(5)
+        res[0] = result[loc,0]; res[1] = result[loc,1]
+        res[2] = result[loc,2]; res[3] = result[loc,3]
+        res[4] = result[loc,4]
+        
+        output = generate_lsystem_tree_points(res)
+        file = open('output.obj', 'w')
+        for item in output:
+            file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
+        file.close()
+
+	#result = numpy.asarray(result)
+	#error = numpy.asarray(numpy.abs(error))
+	#loc = numpy.where(error == error.min())
 	print result[loc,:], error.min()
-	numpy.save('results.npy',result); numpy.save('errors.npy',error);
+	#numpy.save('results.npy',result); numpy.save('errors.npy',error);
 
 
 if __name__ == "__main__":
