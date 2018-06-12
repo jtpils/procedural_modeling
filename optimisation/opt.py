@@ -23,8 +23,11 @@ def generate_lsystem_tree_points(p):
 
     # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
     # ========================
-	trunk_growth_rate = 2.0
-	branch_growth_rate = 1.0
+	
+	trunk_growth_rate = p[5]
+	branch_growth_rate = p[6]
+	#trunk_growth_rate = 0.6
+	#branch_growth_rate = 0.3
 	pitch_angle = branching_angle_pitch/180.0 * 3.14159 #radian
 	roll_angle = branching_angle_roll/180.0 * 3.14159 #radian
 
@@ -270,18 +273,18 @@ def optimise(npts,means,stds,ranges):
 def main():
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
         # Number of params in model
-        nparams = 5;
+        nparams = 7;
         # Setting of default ranges - LIMITS
-        default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60]]     
-        rflags = numpy.asarray([1,1,1,0,0]) # Array to indicate number of known ranges
+        default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60],[0.1,2],[0.05,3]]     
+        rflags = numpy.asarray([1,1,1,0,0,0,0]) # Array to indicate number of known ranges
         ranges = default_ranges;
         # Setting of known ranges (overwrite defaults)
         ranges[0][0]=5; ranges[0][1]=30;
         ranges[1][0]=3;  ranges[1][1]=5;
         ranges[2][0]=1;  ranges[2][1]=4;
         # Setting of default means
-        means = [20,4,3,90,30];
-        stds = [5,1,1,20,7];
+        means = [20,4,3,90,30,0.5,0.6];
+        stds = [5,1,1,20,7,0.1,0.1];
         
 	print "------------------------------------------------"
 	print "Running main function of opt.py..."
@@ -299,15 +302,16 @@ def main():
 	result = numpy.asarray(result)
 	error = numpy.asarray(numpy.abs(error))
 	loc = numpy.where(error == error.min())        
-        
-        print "Result of optimisation:"
-        print "\tOptimum parameters:\t",result[loc,:]
-        print "\tError:\t\t", error.min()
-        
-        res = numpy.zeros(5)
+                
+        res = numpy.zeros(nparams)
         res[0] = result[loc,0]; res[1] = result[loc,1]
         res[2] = result[loc,2]; res[3] = result[loc,3]
-        res[4] = result[loc,4]
+        res[4] = result[loc,4]; res[5] = result[loc,5]
+        res[6] = result[loc,6];
+
+        print "Result of optimisation:"
+        print "\tOptimum parameters:\t",res
+        print "\tError:\t\t", error.min()
         
         output = generate_lsystem_tree_points(res)
         file = open('output.obj', 'w')
