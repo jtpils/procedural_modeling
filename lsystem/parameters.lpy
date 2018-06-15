@@ -1,21 +1,20 @@
 import random as rd
 import numpy as np
 
-
-
 # life time of a leaf
 leafduration = 15
 
 # age at which a leaf is considered as old
 leafold =      2
 
+# tree age
 #age =     4
+
 # increment of radius through time
 radinc_rate =    1.06
 
 #idx for second order branches
 sobindex = 0
-
 
 # life time of an apex
 maxduration = lambda order : int(10./(order*10+1))+5
@@ -27,25 +26,19 @@ roll_angle = 0
 # number of axe at a ramification
 nb_axes = lambda order : rd.randint(3, 6-order)
 
-
 trunk_height = 50
 trunk_pitch = 2
 trunk_roll = 10
 trunk_diameter = 6
 up_angle = lambda t,order : -20        # up angle for lateral branches
 
-
-
-
 # number total of iterations of the system
 nbiter = sum([maxduration(o+1) for o in xrange( age +1 )]) + trunk_height+3
-
 
 module A # represent trunk apical meristem
 module B # represent apical meristem of lateral branches
 module L # whorl of leaf
 module I # Internode
-
 
 Axiom: _(0.095)A(0,0)
 
@@ -69,7 +62,6 @@ A(t,o) :
            pitch_angle_factor = 0.9
         eff_pitch_angle = pitch_angle_factor * pitch_angle
         nproduce [/(roll_angle)&(eff_pitch_angle)B(0,o+1, i)]
-
 
 B(t,o, idx) :
   if t < maxduration(o):
@@ -105,6 +97,7 @@ B(t,o, idx) :
               pitch_angle_factor = 0.9
            eff_pitch_angle = pitch_angle_factor * pitch_angle
            nproduce [/(roll_angle)&(eff_pitch_angle)B(0, o+1, i)]
+
 L(t,n) :
   # ages the leaf. If too old, removes
   if t < leafduration :  produce L(t+1, n)
@@ -112,8 +105,6 @@ L(t,n) :
 
 # Increment radius of internodes
 I(o,s,r)-->I(o, s*(1.0+(o+1.0)/100.0), r*radinc_rate)
-
-
 
 #_(r) --> _(r*radinc_rate)
 _(r) --> _(r+trunk_diameter/nbiter)
