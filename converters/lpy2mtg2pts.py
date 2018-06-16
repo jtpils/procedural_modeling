@@ -13,7 +13,6 @@ mtg2d_file = os.path.join(current_path, 'mtg2d.png')
 import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
 import numpy
 import openalea.lpy as lpy
 from openalea.mtg.plantframe import *
@@ -95,5 +94,6 @@ properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type'
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
 f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+
 #use dict to access mtg structure....
 f.close()

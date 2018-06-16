@@ -36,6 +36,7 @@ def ngenerate_lsystem_tree_points(  age=0,
                                     no_2nd_ord_branches=2,
                                     branching_angle_roll=180.0,
                                     branching_angle_pitch=30.0 ):
+
     'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
 
     lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
