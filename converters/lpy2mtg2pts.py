@@ -13,7 +13,7 @@ mtg2d_file = os.path.join(current_path, 'mtg2d.png')
 import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
+import numpy
 import openalea.lpy as lpy
 from openalea.mtg.plantframe import *
 from openalea.mtg.mtg import *
@@ -23,10 +23,17 @@ from openalea.mtg.io import *
 from openalea.mtg.aml import *
 from openalea.mtg.util import *
 
-l = lpy.Lsystem(input_file)
+parameter_dict={'roll_angle_inc':' ', 'pitch_angle':' ', 'age':' ', 'nb1':' ', 'nb2':' '}
+parameter_dict['roll_angle_inc']=60
+parameter_dict['pitch_angle']=50
+parameter_dict['age']=5
+parameter_dict['nb1']=8
+parameter_dict['nb2']=numpy.array([1, 1, 1, 1, 1, 3, 2, 4])
 
-#axialtree = l.animate()
-axialtree = l.iterate()
+#l = lpy.Lsystem(input_file)
+l = lpy.Lsystem(input_file, parameter_dict)
+axialtree = l.animate()
+#axialtree = l.iterate()
 
 l.plot(axialtree)
 Viewer.frameGL.saveImage(output_lpy, 'png')
@@ -36,36 +43,39 @@ scale = {'A':1,'B':1, 'L':1, 'I':1}
 scene = l.generateScene(axialtree)
 #scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
-parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
+#parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
 
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
 #mtg_lines = write_mtg(mtg)
 
-mtg = axialtree2mtg(axialtree, scale, scene, parameters)
+mtg = axialtree2mtg(axialtree, scale, scene)
+#mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
+#mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
 #plot3d(mtg)
 
-print "axialtree"
-print axialtree
+#print "axialtree"
+#print axialtree
 
 dressing_data = DressingData(DiameterUnit=5)
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
                 DressingData = dressing_data)
-print "TopDia"
-print pf1.points
+#print "TopDia"
+#print pf1.points
 pf1.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg_topdia, 'png')
 
 pf2 = PlantFrame(mtg,
                 TopDiameter='diam')
-print "diam"
-print pf2.points
+#print "diam"
+#print pf2.points
 pf2.plot()
 Viewer.frameGL.saveImage(output_mtg_diam, 'png')
 
+'''
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
 #axes = pf3._compute_axes(mtg, 3, pf3.points, pf3.origin)
@@ -78,10 +88,12 @@ print "pf3"
 print pf3.points
 pf3.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg, 'png')
+'''
 
 properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
-f.write(write_mtg(g=mtg, class_at_scale=scale))
+f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+
 #use dict to access mtg structure....
 f.close()
