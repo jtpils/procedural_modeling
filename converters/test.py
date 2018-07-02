@@ -1,3 +1,5 @@
+import os
+
 from openalea.mtg.mtg import *
 from openalea.mtg.aml import *
 import openalea.lpy as lpy
@@ -67,14 +69,20 @@ for id in g.vertices():
     print g[id]
 from openalea.mtg.io import *
 
+current_path = os.path.dirname(os.path.abspath(__file__))
+output_lpy = os.path.join(current_path, 'test_output.png')
+output_mtg = os.path.join(current_path, 'test_output.mtg')
+
 print list(g.property_names())
 properties = [(p, 'REAL') for p in g.property_names() if p not in ['edge_type', 'index', 'label']]
 print properties
 mtg_lines = write_mtg(g, properties)
-f = open('test.mtg', 'w')
+f = open(output_mtg, 'w')
 f.write(mtg_lines)
 f.close()
 
-axialtree = None
-mtg2lpy(g, axial_tree=axialtree)
-lpy.Lsystem.plot(axialtree)
+l = lpy.Lsystem()
+axialtree = mtg2axialtree(g)
+l.plot(axialtree)
+from openalea.plantgl.all import *
+Viewer.frameGL.saveImage(output_lpy, 'png')
