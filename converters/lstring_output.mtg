@@ -15,29 +15,29 @@ F	X,F	+	?
 
 FEATURES :
 NAME	TYPE
-XX	REAL
-YY	REAL
-ZZ	REAL
-TopDiameter	REAL
+geometry	REAL
+edge_type	REAL
+_axial_id	REAL
+label	REAL
 
 MTG :
-ENTITY-CODE												XX	YY	ZZ	TopDiameter
-/F															
-^<F															
-	+F														
-		+X													
-	^<F														
-		+X													
-	^<X														
-^<F															
-^<F															
-	+F														
-		+X													
-	^<F														
-		+X													
-	^<X														
-^<F															
-	+X														
-^<F															
-	+X														
-^<X															
+ENTITY-CODE												geometry	edge_type	_axial_id	label
+/F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04213F80>]		0	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224030>]	<	1	F
+	+F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224068>]	+	4	F
+		+X											+	7	X
+	^<F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042240A0>]	<	9	F
+		+X											+	12	X
+	^<X												<	15	X
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042240D8>]	<	17	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224110>]	<	18	F
+	+F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224148>]	+	21	F
+		+X											+	24	X
+	^<F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224180>]	<	26	F
+		+X											+	29	X
+	^<X												<	32	X
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042241B8>]	<	35	F
+	+X												+	38	X
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042241F0>]	<	40	F
+	+X												+	43	X
+^<X													<	46	X

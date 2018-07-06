@@ -30,20 +30,29 @@ parameter_dict['age']=5
 parameter_dict['nb1']=8
 parameter_dict['nb2']=numpy.array([1, 1, 1, 1, 1, 3, 2, 4])
 
-#l = lpy.Lsystem(input_file)
-l = lpy.Lsystem(input_file, parameter_dict)
+l = lpy.Lsystem(input_file)
+#l = lpy.Lsystem(input_file, parameter_dict)
 axialtree = l.animate()
 #axialtree = l.iterate()
 
 l.plot(axialtree)
 Viewer.frameGL.saveImage(output_lpy, 'png')
 
+print axialtree
+for num, element in enumerate(axialtree):
+    print num, element
+
 scale = {'F':1,'X':1}
 #scale = {'A':1,'B':1, 'L':1, 'I':1}
-scene = l.generateScene(axialtree)
-#scene = l.sceneInterpretation(axialtree)
+#scene = l.generateScene(axialtree)
+scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
-#parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
+
+print 'Scene:'
+print scene
+for shape in scene:
+    print shape.geometry.name
+    print shape.geometry.getPglReferenceCount
 
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
@@ -51,6 +60,7 @@ scene = l.generateScene(axialtree)
 
 mtg = axialtree2mtg(axialtree, scale, scene)
 #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
+#parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
 #mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
@@ -59,6 +69,11 @@ mtg = axialtree2mtg(axialtree, scale, scene)
 #print "axialtree"
 #print axialtree
 
+print mtg
+
+properties = [(p, 'REAL') for p in mtg.property_names()]
+print properties
+'''
 dressing_data = DressingData(DiameterUnit=1)
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
@@ -74,7 +89,7 @@ pf2 = PlantFrame(mtg,
 #print pf2.points
 pf2.plot()
 Viewer.frameGL.saveImage(output_mtg_diam, 'png')
-
+'''
 '''
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
@@ -91,10 +106,13 @@ Viewer.frameGL.saveImage(output_mtg, 'png')
 '''
 
 #properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
-properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'TopDiameter']]
+#properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'TopDiameter']]
+properties = [(p, 'REAL') for p in mtg.property_names()]
+print properties
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
-f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+#f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+f.write(write_mtg(mtg, properties))
 
 #use dict to access mtg structure....
 f.close()
