@@ -22,6 +22,7 @@ from openalea.plantgl.all import *
 from openalea.mtg.io import *
 from openalea.mtg.aml import *
 from openalea.mtg.util import *
+from openalea.plantgl.scenegraph._pglsg import *
 
 parameter_dict={'roll_angle_inc':' ', 'pitch_angle':' ', 'age':' ', 'nb1':' ', 'nb2':' '}
 parameter_dict['roll_angle_inc']=60
@@ -50,9 +51,14 @@ scene = l.sceneInterpretation(axialtree)
 
 print 'Scene:'
 print scene
+print 'Components in scene:'
 for shape in scene:
-    print shape.geometry.name
-    print shape.geometry.getPglReferenceCount
+    print shape.geometry.name, shape.geometry.getPglReferenceCount
+    #print isinstance(shape, scenegraph._pglsg.Cylinder)
+    if type(shape.geometry) is Cylinder:
+        print shape.geometry.radius, shape.geometry.height
+    else:
+        print shape.geometry.translation
 
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
@@ -73,7 +79,7 @@ print mtg
 
 properties = [(p, 'REAL') for p in mtg.property_names()]
 print properties
-'''
+
 dressing_data = DressingData(DiameterUnit=1)
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
@@ -89,7 +95,7 @@ pf2 = PlantFrame(mtg,
 #print pf2.points
 pf2.plot()
 Viewer.frameGL.saveImage(output_mtg_diam, 'png')
-'''
+
 '''
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)

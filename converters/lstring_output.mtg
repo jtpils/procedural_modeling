@@ -22,22 +22,22 @@ label	REAL
 
 MTG :
 ENTITY-CODE												geometry	edge_type	_axial_id	label
-/F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04213F80>]		0	F
-^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224030>]	<	1	F
-	+F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224068>]	+	4	F
+/F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041A0F80>]		0	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B1030>]	<	1	F
+	+F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B1068>]	+	4	F
 		+X											+	7	X
-	^<F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042240A0>]	<	9	F
+	^<F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B10A0>]	<	9	F
 		+X											+	12	X
 	^<X												<	15	X
-^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042240D8>]	<	17	F
-^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224110>]	<	18	F
-	+F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224148>]	+	21	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B10D8>]	<	17	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B1110>]	<	18	F
+	+F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B1148>]	+	21	F
 		+X											+	24	X
-	^<F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x04224180>]	<	26	F
+	^<F											[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B1180>]	<	26	F
 		+X											+	29	X
 	^<X												<	32	X
-^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042241B8>]	<	35	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B11B8>]	<	35	F
 	+X												+	38	X
-^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x042241F0>]	<	40	F
+^<F												[<openalea.plantgl.scenegraph._pglsg.Shape object at 0x041B11F0>]	<	40	F
 	+X												+	43	X
 ^<X													<	46	X
