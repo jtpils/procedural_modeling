@@ -1,7 +1,7 @@
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-#input_file = os.path.join(current_path, 'parameters.lpy')
-input_file = os.path.join(current_path, 'example.lpy')
+input_file = os.path.join(current_path, 'parameters.lpy')
+#input_file = os.path.join(current_path, 'example.lpy')
 output_lpy = os.path.join(current_path, 'lpy_output.png')
 output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
 output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
@@ -31,8 +31,8 @@ parameter_dict['age']=5
 parameter_dict['nb1']=8
 parameter_dict['nb2']=numpy.array([1, 1, 1, 1, 1, 3, 2, 4])
 
-l = lpy.Lsystem(input_file)
-#l = lpy.Lsystem(input_file, parameter_dict)
+#l = lpy.Lsystem(input_file)
+l = lpy.Lsystem(input_file, parameter_dict)
 axialtree = l.animate()
 #axialtree = l.iterate()
 
@@ -43,8 +43,8 @@ print axialtree
 for num, element in enumerate(axialtree):
     print num, element
 
-scale = {'F':1,'X':1}
-#scale = {'A':1,'B':1, 'L':1, 'I':1}
+#scale = {'F':1,'X':1}
+scale = {'A':1,'B':1, 'L':1, 'I':1}
 #scene = l.generateScene(axialtree)
 scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
@@ -57,8 +57,12 @@ for shape in scene:
     #print isinstance(shape, scenegraph._pglsg.Cylinder)
     if type(shape.geometry) is Cylinder:
         print shape.geometry.radius, shape.geometry.height
-    else:
+    elif type(shape.geometry) is Translated:
         print shape.geometry.translation
+    elif type(shape.geometry) is Frustum:
+        print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
+    else:
+        print 'Unknown shape geometry'
 
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
@@ -113,7 +117,21 @@ Viewer.frameGL.saveImage(output_mtg, 'png')
 
 #properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
 #properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'TopDiameter']]
-properties = [(p, 'REAL') for p in mtg.property_names()]
+#properties = [(p, 'REAL') for p in mtg.property_names()]
+properties = []
+shapes = (shape for shape in mtg.property_names() if shape in ['geometry'])
+print mtg 
+for shape in shapes:
+    if type(shape.geometry) is Cylinder:
+        print shape.geometry.radius, shape.geometry.height
+        properties.append((shape.geometry.radius, 'REAL'), (shape.geometry.height, 'REAL'))
+    elif type(shape.geometry) is Translated:
+        print shape.geometry.translation
+        properties.append((shape.geometry.translation, 'REAL'))
+    elif type(shape.geometry) is Frustum:
+        print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
+    else:
+        print 'Unknown shape geometry'
 print properties
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
