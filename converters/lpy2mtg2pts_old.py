@@ -68,10 +68,11 @@ for shape in scene:
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
 #mtg_lines = write_mtg(mtg)
 
-mtg = axialtree2mtg(axialtree, scale, scene)
+#Note to self: find a way to modify axialtree2mtg function so that it will record 'geometry' properties properly with XX, YY, ZZ, and radius information instead of the object memory address
+#mtg = axialtree2mtg(axialtree, scale, scene)
 #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
-#parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
-#mtg = axialtree2mtg(axialtree, scale, scene, parameters)
+parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['length', 'radius']}
+mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
 #plot3d(mtg)
@@ -84,7 +85,9 @@ print mtg
 properties = [(p, 'REAL') for p in mtg.property_names()]
 print properties
 
+
 dressing_data = DressingData(DiameterUnit=1)
+'''
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
                 DressingData = dressing_data)
@@ -99,8 +102,8 @@ pf2 = PlantFrame(mtg,
 #print pf2.points
 pf2.plot()
 Viewer.frameGL.saveImage(output_mtg_diam, 'png')
-
 '''
+
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
 #axes = pf3._compute_axes(mtg, 3, pf3.points, pf3.origin)
@@ -113,14 +116,13 @@ print "pf3"
 print pf3.points
 pf3.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg, 'png')
-'''
+
 
 #properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
 #properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'TopDiameter']]
-#properties = [(p, 'REAL') for p in mtg.property_names()]
-properties = []
+properties = [(p, 'REAL') for p in mtg.property_names()]
+'''properties = []
 shapes = (shape for shape in mtg.property_names() if shape in ['geometry'])
-print mtg 
 for shape in shapes:
     if type(shape.geometry) is Cylinder:
         print shape.geometry.radius, shape.geometry.height
@@ -132,6 +134,7 @@ for shape in shapes:
         print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
     else:
         print 'Unknown shape geometry'
+        '''
 print properties
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
