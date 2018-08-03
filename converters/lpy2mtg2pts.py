@@ -83,7 +83,7 @@ plot3d(mtg)
 
 print mtg
 
-properties = [(p, 'REAL') for p in mtg.property_names()]
+properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ']]
 print properties
 #print write_mtg(mtg, properties)
 
