@@ -8,7 +8,7 @@ def EndEach(lstring):
 
     print lstring
 
-derivation length: 7
+derivation length: 2
 production:
 X --> F[+X]F[-X]+X
 F --> FF
@@ -16,6 +16,6 @@ F --> FF
 
 homomorphism:
 
-F --> SetWidth(0.5) F
+F --> SetWidth(1.0) F
 
 endlsystem

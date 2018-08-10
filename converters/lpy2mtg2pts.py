@@ -9,6 +9,7 @@ output_mtg = os.path.join(current_path, 'mtg_output.png')
 mtg_file = os.path.join(current_path, 'lstring_output.mtg')
 mtg2d_file = os.path.join(current_path, 'mtg2d.png')
 #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
+test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
 
 import time
 from PyQt4.QtCore import *
@@ -22,6 +23,7 @@ from openalea.plantgl.all import *
 from openalea.mtg.io import *
 from openalea.mtg.aml import *
 from openalea.mtg.util import *
+from openalea.plantgl.scenegraph._pglsg import *
 
 parameter_dict={'roll_angle_inc':' ', 'pitch_angle':' ', 'age':' ', 'nb1':' ', 'nb2':' '}
 parameter_dict['roll_angle_inc']=60
@@ -38,28 +40,65 @@ axialtree = l.animate()
 l.plot(axialtree)
 Viewer.frameGL.saveImage(output_lpy, 'png')
 
+print axialtree
+for num, element in enumerate(axialtree):
+    print num, element
+
 #scale = {'F':1,'X':1}
-scale = {'A':1,'B':1, 'L':1, 'I':1}
-scene = l.generateScene(axialtree)
-#scene = l.sceneInterpretation(axialtree)
+#scale = {'A':1, 'B':1, 'L':1, 'I':1}
+scale = {'A':1, 'L':1, 'I':1}
+#scene = l.generateScene(axialtree)
+scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
-#parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['s', 'r']}
+
+print 'Scene:'
+print scene
+print 'Components in scene:'
+for shape in scene:
+    print shape.geometry.name, shape.geometry.getPglReferenceCount
+    #print isinstance(shape, scenegraph._pglsg.Cylinder)
+    if type(shape.geometry) is Cylinder:
+        print shape.geometry.radius, shape.geometry.height
+    elif type(shape.geometry) is Translated:
+        print shape.geometry.translation
+    elif type(shape.geometry) is Frustum:
+        print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
+    else:
+        print 'Unknown shape geometry'
+
 
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
 #mtg_lines = write_mtg(mtg)
 
-mtg = axialtree2mtg(axialtree, scale, scene)
+#mtg = axialtree2mtg(axialtree, scale, scene)
 #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
-#mtg = axialtree2mtg(axialtree, scale, scene, parameters)
+#parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
+parameters = {'A':['age', 'order'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
+#parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['o', 'a', 'r']}
+mtg = axialtree2mtg(axialtree, scale, scene, parameters)
+
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
-#plot3d(mtg)
+plot3d(mtg)
 
 #print "axialtree"
 #print axialtree
 
-dressing_data = DressingData(DiameterUnit=5)
+print mtg
+
+#properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ']]
+#print properties
+#print write_mtg(mtg, properties)
+
+#f = open(test_mtg_file)
+#txt = f.read()
+#mtg_test = read_mtg(txt)
+
+'''
+dressing_data = DressingData(DiameterUnit=1)
+
+
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
                 DressingData = dressing_data)
@@ -67,6 +106,7 @@ pf1 = PlantFrame(mtg,
 #print pf1.points
 pf1.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg_topdia, 'png')
+
 
 pf2 = PlantFrame(mtg,
                 TopDiameter='diam')
@@ -90,10 +130,18 @@ pf3.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg, 'png')
 '''
 
-properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
+#properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label', '_axial_id', 'geometry']]
+properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'radius']]
+#properties = [(p, 'REAL') for p in mtg.property_names()]
+#properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
+
+
+print properties
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
-f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+
+#f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+f.write(write_mtg(mtg, properties))
 
 #use dict to access mtg structure....
 f.close()

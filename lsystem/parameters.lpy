@@ -48,7 +48,7 @@ Axiom: _(0.095)A(0,0)
 derivation length: nbiter
 production:
 
-A(t,o) :
+A(t,o) : #t=, o=order
   if t < maxduration(o):
      produce I(o, 1, 0.1)L(0, t)A(t+1, o)
   else:
@@ -112,7 +112,7 @@ I(o,s,r)-->I(o, s*(1.0+(o+1.0)/100.0), r*radinc_rate)
 _(r) --> _(r+trunk_diameter/nbiter)
 
 homomorphism:
-I(o,a,r) --> F(a, r)
+I(o,a,r) --> F(a, r)     #a=length, r=radius
 I(a,r) --> F(a, r)
 
 L(t,p) :
