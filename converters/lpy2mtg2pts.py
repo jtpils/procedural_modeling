@@ -66,17 +66,18 @@ for shape in scene:
     else:
         print 'Unknown shape geometry'
 
+
 #mtg = lpy2mtg(axialtree, l, scene)
 #mtg_lines = lpy2mtg(mtg, axialtree, l)
 #mtg_lines = write_mtg(mtg)
 
-#Note to self: find a way to modify axialtree2mtg function so that it will record 'geometry' properties properly with XX, YY, ZZ, and radius information instead of the object memory address
 #mtg = axialtree2mtg(axialtree, scale, scene)
 #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
 #parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
 parameters = {'A':['age', 'order'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
 #parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['o', 'a', 'r']}
 mtg = axialtree2mtg(axialtree, scale, scene, parameters)
+
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
 plot3d(mtg)
@@ -97,6 +98,7 @@ print mtg
 '''
 dressing_data = DressingData(DiameterUnit=1)
 
+
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
                 DressingData = dressing_data)
@@ -113,6 +115,7 @@ pf2 = PlantFrame(mtg,
 pf2.plot()
 Viewer.frameGL.saveImage(output_mtg_diam, 'png')
 
+'''
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
 #axes = pf3._compute_axes(mtg, 3, pf3.points, pf3.origin)
@@ -132,9 +135,11 @@ properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ
 #properties = [(p, 'REAL') for p in mtg.property_names()]
 #properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
 
+
 print properties
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
+
 #f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
 f.write(write_mtg(mtg, properties))
 

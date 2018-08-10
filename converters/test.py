@@ -77,6 +77,7 @@ print list(g.property_names())
 properties = [(p, 'REAL') for p in g.property_names() if p not in ['edge_type', 'index', 'label']]
 print properties
 mtg_lines = write_mtg(g, properties)
+
 f = open(output_mtg, 'w')
 f.write(mtg_lines)
 f.close()
@@ -86,3 +87,4 @@ axialtree = mtg2axialtree(g)
 l.plot(axialtree)
 from openalea.plantgl.all import *
 Viewer.frameGL.saveImage(output_lpy, 'png')
+
