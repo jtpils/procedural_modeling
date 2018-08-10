@@ -9,6 +9,7 @@ output_mtg = os.path.join(current_path, 'mtg_output.png')
 mtg_file = os.path.join(current_path, 'lstring_output.mtg')
 mtg2d_file = os.path.join(current_path, 'mtg2d.png')
 #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
+test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
 
 import time
 from PyQt4.QtCore import *
@@ -44,7 +45,8 @@ for num, element in enumerate(axialtree):
     print num, element
 
 #scale = {'F':1,'X':1}
-scale = {'A':1,'B':1, 'L':1, 'I':1}
+#scale = {'A':1, 'B':1, 'L':1, 'I':1}
+scale = {'A':1, 'L':1, 'I':1}
 #scene = l.generateScene(axialtree)
 scene = l.sceneInterpretation(axialtree)
 #scene = l.Tree2Scene(axialtree)
@@ -71,7 +73,8 @@ for shape in scene:
 #Note to self: find a way to modify axialtree2mtg function so that it will record 'geometry' properties properly with XX, YY, ZZ, and radius information instead of the object memory address
 #mtg = axialtree2mtg(axialtree, scale, scene)
 #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
-parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['length', 'radius']}
+#parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
+parameters = {'A':['age', 'order'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
 #parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['o', 'a', 'r']}
 mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 #mtg = read_lsystem_string(str(axialtree), scale)
@@ -83,12 +86,16 @@ plot3d(mtg)
 
 print mtg
 
-properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ']]
-print properties
+#properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ']]
+#print properties
 #print write_mtg(mtg, properties)
 
+#f = open(test_mtg_file)
+#txt = f.read()
+#mtg_test = read_mtg(txt)
 
-dressing_data = DressingData(DiameterUnit=10)
+'''
+dressing_data = DressingData(DiameterUnit=1)
 
 pf1 = PlantFrame(mtg,
                 TopDiameter='TopDia',
@@ -98,7 +105,7 @@ pf1 = PlantFrame(mtg,
 pf1.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg_topdia, 'png')
 
-'''
+
 pf2 = PlantFrame(mtg,
                 TopDiameter='diam')
 #print "diam"
@@ -120,9 +127,10 @@ pf3.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg, 'png')
 '''
 
-#properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label']]
-#properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'TopDiameter']]
-properties = [(p, 'REAL') for p in mtg.property_names()]
+#properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label', '_axial_id', 'geometry']]
+properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'radius']]
+#properties = [(p, 'REAL') for p in mtg.property_names()]
+#properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
 
 print properties
 f = open(mtg_file, 'w')
