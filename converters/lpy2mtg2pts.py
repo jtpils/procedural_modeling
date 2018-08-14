@@ -1,6 +1,8 @@
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-input_file = os.path.join(current_path, 'parameters.lpy')
+#input_file = os.path.join(current_path, 'parameters.lpy')
+input_file = os.path.join(current_path, '../lsystem/parameters.lpy')
+input_file = os.path.abspath(os.path.realpath(input_file))
 #input_file = os.path.join(current_path, 'example.lpy')
 output_lpy = os.path.join(current_path, 'lpy_output.png')
 output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
@@ -27,9 +29,9 @@ from openalea.plantgl.scenegraph._pglsg import *
 
 parameter_dict={'roll_angle_inc':' ', 'pitch_angle':' ', 'age':' ', 'nb1':' ', 'nb2':' '}
 parameter_dict['roll_angle_inc']=60
-parameter_dict['pitch_angle']=50
-parameter_dict['age']=5
-parameter_dict['nb1']=8
+parameter_dict['pitch_angle']=30
+parameter_dict['age']=3
+parameter_dict['nb1']=3
 parameter_dict['nb2']=numpy.array([1, 1, 1, 1, 1, 3, 2, 4])
 
 #l = lpy.Lsystem(input_file)

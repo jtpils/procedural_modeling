@@ -2,20 +2,14 @@
 
 import numpy
 from pyquaternion import Quaternion
+import os
+from converters.lpy2mtg2pts import lsystem_run
 
 def estimate_age(species, size):
     'Estimate tree age based on scanned size of tree of certain species'
     #todo - estimate based on species, lookup table for tree size/height/dimension vs age range
     age = 4
     return age
-
-def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
-    'Pass known parameter values into L-system rules to produce Lstring output'
-    #todo
-
-    lstring_output = ''
-
-    return lstring_output
 
 def parse_lstring(lstring):
     #todo
@@ -39,11 +33,11 @@ def ngenerate_lsystem_tree_points(  age=0,
 
     'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
 
-    lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
+    output_point_list = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
     # return parse_lstring(lstring)
     #parse l-system output string into 3d points matching Xfrog object size
-    #todo
 
+    '''
     # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
     # ========================
     trunk_growth_rate = 2.0
@@ -118,6 +112,7 @@ def ngenerate_lsystem_tree_points(  age=0,
         #print branching_stack
 
     # ===========================================
+    '''
 
     return output_point_list
 
@@ -147,9 +142,9 @@ def optimise():
 
 def main():
     #output = generate_lsystem_tree_points(numpy.array([20,5,8,75.0,45.0]))
-    output = ngenerate_lsystem_tree_points( age=20,
-                                            no_1st_ord_branches=5,
-                                            no_2nd_ord_branches=8,
+    output = ngenerate_lsystem_tree_points( age=2,
+                                            no_1st_ord_branches=2,
+                                            no_2nd_ord_branches=3,
                                             branching_angle_roll=75.0,
                                             branching_angle_pitch=45.0)
     print output
