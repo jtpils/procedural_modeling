@@ -7,6 +7,7 @@ from numpy.linalg import eig, inv
 from pyquaternion import Quaternion
 from os.path import isfile
 import glob
+import multiprocessing as mp
 #import sys
 #sys.path.append('../interfacing_lysys_opt')
 
@@ -23,7 +24,7 @@ def generate_lsystem_tree_points(p):
 
     # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
     # ========================
-	
+
 	trunk_growth_rate = p[5]
 	branch_growth_rate = p[6]
 	#trunk_growth_rate = 0.6
@@ -95,7 +96,7 @@ def generate_lsystem_tree_points(p):
 
         #pop stack to previous state
         [current_post, current_dir, current_up, current_left] = branching_stack.pop()
-    
+
     # ===========================================
 
         return output_point_list
@@ -123,7 +124,7 @@ def fit_ellipse(x,y):
     etheta = 0.5*numpy.arctan(2*b/(a-c)) # Ellipse angle of rotation
     # Ellipse major/minor axes
     up = 2*(a*f*f+c*d*d+g*b*b-2*b*d*f-a*c*g)
-    down1=(b*b-a*c)*( (c-a)*numpy.sqrt(1+4*b*b/((a-c)*(a-c)))-(c+a))	
+    down1=(b*b-a*c)*( (c-a)*numpy.sqrt(1+4*b*b/((a-c)*(a-c)))-(c+a))
     down2=(b*b-a*c)*( (a-c)*numpy.sqrt(1+4*b*b/((a-c)*(a-c)))-(c+a))
     res1=numpy.sqrt(numpy.abs(up/down1))
     res2=numpy.sqrt(numpy.abs(up/down2))
@@ -233,105 +234,112 @@ def estimate_error_1(params):
         [Eth,Ech,Eel_radii,Eeu_radii]))
     #print params, E_total
     return E_total
-    
+
 def estimate_error_2(params):
 # To do
 
-    return E_total    
+    return E_total
 
-def optimise(npts,means,stds,ranges):
-# Optimise function takes in:
-# npts:     number of sample points for Latin Hypercube sampling
-# rflags:   array of flags to indicate whether we know ranges
-# ranges:   ranges of known variables (same length as rflags)
-# indices:  this should be used in a loop...
-# Returns variables:
-# result: list of optimum values obtained from each initial condition
-# error according to 'result'
-    r=[];e=[];
-    nparams = len(means);
-    
-    # Construct sample points
-    sample_points = pyDOE.lhs(nparams,samples=nparams*npts,criterion='center')
-    
-    # Centre around means and stds
-    for i in xrange(nparams):
-        sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
-    
-    initial_points = [];
-        
-    # Test points    
-    for i in range(len(sample_points)):
-        p = sample_points[i,:]
-		#print p
-        try:
-            print "Trying point:", i
-            print "\tParams:     ", p
-            opt_params=optimize.minimize(estimate_error_1,p,method='L-BFGS-B',bounds=ranges)
-            print "\tOpt params: ", opt_params.x
-            r.append(opt_params.x); e.append(opt_params.fun)
-            print "\tError:      ", opt_params.fun
-            initial_points.append(p)
-        except:
-            pass
-    i = numpy.asarray(initial_points)
-    r = numpy.asarray(r); e = numpy.asarray(e);
-    
-    return i,r,e
+def create_sample_points(npts,means,stds):
+	# Number of parameters
+	nparams = len(means);
+	# Construct initial sample points
+	sample_points = pyDOE.lhs(nparams,samples=nparams*npts,criterion='center')
+	# Centre around means and stds
+	for i in xrange(nparams):
+		sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
+	return sample_points
+
+def optimise(points,ranges):
+	r=[]; e=[]; i=[];
+	try:
+		opt_params=optimize.minimize(estimate_error_1,points,\
+				method='SLSQP',bounds=ranges)
+		#print "\tOpt params: ", opt_params.x
+		r = opt_params.x; e = opt_params.fun
+		#print "\tError:      ", opt_params.fun
+		i = points
+	except:
+		r = points
+		e = 100.0;
+		i = points
+		pass
+	i = numpy.asarray(i)
+	r = numpy.asarray(r); e = numpy.asarray(e);
+	return i,r,e
 
 def main():
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
-    # Number of params in model
-    nparams = 7;
-    # Setting of default ranges - LIMITS
-    default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60],[0.1,3],[0.05,3]]     
-    rflags = numpy.asarray([1,1,1,0,0,0,0]) # Array to indicate number of known ranges
-    ranges = default_ranges;
-    # Setting of known ranges (overwrite defaults)
-    ranges[0][0]=5; ranges[0][1]=30;
-    ranges[1][0]=3;  ranges[1][1]=5;
-    ranges[2][0]=1;  ranges[2][1]=10;
-    # Setting of default means
-    means = [20,5,8,75,25,2.,1.];
-    stds = [3,2,2,25,10,0.5,0.25];
-        
-    print "------------------------------------------------"
-    print "Running main function of opt.py..."
-    print "Target values:"
-    print "\tTree height:              ", targ_th+targ_ch
-    print "Setting the following constraints:"
-    print "\tAge:                     5-30 years"
-    print "\tNo 1st order branches:   3-5"
-    print "\tNo 2nd order branches:   1-10"
-    print "Params with unknown range:"
-    print "\tBranching angle (roll)\n\tBranching angle (pitch)";
+	# Number of params in model
+	nparams = 7;
+	# Setting of default ranges - LIMITS
+	default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60],[0.1,3],[0.05,3]]
+	rflags = numpy.asarray([1,1,1,0,0,0,0]) # Array to indicate number of known ranges
+	ranges = default_ranges;
+	# Setting of known ranges (overwrite defaults)
+	ranges[0][0]=5; ranges[0][1]=30;
+	ranges[1][0]=3;  ranges[1][1]=5;
+	ranges[2][0]=1;  ranges[2][1]=10;
+	# Setting of default means
+	means = [20,5,8,75,25,2.,1.];
+	stds = [3,2,2,25,10,0.5,0.25];
 
-    initials,result,error = optimise(100,means,stds,ranges)
+	print "------------------------------------------------"
+	print "Running main function of opt.py..."
+	print "Target values:"
+	print "\tTree height:              ", targ_th+targ_ch
+	print "Setting the following constraints:"
+	print "\tAge:                     5-30 years"
+	print "\tNo 1st order branches:   3-5"
+	print "\tNo 2nd order branches:   1-10"
+	print "Params with unknown range:"
+	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
 
-    initials = numpy.asarray(initials)
-    result = numpy.asarray(result)
-    error = numpy.asarray(numpy.abs(error))
-    loc = numpy.where(error == error.min())        
-                
-    res = numpy.zeros(nparams)
-    res[0] = result[loc,0]; res[1] = result[loc,1]
-    res[2] = result[loc,2]; res[3] = result[loc,3]
-    res[4] = result[loc,4]; res[5] = result[loc,5]
-    res[6] = result[loc,6];
+	run=1; save_npy=0; save_obj=0;
+	npoints = 100;
+	num_threads=1;mp.cpu_count();
 
-    print "Result of optimisation:"
-    print "\tOpt params:",res
-    print "\tError:\t", error.min()
-        
-    output = generate_lsystem_tree_points(res)
-    file = open('output.obj', 'w')
-    for item in output:
-        file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
-    file.close()
 
-    print result[loc,:], error.min()
-    numpy.save('results.npy',result); numpy.save('errors.npy',error);
-    numpy.save('initial_points.npy',initials)
+	if run==1:
+		# Run optimisation routine
+		sample_points = create_sample_points(npoints,means,stds)
+		print "Testing %i sample points with %i cpus" % (len(sample_points), num_threads)
+		# Create pool of threads
+		pool = mp.Pool(processes=num_threads);
+		# Run on nprocs
+		result = [ pool.apply_async(optimise,args=(i,ranges,)) for i in sample_points]
+		# Collect data when ready
+		output = numpy.asarray([p.get() for p in result])
+		# Reorganise results
+		initial_points = numpy.asarray(output[:,0])
+		results = numpy.asarray(output[:,1])
+		error = numpy.asarray(output[:,2])
+		loc = numpy.where(error==error.min())
+		loc = int(loc[0])
+		#Convert result to array (don't remember why it was necessary
+		# to do it like this
+		res = numpy.zeros(nparams)
+		res[0] = results[loc][0]; res[1] = results[loc][1]
+		res[2] = results[loc][2]; res[3] = results[loc][3]
+		res[4] = results[loc][4]; res[5] = results[loc][5]
+		res[6] = results[loc][6];
+		# Print results to screen
+		print "Result of optimisation:"
+		print "\tOpt params:",res
+		print "\tError:\t", error.min()
+		# Save as obj?
+		if save_obj==1:
+			output = generate_lsystem_tree_points(res)
+			file = open('output.obj', 'w')
+			for item in output:
+				file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
+			file.close()
+		# Save as npy
+		if save_npy==1:
+			numpy.save('results.npy',result); numpy.save('errors.npy',error);
+			numpy.save('initial_points.npy',initials)
+	print "------------------------------------------------"
+
 
 if __name__ == "__main__":
     main()
