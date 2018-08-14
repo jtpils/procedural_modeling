@@ -80,12 +80,12 @@ mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 
 #mtg = read_lsystem_string(str(axialtree), scale)
 #plot2d(mtg, mtg2d_file, scale)
-plot3d(mtg)
+#plot3d(mtg)
 
 #print "axialtree"
 #print axialtree
 
-print mtg
+#print mtg
 
 #properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ']]
 #print properties
@@ -95,8 +95,7 @@ print mtg
 #txt = f.read()
 #mtg_test = read_mtg(txt)
 
-'''
-dressing_data = DressingData(DiameterUnit=1)
+dressing_data = DressingData(DiameterUnit=10)
 
 
 pf1 = PlantFrame(mtg,
@@ -107,7 +106,7 @@ pf1 = PlantFrame(mtg,
 pf1.plot(gc=True)
 Viewer.frameGL.saveImage(output_mtg_topdia, 'png')
 
-
+'''
 pf2 = PlantFrame(mtg,
                 TopDiameter='diam')
 #print "diam"
@@ -115,7 +114,6 @@ pf2 = PlantFrame(mtg,
 pf2.plot()
 Viewer.frameGL.saveImage(output_mtg_diam, 'png')
 
-'''
 topdia = lambda x:  mtg.property('TopDia').get(x)
 pf3 = PlantFrame(mtg, TopDiameter=topdia, DressingData = dressing_data)
 #axes = pf3._compute_axes(mtg, 3, pf3.points, pf3.origin)
@@ -134,14 +132,10 @@ Viewer.frameGL.saveImage(output_mtg, 'png')
 properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'radius']]
 #properties = [(p, 'REAL') for p in mtg.property_names()]
 #properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
-
-
-print properties
+#print properties
 f = open(mtg_file, 'w')
 #f.write(mtg_lines)
-
 #f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
 f.write(write_mtg(mtg, properties))
 
-#use dict to access mtg structure....
 f.close()
