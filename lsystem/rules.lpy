@@ -38,9 +38,11 @@ up_angle = lambda t,order : -20        # up angle for lateral branches
 nbiter = sum([maxduration(o) for o in xrange(age+1)]) + trunk_height+3
 
 
-steps = 3                 #timestep: 3 steps/year, unit of age is year)
-germination_offset = 10   #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
-diameter_growth_rate =
+steps = 3                   #timestep: 3 steps/year, unit of age is year)
+germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
+diameter_growth_rate = 1    #m/year? relative growth rate?
+annual_no_new_nodes = 30            #number of new buds per year
+avg_internode_length = 0.03         #unit: m
 
 derivation length: germination_offset + age*steps
 
@@ -73,7 +75,7 @@ S:      #shoot
 
 B(status):      #bud
   if status is 1:     #bud grows a node & internode
-    produce N()I(0)B(0)     #todo: when will the bud form the next node??? i.e., B(1)
+    produce N()I(0,0)B(0)     #todo: when will the bud form the next node??? i.e., B(1)
   elif status < 0:   #bud grows into a flower
     produce f()
                       #status is 0: bud is dormant
@@ -81,12 +83,12 @@ B(status):      #bud
 N():      #node
     produce L()N()[B(0)]    #todo: when will the lateral bud [B] grow?
 
-I(pruned, radius, length):      #internode
-  if pruned is True:
-    produce *
+#I(radius, length):      #internode
+  #if pruned is True:
+  #  produce *
 
-I(pruned, radius, length) > B --> I(pruned, radius*diameter_growth_rate, length*internode_length_growth_rate)
-I(pruned, radius, length) > N --> I(pruned, radius*diameter_growth_rate, length)
+I(length, radius) > B --> I(min(avg_internode_length, length+avg_internode_length*annual_no_new_nodes/steps), radius+diameter_growth_rate/steps)
+I(length, radius) > N --> I(length, radius+diameter_growth_rate/steps)
 
 L():      #leaf
   if :
@@ -170,6 +172,7 @@ _(r) --> _(r+trunk_diameter/nbiter)
 
 homomorphism:
 
+I(length, radius) --> F(length, radius)
 
 I(o,a,r) --> F(a, r)     #a=length, r=radius
 I(a,r) --> F(a, r)
