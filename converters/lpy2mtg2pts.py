@@ -18,7 +18,7 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     #input_file = os.path.join(current_path, 'parameters.lpy')
-    input_file = os.path.join(current_path, '../lsystem/parameters.lpy')
+    input_file = os.path.join(current_path, '../lsystem/rules.lpy')
     input_file = os.path.abspath(os.path.realpath(input_file))
     #input_file = os.path.join(current_path, 'example.lpy')
     output_lpy = os.path.join(current_path, 'lpy_output.png')
