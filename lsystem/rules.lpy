@@ -79,7 +79,7 @@ B(status):      #bud
                       #status is 0: bud is dormant
 
 N():      #node
-    produce L()[B(0)]N()    #todo: when will the lateral bud [B] grow?
+    produce L()N()[B(0)]    #todo: when will the lateral bud [B] grow?
 
 I(pruned, time, radius, length):      #internode
   if pruned is True:
