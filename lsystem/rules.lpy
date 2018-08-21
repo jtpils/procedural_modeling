@@ -81,12 +81,12 @@ B(status):      #bud
 N():      #node
     produce L()N()[B(0)]    #todo: when will the lateral bud [B] grow?
 
-I(pruned, time, radius, length):      #internode
+I(pruned, radius, length):      #internode
   if pruned is True:
     produce *
 
-I(pruned, time, radius, length) > B --> I(pruned, time+1, radius*diameter_growth_rate, length*internode_length_growth_rate)
-I(pruned, time, radius, length) > N --> I(pruned, time+1, radius*diameter_growth_rate, length)
+I(pruned, radius, length) > B --> I(pruned, radius*diameter_growth_rate, length*internode_length_growth_rate)
+I(pruned, radius, length) > N --> I(pruned, radius*diameter_growth_rate, length)
 
 L():      #leaf
   if :
