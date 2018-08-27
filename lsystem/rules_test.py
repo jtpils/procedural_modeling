@@ -1,6 +1,5 @@
+from __future__ import division
 import os
-
-
 import numpy as np
 current_path = os.path.dirname(os.path.abspath(__file__))
 input_file = os.path.join(current_path, 'rules.lpy')
@@ -15,7 +14,7 @@ from openalea.mtg.aml import *
 
 
 parameter_dict={'age':' '}
-parameter_dict['age']=20
+parameter_dict['age']=1
 
 l = lpy.Lsystem(input_file, parameter_dict)
 l.animate()

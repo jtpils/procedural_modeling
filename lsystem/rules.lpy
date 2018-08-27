@@ -1,66 +1,37 @@
-import random as rd
-import numpy as np
-
-# life time of a leaf
-leafduration = 3
-
-# age at which a leaf is considered as old
-leafold =      4
-
-# tree age
-#age =     4
-
-# increment of radius through time
-radinc_rate = 0.25
-
-#idx for second order branches
-sobindex = 0
-
-# life time of an apex
-maxduration = lambda order : int(10./(order*10+1))+5
-#pitch_angle = lambda order : 30 # branching angle
-#roll_angle = lambda order : 20 # branching angle
-#pitch_angle = 30
-roll_angle = 0
-#roll_angle_inc = 120
-#nb1 = 3
-#nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4])
-# number of axe at a ramification
-nb_axes = lambda order : rd.randint(3, 6-order)
-
-trunk_height = 5
-trunk_pitch = 0.3
-trunk_roll = 10
-trunk_diameter = 6
-up_angle = lambda t,order : -20        # up angle for lateral branches
-
-# number total of iterations of the system
-nbiter = sum([maxduration(o) for o in xrange(age+1)]) + trunk_height+3
-
-
-steps = 3                   #timestep: 3 steps/year, unit of age is year)
+steps = 12                  #timestep: 3 steps/year, unit of age is year)
+step_tracker = 0
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
-diameter_growth_rate = 1    #m/year? relative growth rate?
-annual_no_new_nodes = 30            #number of new buds per year
-avg_internode_length = 0.03         #unit: m
+diameter_growth_rate = 0.1  #m/year? relative growth rate?
+annual_no_new_nodes = 30.0  #number of new buds per year
+avg_internode_length = 0.03 #unit: m
+partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
+no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
+branchFlag = True
+
+print 'Derivation length:',
+print germination_offset+age*steps
 
 derivation length: germination_offset + age*steps
 
-module s    #seed
+module O    #seed
 module S    #shoot
 module R    #root
 module B    #bud
 module N    #node
 module I    #internode
 module L    #leaf
-module f    #flower
-module F    #fruit
+module W    #flower
+module U    #fruit
 
-Axiom: s
+Axiom: O
+
+def EndEach(lstring):
+    print lstring
 
 production:
 
-s:        #seed
+O:        #seed
+  global germination_offset
   germination_offset = germination_offset - 1
   if germination_offset is 2:
     produce RS
@@ -69,125 +40,78 @@ R:        #root
   pass
 
 S:      #shoot
+  global germination_offset
   germination_offset = germination_offset - 1
+  #print 'Debug in S:',
+  #print germination_offset
   if germination_offset is 1:
     produce B(germination_offset)
 
 B(status):      #bud
   if status is 1:     #bud grows a node & internode
-    produce N()I(0,0)B(0)     #todo: when will the bud form the next node??? i.e., B(1)
+    produce NI(0.0,0.0)B(0)
+    #todo: when will the bud form the next node??? i.e., B(1)
   elif status < 0:   #bud grows into a flower
-    produce f()
+    produce W
                       #status is 0: bud is dormant
 
-N():      #node
-    produce L()N()[B(0)]    #todo: when will the lateral bud [B] grow?
-
-#I(radius, length):      #internode
-  #if pruned is True:
-  #  produce *
-
-I(length, radius) > B --> I(min(avg_internode_length, length+avg_internode_length*annual_no_new_nodes/steps), radius+diameter_growth_rate/steps)
-I(length, radius) > N --> I(length, radius+diameter_growth_rate/steps)
-
-L():      #leaf
-  if :
-    produce *         #fallen
-
-f():      #flower
-  if :
-    produce F()
-  elif :
-    produce *         #wither
-
-F():      #fruit
-  if :
-    produce *         #fallen
-
-A(t,o) : #t=, o=order
-  if t < maxduration(o):
-     produce I(o, 1, 0.1)L(0, t)A(t+1, o)
-  else:
-      nbaxe = nb1
-      for i in xrange(nbaxe):
-        r1 = rd.uniform(-0.95, 0.95)
-        #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0,o+1, i)]
-        global roll_angle
-        global pitch_angle
-        roll_angle += roll_angle_inc
-        pitch_angle_factor = 1.0
-        if (roll_angle >= 360):
-           pitch_angle_factor = 0.9
-        eff_pitch_angle = pitch_angle_factor * pitch_angle
-        nproduce [/(roll_angle)&(eff_pitch_angle)B(0,o+1, i)]
-
-B(t,o, idx) :
-  if t < maxduration(o):
-     # simply produces a metamer and ages the apex
-     # reorient smoothly the branch toward the up
-     #produce ^(up_angle(t,o)+rd.random()*5)I(1,0.1)L(0,t)B(t+1,o)
-     produce I(o, 1, 0.1)L(0, t)B(t+1, o, idx)
-  else:
-      # produce a whorl of sympodial branches
-      if o==1:
-        nbaxe = nb2[idx]
-        for i in xrange(nbaxe):
-           r1 = rd.uniform(-0.95, 0.95)
-           #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
-           global roll_angle
-           global pitch_angle
-           roll_angle += roll_angle_inc
-           pitch_angle_factor = 1.0
-           if (roll_angle >= 360):
-              pitch_angle_factor = 0.9
-           eff_pitch_angle = pitch_angle_factor * pitch_angle
-           nproduce [/(roll_angle)&(eff_pitch_angle)B(0, o+1, i)]
-      else:
-        nbaxe = rd.randint(1,6)
-        for i in xrange(nbaxe):
-           r1 = rd.uniform(-0.95, 0.95)
-           #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
-           global roll_angle
-           global pitch_angle
-           roll_angle += roll_angle_inc
-           pitch_angle_factor = 1.0
-           if (roll_angle >= 360):
-              pitch_angle_factor = 0.9
-           eff_pitch_angle = pitch_angle_factor * pitch_angle
-           nproduce [/(roll_angle)&(eff_pitch_angle)B(0, o+1, i)]
-
-L(t,n) :
-  # ages the leaf. If too old, removes
-  if t < leafduration :  produce L(t+1, n)
-  else:   produce *
-
-# Increment radius of internodes
-I(o,s,r)-->I(o, s*(1.0+(o+1.0)/100.0), r*radinc_rate)
-
-#_(r) --> _(r*radinc_rate)
-_(r) --> _(r+trunk_diameter/nbiter)
+N:      #node
+  global branchFlag
+  if branchFlag is True:
+    branchFlag = False
+    produce NL[B(0)]
+    #todo: when will the lateral bud [B] grow?
+  #else:
+  #  branchFlag = True
 
 
+I(length, radius) > B(status):
+  length_norm = 0.0
+  if (length < avg_internode_length):
+    length_norm = length / avg_internode_length   #float
+  #print 'length_norm = ',
+  #print length_norm
+
+  aggregate_partial_node_per_step = partial_node_per_step + length_norm
+  eff_new_nodes = no_new_nodes_per_step
+
+  if aggregate_partial_node_per_step >= 1:
+    eff_new_nodes =  eff_new_nodes + 1
+    aggregate_partial_node_per_step = aggregate_partial_node_per_step - 1
+
+  #print 'aggregate_partial_node_per_step = ',
+  #print aggregate_partial_node_per_step
+
+  diameter_growth_per_node = diameter_growth_rate/annual_no_new_nodes
+  cur_radius = radius+diameter_growth_rate/steps
+  near_bud_radius = diameter_growth_rate/steps*aggregate_partial_node_per_step
+  #print 'near_bud_radius=',
+  #print near_bud_radius
+  if eff_new_nodes>=1:
+    for i in range(eff_new_nodes):
+      nproduce I(avg_internode_length, cur_radius)N
+      cur_radius = cur_radius - diameter_growth_per_node
+  produce I(avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
+
+I(length, radius) > N:
+  produce I(length, radius+diameter_growth_rate/steps)
+
+
+L:      #leaf
+    produce *
+    #fallen
+
+W:      #flower
+    produce *
+    #wither
+
+U:      #fruit
+    produce *
+    #fallen
 
 
 homomorphism:
 
 I(length, radius) --> F(length, radius)
 
-I(o,a,r) --> F(a, r)     #a=length, r=radius
-I(a,r) --> F(a, r)
-
-L(t,p) :
-    phi = 0 if p % 2 == 0 else 90  # phyllotactic angle
-    col = 4 if t >= leafold else 2 # color is choosen according to age
-    produce [/(phi)^(120);(col)~l(1)][/(phi)&(120);(col)~l(1)]
-
 endlsystem
-###### INITIALISATION ######
-
-__lpy_code_version__ = 1.1
-
-def __initialiseContext__(context):
-	context.options.setSelection('Module declaration',1)
-__description__ = 'Schoute architectural model.'
-__authors__ = 'E. Costes, F. Boudon'
