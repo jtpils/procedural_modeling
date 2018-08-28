@@ -1,4 +1,15 @@
-steps = 12                  #timestep: 3 steps/year, unit of age is year)
+#initial turtle's orientation: Head Z+ [0,0,1], Up Y+ [0,1,0], Left X+ [1,0,0]
+#assumption: young branches and leaves never grow until the trunk height at mature phase (in reality, branches and leaves have been falling off at lower trunk segments before matured tree trunk appears smooth)
+
+trunk_pitch_angle = 10.0            #pitch down wrt turtle's left, in degrees
+trunk_roll_angle = 45.0             #roll left wrt turtle's head, in degrees
+trunk_height = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+no_first_ord_branches = 3   #number of first order branches
+no_second_ord_branches = 2  #number of second order branches (assume uniformity)
+branching_pitch_angle = 45.0
+branching_roll_angle = 120.0
+
+steps = 12                  #timestep: 'steps' steps/year, unit of age is year)
 step_tracker = 0
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 diameter_growth_rate = 0.1  #m/year? relative growth rate?
@@ -6,7 +17,7 @@ annual_no_new_nodes = 30.0  #number of new buds per year
 avg_internode_length = 0.03 #unit: m
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
-branchFlag = True
+trunkDone = False
 
 print 'Derivation length:',
 print germination_offset+age*steps
@@ -48,24 +59,26 @@ S:      #shoot
     produce B(germination_offset)
 
 B(status):      #bud
-  if status is 1:     #bud grows a node & internode
-    produce NI(0.0,0.0)B(0)
-    #todo: when will the bud form the next node??? i.e., B(1)
+  if status is 1:     #apical bud grows a node & internode
+    produce /(trunk_roll_angle)&(trunk_pitch_angle)N(0)I(0.0,0.0,0.0)B(2)
+  elif status is 3:     #axillary bud grows a node & internode
+    produce N(0)I(0.0,0.0,0.0)B(2)
   elif status < 0:   #bud grows into a flower
     produce W
-                      #status is 0: bud is dormant
+                      #status is 0: bud is supressed, 2: bud is dominantly growing new nodes
 
-N:      #node
-  global branchFlag
-  if branchFlag is True:
-    branchFlag = False
-    produce NL[B(0)]
-    #todo: when will the lateral bud [B] grow?
-  #else:
-  #  branchFlag = True
+N(branchingSignal):      #node, branchingSignal = True will signal the node to grow a leaf and a bud to branch out
+  if branchingSignal > 0:
+    no_branches = no_first_ord_branches
+    if branchingSignal > 1:
+      no_branches = no_second_ord_branches
+    nproduce N(0)
+    for i in range(no_branches):
+      nproduce [/(i*branching_roll_angle)&(branching_pitch_angle)LB(1)]
+    produce
 
 
-I(length, radius) > B(status):
+I(distanceFromBase, length, radius) > B(2):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
   length_norm = 0.0
   if (length < avg_internode_length):
     length_norm = length / avg_internode_length   #float
@@ -85,33 +98,51 @@ I(length, radius) > B(status):
   diameter_growth_per_node = diameter_growth_rate/annual_no_new_nodes
   cur_radius = radius+diameter_growth_rate/steps
   near_bud_radius = diameter_growth_rate/steps*aggregate_partial_node_per_step
+  float_error = 0.0001
   #print 'near_bud_radius=',
   #print near_bud_radius
   if eff_new_nodes>=1:
     for i in range(eff_new_nodes):
-      nproduce I(avg_internode_length, cur_radius)N
-      cur_radius = cur_radius - diameter_growth_per_node
-  produce I(avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
+      branchOut = 0
+      cur_distanceFromBase = distanceFromBase+(i+1)*avg_internode_length
+      #print 'cur_distanceFromBase,trunk_height,avg_internode_length=',
+      #print cur_distanceFromBase, trunk_height, avg_internode_length, cur_distanceFromBase>=trunk_height, cur_distanceFromBase<trunk_height+avg_internode_length
+      if (cur_distanceFromBase >= trunk_height-float_error*avg_internode_length) and (cur_distanceFromBase < trunk_height+avg_internode_length):
+        global trunkDone
+        if trunkDone is False:
+          branchOut = 1
+          trunkDone = True
+        else:
+          branchOut = 2
 
-I(length, radius) > N:
-  produce I(length, radius+diameter_growth_rate/steps)
+      nproduce I(cur_distanceFromBase, avg_internode_length, cur_radius)N(branchOut)
+      cur_radius = cur_radius - diameter_growth_per_node
+  produce I(distanceFromBase+avg_internode_length*(eff_new_nodes+aggregate_partial_node_per_step), avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
+
+I(distanceFromBase, length, radius) > N(branchingSignal):        #distanceFromBase measures the distance from the node N to its parent branching node
+  produce I(distanceFromBase, length, radius+diameter_growth_rate/steps)
 
 
 L:      #leaf
-    produce *
-    #fallen
+  pass
+  #produce *
+  #fallen
 
 W:      #flower
-    produce *
-    #wither
+  pass
+  #produce *
+  #wither
 
 U:      #fruit
-    produce *
-    #fallen
+  pass
+  #produce *
+  #fallen
 
 
 homomorphism:
 
-I(length, radius) --> F(length, radius)
+B(status) --> SetColor(3)@O(0.05)
+L --> SetColor(2)@B(0.05,0.001)
+I(distanceFromBase, length, radius) --> SetColor(1)F(length, radius)
 
 endlsystem

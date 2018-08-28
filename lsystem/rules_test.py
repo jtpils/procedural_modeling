@@ -14,7 +14,7 @@ from openalea.mtg.aml import *
 
 
 parameter_dict={'age':' '}
-parameter_dict['age']=1
+parameter_dict['age']=10
 
 l = lpy.Lsystem(input_file, parameter_dict)
 l.animate()
