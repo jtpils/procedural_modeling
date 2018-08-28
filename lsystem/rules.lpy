@@ -1,20 +1,22 @@
 #initial turtle's orientation: Head Z+ [0,0,1], Up Y+ [0,1,0], Left X+ [1,0,0]
 #assumption: young branches and leaves never grow until the trunk height at mature phase (in reality, branches and leaves have been falling off at lower trunk segments before matured tree trunk appears smooth)
 
-trunk_pitch_angle = 10.0            #pitch down wrt turtle's left, in degrees
-trunk_roll_angle = 45.0             #roll left wrt turtle's head, in degrees
-trunk_height = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-no_first_ord_branches = 3   #number of first order branches
-no_second_ord_branches = 2  #number of second order branches (assume uniformity)
-branching_pitch_angle = 45.0
-branching_roll_angle = 120.0
+#age = 10
+#trunk_pitch_angle = 10.0            #pitch down wrt turtle's left, in degrees
+#trunk_roll_angle = 45.0             #roll left wrt turtle's head, in degrees
+#trunk_height = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#no_first_ord_branches = 3   #number of first order branches
+#no_second_ord_branches = 2  #number of second order branches (assume uniformity)
+#branching_pitch_angle = 45.0
+#branching_roll_angle = 120.0
+#diameter_growth_rate = 0.1  #m/year? relative growth rate?
+#annual_no_new_nodes = 30.0  #number of new buds per year
+#avg_internode_length = 0.03 #unit: m
 
 steps = 12                  #timestep: 'steps' steps/year, unit of age is year)
 step_tracker = 0
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
-diameter_growth_rate = 0.1  #m/year? relative growth rate?
-annual_no_new_nodes = 30.0  #number of new buds per year
-avg_internode_length = 0.03 #unit: m
+
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 trunkDone = False
