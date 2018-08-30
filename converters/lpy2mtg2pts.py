@@ -13,7 +13,11 @@ from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
-def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch):
+def lsystem_run(age=10,
+                trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
+                no_first_ord_branches=3, no_second_ord_branches=5,
+                branching_pitch_angle=45.0, branching_roll_angle=30.0,
+                diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
 
     current_path = os.path.dirname(os.path.abspath(__file__))
@@ -30,12 +34,21 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
     #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
     test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
 
-    parameter_dict={'age':' ', 'nb1':' ', 'nb2':' ', 'roll_angle_inc':' ', 'pitch_angle':' '}
+    parameter_dict={'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
+                    'no_first_ord_branches':' ','no_second_ord_branches':' ',
+                    'branching_pitch_angle':' ','branching_roll_angle':' ',
+                    'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
     parameter_dict['age']=age
-    parameter_dict['nb1']=no_1st_ord_branches
-    parameter_dict['nb2']=numpy.array([no_2nd_ord_branches, no_2nd_ord_branches, no_2nd_ord_branches, no_2nd_ord_branches, no_2nd_ord_branches, no_2nd_ord_branches, no_2nd_ord_branches, no_2nd_ord_branches])
-    parameter_dict['roll_angle_inc']=branching_angle_roll
-    parameter_dict['pitch_angle']=branching_angle_pitch
+    parameter_dict['trunk_pitch_angle'] = trunk_pitch_angle            #pitch down wrt turtle's left, in degrees
+    parameter_dict['trunk_roll_angle'] = trunk_roll_angle             #roll left wrt turtle's head, in degrees
+    parameter_dict['trunk_height'] = trunk_height            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+    parameter_dict['no_first_ord_branches'] = no_first_ord_branches   #number of first order branches
+    parameter_dict['no_second_ord_branches'] = no_second_ord_branches  #number of second order branches (assume uniformity)
+    parameter_dict['branching_pitch_angle'] = branching_pitch_angle
+    parameter_dict['branching_roll_angle'] = branching_roll_angle
+    parameter_dict['diameter_growth_rate'] = diameter_growth_rate  #m/year? relative growth rate?
+    parameter_dict['annual_no_new_nodes'] = annual_no_new_nodes  #number of new buds per year
+    parameter_dict['avg_internode_length'] = avg_internode_length #unit: m
 
     #l = lpy.Lsystem(input_file)
     l = lpy.Lsystem(input_file, parameter_dict)
@@ -51,7 +64,7 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
 
     #scale = {'F':1,'X':1}
     #scale = {'A':1, 'B':1, 'L':1, 'I':1}
-    scale = {'A':1, 'L':1, 'I':1}
+    scale = {'I':1}
     #scene = l.generateScene(axialtree)
     scene = l.sceneInterpretation(axialtree)
     #scene = l.Tree2Scene(axialtree)
@@ -68,6 +81,10 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
             print shape.geometry.translation
         elif type(shape.geometry) is Frustum:
             print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
+        elif type(shape.geometry) is TriangleSet:
+            print 'TriangleSet geometry'
+        elif type(shape.geometry) is Oriented:
+            print 'Oriented geometry'
         else:
             print 'Unknown shape geometry'
 
@@ -79,7 +96,7 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
     #mtg = axialtree2mtg(axialtree, scale, scene)
     #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
     #parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
-    parameters = {'A':['age', 'order'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
+    parameters = {'I':['order', 'distanceFromBase', 'length', 'radius']}
     #parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['o', 'a', 'r']}
     mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 
@@ -103,7 +120,7 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
     #txt = f.read()
     #mtg_test = read_mtg(txt)
 
-    dressing_data = DressingData(DiameterUnit=10)
+    dressing_data = DressingData(DiameterUnit=1)
 
 
     pf1 = PlantFrame(mtg,
@@ -148,4 +165,5 @@ def lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_r
 
     f.close()
 
+    lstring_output = ''
     return lstring_output
