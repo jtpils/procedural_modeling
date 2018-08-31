@@ -18,17 +18,10 @@ def generate_lsystem_tree_points(p):
 	no_2nd_ord_branches = int(p[2]);
 	branching_angle_roll = p[3];
 	branching_angle_pitch = p[4];
-    #lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
-    #parse l-system output string into 3d points matching Xfrog object size
-    #todo
-
-    # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
-    # ========================
-
 	trunk_growth_rate = p[5]
 	branch_growth_rate = p[6]
-	#trunk_growth_rate = 0.6
-	#branch_growth_rate = 0.3
+    # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
+    # ========================
 	pitch_angle = branching_angle_pitch/180.0 * 3.14159 #radian
 	roll_angle = branching_angle_roll/180.0 * 3.14159 #radian
 
@@ -174,9 +167,9 @@ def calc_growth_space_vx(pts):
         sum_p_a_h = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
         if sum_p_a_h>1:
             temp_thet,temp_r1,temp_r2 = fit_ellipse(pts[p_a_h,0],pts[p_a_h,1])
-            if ((temp_r1+temp_r2)/2.<30.):                
+            if ((temp_r1+temp_r2)/2.<30.):
                 r.append([lh, (temp_r1+temp_r2)/2.])
-    
+
     bottom_rad = numpy.mean(r[0:8])
     for j in range(len(r)):
         if r[j][1]>3*bottom_rad:
