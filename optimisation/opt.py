@@ -8,7 +8,7 @@ from pyquaternion import Quaternion
 from os.path import isfile
 import glob
 import multiprocessing as mp
-#import sys
+import sys
 #sys.path.append('../interfacing_lysys_opt')
 
 def generate_lsystem_tree_points(p):
@@ -167,14 +167,22 @@ def calc_growth_space_vx(pts):
     zmin,zmax = numpy.min(pts[:,2]),numpy.max(pts[:,2])
     bbox = numpy.asarray([xmin,xmax,ymin,xmax,zmin,zmax])
     # Estimation of trunk height
+    r = []
     for i in range(100):
         lh,uh = (zmax/100.)*i, (zmax/100.)*i+1
-        points_at_height = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
-        if (points_at_height>250):
-            trunk_height = lh;
-            break;
-    # Crown height
-    crown_height = zmax-trunk_height;
+        p_a_h = numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh)
+        sum_p_a_h = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
+        if sum_p_a_h>1:
+            temp_thet,temp_r1,temp_r2 = fit_ellipse(pts[p_a_h,0],pts[p_a_h,1])
+            if ((temp_r1+temp_r2)/2.<30.):                
+                r.append([lh, (temp_r1+temp_r2)/2.])
+    
+    bottom_rad = numpy.mean(r[0:8])
+    for j in range(len(r)):
+        if r[j][1]>3*bottom_rad:
+            trunk_height = r[j][0]
+            crown_height = zmax-trunk_height;
+            break
     # Geometric mean of crown
     mu_x = numpy.mean(pts[pts[:,2]>trunk_height,0])
     mu_y = numpy.mean(pts[pts[:,2]>trunk_height,1])
@@ -210,23 +218,28 @@ def load_mtg_file(fname):
 def load_normalised_voxel_growth_space():
 	# Function reads growth_space file, shifts x,y coordinates
     # to zero mean, sets min z coordinate to 0.
-    gs = numpy.genfromtxt(gs_filename,delimiter=',')
+    gs = numpy.genfromtxt(gs_dir+gs_filename,delimiter=',')
+    gs = gs*resolution/100.
     gs[:,0] = gs[:,0] - numpy.mean(gs[:,0])
     gs[:,1] = gs[:,1] - numpy.mean(gs[:,1])
     gs[:,2] = gs[:,2] - numpy.min(gs[:,2])
     return gs
 
 # Global variable
-target_filename='../../obj_files/target.obj'
-gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
+#target_filename='../../obj_files/target.obj'
+#gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
+gs_dir = '../../growth-space/voxel_size_tests/'
+gs_filename=sys.argv[1]
+resolution=int(sys.argv[2])
+
 
 # Uncomment to use obj as target
 # Actual params were 20,5,8,75,25,2,1
-tpts = numpy.genfromtxt(target_filename,delimiter=' ',usecols=(1,2,3))
-targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_ls(tpts)
+# tpts = numpy.genfromtxt(target_filename,delimiter=' ',usecols=(1,2,3))
+# targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_ls(tpts)
 
-#tpts = load_normalised_voxel_growth_space()
-#targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_vx(tpts)
+tpts = load_normalised_voxel_growth_space()
+targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_vx(tpts)
 
 def estimate_error_1(params):
 # Estimate_error function takes in:
@@ -284,6 +297,7 @@ def optimise(points,ranges):
 	return i,r,e
 
 def main():
+        print sys.argv[1]
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
 	# Number of params in model
 	nparams = 7;
@@ -310,9 +324,9 @@ def main():
 	print "Params with unknown range:"
 	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
 
-	run=1; save_npy=0; save_obj=0;
+	run=1; save_npy=0; save_obj=1;
 	npoints = 100;
-	num_threads=1;mp.cpu_count();
+	num_threads=mp.cpu_count();
 
 
 	if run==1:
@@ -345,7 +359,8 @@ def main():
 		# Save as obj?
 		if save_obj==1:
 			output = generate_lsystem_tree_points(res)
-			file = open('output.obj', 'w')
+			out_file = 'opt_' + gs_filename + '.obj'
+			file = open(out_file, 'w')
 			for item in output:
 				file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
 			file.close()
