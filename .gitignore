@@ -1,3 +1,6 @@
 *.obj
 *.png
 *.xml
+*.txt
+log.*
+nohup.out

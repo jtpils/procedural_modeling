@@ -1,9 +1,0 @@
-# Method, Points, Time (minutes), Error, CPUs
-SLSQP, 100, 26, 2.7E-6, 1
-L-BFGS-B, 100, 94, 1.4E-7, 1
-TNC, 100, 66, 1.0E-4, 1
-SLSQP, 100, 24, 3.6E-7, 36
-SLSQP, 100, 20, 8.5E-7, 20
-SLSQP, 100, 21, 1.8E-6, 10
-SLSQP, 100, 23, 4.4E-7, 5
-

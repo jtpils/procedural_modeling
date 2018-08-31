@@ -222,8 +222,8 @@ def load_normalised_voxel_growth_space():
 #target_filename='../../obj_files/target.obj'
 #gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
 gs_dir = '../../growth-space/voxel_size_tests/'
-gs_filename=sys.argv[1]
-resolution=int(sys.argv[2])
+gs_filename='Tree1_50cm_5pts.csv'
+resolution=50
 
 
 # Uncomment to use obj as target
@@ -290,7 +290,6 @@ def optimise(points,ranges):
 	return i,r,e
 
 def main():
-        print sys.argv[1]
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
 	# Number of params in model
 	nparams = 7;
@@ -300,25 +299,26 @@ def main():
 	ranges = default_ranges;
 	# Setting of known ranges (overwrite defaults)
 	ranges[0][0]=5; ranges[0][1]=30;
-	ranges[1][0]=3;  ranges[1][1]=5;
-	ranges[2][0]=1;  ranges[2][1]=10;
+	ranges[1][0]=2;  ranges[1][1]=4;
+	ranges[2][0]=1;  ranges[2][1]=4;
 	# Setting of default means
-	means = [20,5,8,75,25,2.,1.];
-	stds = [3,2,2,25,10,0.5,0.25];
+	means = [20,3,2,75,25,2.,1.];
+	stds = [3,0.4,0.5,25,10,0.5,0.25];
 
 	print "------------------------------------------------"
 	print "Running main function of opt.py..."
 	print "Target values:"
-	print "\tTree height:              ", targ_th+targ_ch
+	print "\tTrunk height:              ", targ_th
+	print "\tCrown height:              ", targ_ch
 	print "Setting the following constraints:"
-	print "\tAge:                     5-30 years"
-	print "\tNo 1st order branches:   3-5"
-	print "\tNo 2nd order branches:   1-10"
+	print "\tAge:                 :   5-30"
+	print "\tNo 1st order branches:   2-4"
+	print "\tNo 2nd order branches:   1-4"
 	print "Params with unknown range:"
 	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
 
 	run=1; save_npy=0; save_obj=1;
-	npoints = 100;
+	npoints = int(sys.argv[1]);
 	num_threads=mp.cpu_count();
 
 
@@ -352,7 +352,7 @@ def main():
 		# Save as obj?
 		if save_obj==1:
 			output = generate_lsystem_tree_points(res)
-			out_file = 'opt_' + gs_filename + '.obj'
+			out_file = 'opt_npts' + str(npoints) + '.obj'
 			file = open(out_file, 'w')
 			for item in output:
 				file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
