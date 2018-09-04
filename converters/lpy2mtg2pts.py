@@ -1,3 +1,5 @@
+#Note: to copy file 'io.py' in this folder to the equivalent location of 'C:\Python27\Lib\site-packages\OpenAlea.Mtg-1.2.0-py2.7.egg\openalea\mtg' (overwrite existing io.py to modify mtg writing)
+
 import os
 import time
 from PyQt4.QtCore import *
