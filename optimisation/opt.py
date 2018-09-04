@@ -1,35 +1,25 @@
-import numpy
-import pyDOE
-import scipy.stats
-from scipy.stats.distributions import norm
-import scipy.optimize as optimize
-
 from os.path import isfile
-import glob
-import multiprocessing as mp
-import sys
 import warnings
+import glob
+import sys
 warnings.filterwarnings("ignore")
+
 import calc_growth_space as cgs
 import load_growth_space as lgs
 import lsystem_temp as lsys
 import estimate_errors as ee
 
-#sys.path.append('../interfacing_lysys_opt')
-
-
+import multiprocessing as mp
+from scipy.stats.distributions import norm
+import scipy.optimize as optimize
+import scipy.stats
+import pyDOE
+import numpy
 
 # Global variable
-#target_filename='../../obj_files/target.obj'
-#gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
 gs_dir = '../../growth-space/voxel_size_tests/'
 gs_filename='Tree1_50cm_5pts.csv'
 resolution=50
-
-# Uncomment to use obj as target
-# Actual params were 20,5,8,75,25,2,1
-# tpts = numpy.genfromtxt(target_filename,delimiter=' ',usecols=(1,2,3))
-# targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_ls(tpts)
 
 tpts = lgs.normalised_voxel_gs(gs_dir+gs_filename,resolution)
 targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = cgs.cgs_vx(tpts)
