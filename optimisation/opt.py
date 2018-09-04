@@ -9,6 +9,8 @@ from os.path import isfile
 import glob
 import multiprocessing as mp
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 #sys.path.append('../interfacing_lysys_opt')
 
 def generate_lsystem_tree_points(p):
@@ -257,8 +259,28 @@ def estimate_error_1(params):
     return E_total
 
 def estimate_error_2(params):
-# To do
+# Estimate_error function takes in:
+# params: parameters used to create tree from L-System
+# fname: filename of obj file (comparison data)
+    # Generate L-system points for params
+    ls_pts = generate_lsystem_tree_points(params)
+    ls_pts = numpy.asarray(ls_pts)
+    ls_bbox, ls_th, ls_ch, ls_mu, ls_el, ls_eu = calc_growth_space_ls(ls_pts)
+    # Calculate error
+    Ebbox = numpy.sqrt((((ls_bbox[1]-ls_bbox[0])-(targ_bbox[1]-targ_bbox[0]))/(targ_bbox[1]-targ_bbox[0]))**2 + \
+        (((ls_bbox[3]-ls_bbox[2])-(targ_bbox[3]-targ_bbox[2]))/(targ_bbox[3]-targ_bbox[2]))**2) #BBox error
+    Eth = numpy.sqrt(((ls_th-targ_th)/targ_th)**2) # Trunk height error
+    Ech = numpy.sqrt(((ls_ch-targ_ch)/targ_ch)**2) # Crown height error
+    #Eel_theta = (ls_el[0]-targ_el[0])/(2*numpy.pi)
+    Eel_radii = numpy.mean(((ls_el[1:2]-targ_el[1:2])/(targ_el[1:2]))**2)
+    #Eeu_theta = (ls_eu[0]-targ_eu[0])/(2*numpy.pi)
+    Eeu_radii = numpy.mean(((ls_eu[1:2]-targ_eu[1:2])/(targ_eu[1:2]))**2)
 
+	E_mu = numpy.mean(ls_mu-targ_mu)
+
+    E_total = numpy.sum(numpy.array(\
+        [Eth,Ech,Eel_radii,Eeu_radii,E_mu]))
+    #print params, E_total
     return E_total
 
 def create_sample_points(npts,means,stds):
@@ -274,8 +296,11 @@ def create_sample_points(npts,means,stds):
 def optimise(points,ranges):
 	r=[]; e=[]; i=[];
 	try:
+#		opt_params=optimize.minimize(estimate_error_1,points,\
+#				method='SLSQP',bounds=ranges)
+
 		opt_params=optimize.minimize(estimate_error_1,points,\
-				method='SLSQP',bounds=ranges)
+				method='TNC',bounds=ranges)
 		#print "\tOpt params: ", opt_params.x
 		r = opt_params.x; e = opt_params.fun
 		#print "\tError:      ", opt_params.fun
@@ -299,11 +324,11 @@ def main():
 	ranges = default_ranges;
 	# Setting of known ranges (overwrite defaults)
 	ranges[0][0]=5; ranges[0][1]=30;
-	ranges[1][0]=2;  ranges[1][1]=4;
-	ranges[2][0]=1;  ranges[2][1]=4;
+	ranges[1][0]=2;  ranges[1][1]=6;
+	ranges[2][0]=1;  ranges[2][1]=8;
 	# Setting of default means
-	means = [20,3,2,75,25,2.,1.];
-	stds = [3,0.4,0.5,25,10,0.5,0.25];
+	means = [20,3,3,75,25,2.,1.];
+	stds = [3,1,1,25,10,0.5,0.25];
 
 	print "------------------------------------------------"
 	print "Running main function of opt.py..."
