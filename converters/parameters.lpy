@@ -9,10 +9,10 @@ leafduration = 15
 leafold =      2
 
 # maximum number of branching order
-#age =     4
+age =     4
 
 # increment of radius through time
-#radinc =    0.025
+radinc =    0.025
 
 #idx for second order branches
 sobindex = 0
@@ -20,13 +20,11 @@ sobindex = 0
 
 # life time of an apex
 maxduration = lambda order : int(10./(order*10+1))+5
-#pitch_angle = lambda order : 30 # branching angle
-#roll_angle = lambda order : 20 # branching angle
-#pitch_angle = 30
+pitch_angle = 30
 roll_angle = 0
-#roll_angle_inc = 120
-#nb1 = 3
-#nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4])
+roll_angle_inc = 120
+nb1 = 3
+nb2 = np.array([2, 3, 1, 4, 2, 2, 2, 2, 2, 4])
 # number of axe at a ramification
 #nb_axes = lambda order : rd.randint(3, 6-order)
 #up_angle = lambda t,order : -20        # up angle for lateral branches
@@ -59,7 +57,7 @@ A(t,o) :
         #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0,o+1, i)]
         global roll_angle
         global pitch_angle
-        roll_angle += roll_angle_inc
+        roll_angle = roll_angle + roll_angle_inc
         pitch_angle_factor = 1.0
         if (roll_angle >= 360):
            pitch_angle_factor = 0.9
@@ -84,7 +82,7 @@ B(t,o, idx) :
            #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
            global roll_angle
            global pitch_angle
-           roll_angle += roll_angle_inc
+           roll_angle = roll_angle + roll_angle_inc
            pitch_angle_factor = 1.0
            if (roll_angle >= 360):
               pitch_angle_factor = 0.9
@@ -97,7 +95,7 @@ B(t,o, idx) :
            #nproduce [/(360*i/nbaxe+r1*180/nbaxe)&(pitch_angle)B(0, o+1, i)]
            global roll_angle
            global pitch_angle
-           roll_angle += roll_angle_inc
+           roll_angle = roll_angle + roll_angle_inc
            pitch_angle_factor = 1.0
            if (roll_angle >= 360):
               pitch_angle_factor = 0.9

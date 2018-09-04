@@ -2,17 +2,16 @@ import random as rd
 import numpy as np
 
 # life time of a leaf
-leafduration = 15
+leafduration = 3
 
 # age at which a leaf is considered as old
-leafold =      2
+leafold =      4
 
 # tree age
-=======
 #age =     4
 
 # increment of radius through time
-#radinc =    0.025
+radinc_rate = 0.25
 
 #idx for second order branches
 sobindex = 0
@@ -29,8 +28,8 @@ roll_angle = 0
 # number of axe at a ramification
 nb_axes = lambda order : rd.randint(3, 6-order)
 
-trunk_height = 50
-trunk_pitch = 2
+trunk_height = 5
+trunk_pitch = 0.3
 trunk_roll = 10
 trunk_diameter = 6
 up_angle = lambda t,order : -20        # up angle for lateral branches

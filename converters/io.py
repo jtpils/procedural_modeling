@@ -597,7 +597,7 @@ def axialtree2mtg(tree, scale, scene, parameters = None):
                 mtg.property('geometry')[mtg_id]=geoms[axial_id]
 
                 shape = geoms[axial_id][0].geometry
-                if type(shape) is Cylinder:
+                if type(shape) is Cylinder or type(shape) is Frustum:
                     mtg.property('XX')[mtg_id] = 0
                     mtg.property('YY')[mtg_id] = 0
                     mtg.property('ZZ')[mtg_id] = 0
@@ -619,12 +619,11 @@ def axialtree2mtg(tree, scale, scene, parameters = None):
                         mtg.property('YY')[mtg_id] = shape.translation.y
                         mtg.property('ZZ')[mtg_id] = shape.translation.z
                         mtg.property('radius')[mtg_id] = shape.geometry.radius
-                elif type(shape) is Frustum:
+                else:
                     mtg.property('XX')[mtg_id] = 0
                     mtg.property('YY')[mtg_id] = 0
                     mtg.property('ZZ')[mtg_id] = 0
-                    mtg.property('radius')[mtg_id] = shape.radius
-
+                    mtg.property('radius')[mtg_id] = 0
             else:
                 #print 'Be careful : no id ', axial_id
                 pass
@@ -684,7 +683,7 @@ def axialtree2mtg(tree, scale, scene, parameters = None):
                     except:
                         pass
                 ptr = ptr+1
-                        
+
 
             if mtg.scale(vid) == mtg.scale(current_vertex) == _scale:
                 # Add a vertex at the finer scale
