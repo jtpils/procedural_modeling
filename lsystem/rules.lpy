@@ -23,6 +23,7 @@ phyllotaxis_angle = 0
 phyllotaxis_increment = 30
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
+turtle_draw_zero_length_error_prevention = 0.0000001
 
 print 'Derivation length:',
 print germination_offset+age*steps
@@ -66,7 +67,7 @@ S:      #shoot
 
 B(order, status):      #bud
   if status is 2:     #apical bud grows a node & internode
-    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0)B(0,1)
+    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0)I(0,0.0,0.0,0.0)B(0,1)
   elif status is 3:   #dormant bud comes alive
     produce I(order,0.0,0.0,0.0)B(order,1)
   elif status < 0:   #bud grows into a flower
@@ -145,17 +146,17 @@ U:      #fruit
 
 
 homomorphism:
-#B(0,1) --> SetColor(3)@O(0.02)      #active apical bud
-#B(order,1) --> SetColor(6)@O(0.02)  #active axillary bud
-#B(order,0) --> SetColor(7)@O(0.02)  #dormant bud
-#L(fallen, duration):
-#  global phyllotaxis_angle
-#  phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
-#  oldage = 0.2*steps
-#  if duration < oldage:  #green leaf
-#    produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
-#  else:    #yellow old leaf, falling off soon
-#    produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
-I(order, distanceFromBase, length, radius) --> SetColor(1)F(length, radius)
+B(0,1) --> SetColor(3)@O(0.02)      #active apical bud
+B(order,1) --> SetColor(6)@O(0.02)  #active axillary bud
+B(order,0) --> SetColor(7)@O(0.02)  #dormant bud
+L(fallen, duration):
+  global phyllotaxis_angle
+  phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
+  oldage = 0.2*steps
+  if duration < oldage:  #green leaf
+    produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
+  else:    #yellow old leaf, falling off soon
+    produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
+I(order, distanceFromBase, length, radius) --> SetColor(1)F(length+turtle_draw_zero_length_error_prevention, radius)
 
 endlsystem

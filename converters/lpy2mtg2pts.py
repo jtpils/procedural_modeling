@@ -58,9 +58,9 @@ def lsystem_run(age=10,
     l.plot(axialtree)
     Viewer.frameGL.saveImage(output_lpy, 'png')
 
-    print axialtree
-    for num, element in enumerate(axialtree):
-        print num, element
+    #print axialtree
+    #for num, element in enumerate(axialtree):
+    #    print num, element
 
     #scale = {'F':1,'X':1}
     #scale = {'A':1, 'B':1, 'L':1, 'I':1}
@@ -68,7 +68,11 @@ def lsystem_run(age=10,
     #scene = l.generateScene(axialtree)
     scene = l.sceneInterpretation(axialtree)
     #scene = l.Tree2Scene(axialtree)
+    #print 'Homomorphism:',
+    #print l.homomorphism(axialtree)
 
+    #scene = l.Tree2Scene(axialtree)
+    '''
     print 'Scene:'
     print scene
     print 'Components in scene:'
@@ -87,18 +91,18 @@ def lsystem_run(age=10,
             print 'Oriented geometry'
         else:
             print 'Unknown shape geometry'
-
+    '''
 
     #mtg = lpy2mtg(axialtree, l, scene)
     #mtg_lines = lpy2mtg(mtg, axialtree, l)
     #mtg_lines = write_mtg(mtg)
 
-    #mtg = axialtree2mtg(axialtree, scale, scene)
+    mtg = axialtree2mtg(axialtree, scale, scene)
     #mtg = axialtree2mtg(axialtree, scale, scene, parameter_dict)
     #parameters = {'A':['age', 'order'], 'B':['age', 'order', 'index'], 'L':['age', 'phyllotactic'], 'I':['order', 'length', 'radius']}
-    parameters = {'I':['order', 'distanceFromBase', 'length', 'radius']}
     #parameters = {'A':['t', 'o'], 'B':['t', 'o', 'idx'], 'L':['t', 'n'], 'I':['o', 'a', 'r']}
-    mtg = axialtree2mtg(axialtree, scale, scene, parameters)
+    #parameters = {'I':['order', 'distanceFromBase', 'length', 'radius']}
+    #mtg = axialtree2mtg(axialtree, scale, scene, parameters)
 
     #extract 3D positions from mtg or scene here! put them into output_point_list
     #todo....
@@ -119,7 +123,7 @@ def lsystem_run(age=10,
     #f = open(test_mtg_file)
     #txt = f.read()
     #mtg_test = read_mtg(txt)
-
+    '''
     dressing_data = DressingData(DiameterUnit=1)
 
 
@@ -131,7 +135,6 @@ def lsystem_run(age=10,
     pf1.plot(gc=True)
     Viewer.frameGL.saveImage(output_mtg_topdia, 'png')
 
-    '''
     pf2 = PlantFrame(mtg,
                     TopDiameter='diam')
     #print "diam"
@@ -167,3 +170,7 @@ def lsystem_run(age=10,
 
     lstring_output = ''
     return lstring_output
+
+
+if __name__ == "__main__":
+    lsystem_run()

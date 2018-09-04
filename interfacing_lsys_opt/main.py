@@ -32,7 +32,7 @@ def generate_lsystem_tree_points(params):
                                             annual_no_new_nodes=params[9],
                                             avg_internode_length=params[10] )
 
-def ngenerate_lsystem_tree_points(  age=10,
+def ngenerate_lsystem_tree_points(  age=1,
                                     trunk_pitch_angle=5.0,
                                     trunk_roll_angle=0.0,
                                     trunk_height=3.0,
