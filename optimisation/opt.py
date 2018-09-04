@@ -7,14 +7,13 @@ warnings.filterwarnings("ignore")
 import calc_growth_space as cgs
 import load_growth_space as lgs
 import lsystem_temp as lsys
-import estimate_errors as ee
 
 import multiprocessing as mp
 from scipy.stats.distributions import norm
 import scipy.optimize as optimize
 import scipy.stats
-import pyDOE
 import numpy
+import pyDOE
 
 # Global variable
 gs_dir = '../../growth-space/voxel_size_tests/'
@@ -81,14 +80,17 @@ def create_sample_points(npts,means,stds):
 		sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
 	return sample_points
 
-def optimise(points,ranges):
+def optimise(points,ranges,method):
 	r=[]; e=[]; i=[];
 	try:
-#		opt_params=optimize.minimize(estimate_error_1,points,\
-#				method='SLSQP',bounds=ranges)
-
-		opt_params=optimize.minimize(estimate_error_1,points,\
+		if method=='SLSQP':
+			opt_params=optimize.minimize(estimate_error_1,points,\
+				method='SLSQP',bounds=ranges)
+		elif method=='TNC':
+			opt_params=optimize.minimize(estimate_error_1,points,\
 				method='TNC',bounds=ranges)
+		else:
+			print "Optimisation method not recognised."
 		#print "\tOpt params: ", opt_params.x
 		r = opt_params.x; e = opt_params.fun
 		#print "\tError:      ", opt_params.fun
@@ -130,7 +132,7 @@ def main():
 	print "Params with unknown range:"
 	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
 
-	run=1; save_npy=0; save_obj=1;
+	run=1; save_npy=0; save_obj=1; method='SLSQP'
 	npoints = int(sys.argv[1]);
 	num_threads=mp.cpu_count();
 
@@ -142,7 +144,7 @@ def main():
 		# Create pool of threads
 		pool = mp.Pool(processes=num_threads);
 		# Run on nprocs
-		result = [ pool.apply_async(optimise,args=(i,ranges,)) for i in sample_points]
+		result = [ pool.apply_async(optimise,args=(i,ranges,method)) for i in sample_points]
 		# Collect data when ready
 		output = numpy.asarray([p.get() for p in result])
 		# Reorganise results
