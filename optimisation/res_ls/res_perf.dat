@@ -1,4 +1,0 @@
-# Method, Points, Time (minutes), Error
-SLSQP, 100, 26, 2.7E-6
-L-BFGS-B, 100, 94, 1.4E-7
-TNC, 100, 66, 1.0E-4

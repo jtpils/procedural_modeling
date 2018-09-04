@@ -7,7 +7,10 @@ from numpy.linalg import eig, inv
 from pyquaternion import Quaternion
 from os.path import isfile
 import glob
-#import sys
+import multiprocessing as mp
+import sys
+import warnings
+warnings.filterwarnings("ignore")
 #sys.path.append('../interfacing_lysys_opt')
 
 def generate_lsystem_tree_points(p):
@@ -17,17 +20,10 @@ def generate_lsystem_tree_points(p):
 	no_2nd_ord_branches = int(p[2]);
 	branching_angle_roll = p[3];
 	branching_angle_pitch = p[4];
-    #lstring = lsystem_run(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
-    #parse l-system output string into 3d points matching Xfrog object size
-    #todo
-
-    # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
-    # ========================
-	
 	trunk_growth_rate = p[5]
 	branch_growth_rate = p[6]
-	#trunk_growth_rate = 0.6
-	#branch_growth_rate = 0.3
+    # temporary hardcoding of tree growth: age 1-2 trunk grows taller by 2 m/yr, age 3 first branch out by 1 m/yr, age 4 second branch out by 0.5 m/yr
+    # ========================
 	pitch_angle = branching_angle_pitch/180.0 * 3.14159 #radian
 	roll_angle = branching_angle_roll/180.0 * 3.14159 #radian
 
@@ -95,7 +91,7 @@ def generate_lsystem_tree_points(p):
 
         #pop stack to previous state
         [current_post, current_dir, current_up, current_left] = branching_stack.pop()
-    
+
     # ===========================================
 
         return output_point_list
@@ -123,7 +119,7 @@ def fit_ellipse(x,y):
     etheta = 0.5*numpy.arctan(2*b/(a-c)) # Ellipse angle of rotation
     # Ellipse major/minor axes
     up = 2*(a*f*f+c*d*d+g*b*b-2*b*d*f-a*c*g)
-    down1=(b*b-a*c)*( (c-a)*numpy.sqrt(1+4*b*b/((a-c)*(a-c)))-(c+a))	
+    down1=(b*b-a*c)*( (c-a)*numpy.sqrt(1+4*b*b/((a-c)*(a-c)))-(c+a))
     down2=(b*b-a*c)*( (a-c)*numpy.sqrt(1+4*b*b/((a-c)*(a-c)))-(c+a))
     res1=numpy.sqrt(numpy.abs(up/down1))
     res2=numpy.sqrt(numpy.abs(up/down2))
@@ -166,14 +162,22 @@ def calc_growth_space_vx(pts):
     zmin,zmax = numpy.min(pts[:,2]),numpy.max(pts[:,2])
     bbox = numpy.asarray([xmin,xmax,ymin,xmax,zmin,zmax])
     # Estimation of trunk height
+    r = []
     for i in range(100):
         lh,uh = (zmax/100.)*i, (zmax/100.)*i+1
-        points_at_height = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
-        if (points_at_height>250):
-            trunk_height = lh;
-            break;
-    # Crown height
-    crown_height = zmax-trunk_height;
+        p_a_h = numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh)
+        sum_p_a_h = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
+        if sum_p_a_h>1:
+            temp_thet,temp_r1,temp_r2 = fit_ellipse(pts[p_a_h,0],pts[p_a_h,1])
+            if ((temp_r1+temp_r2)/2.<30.):
+                r.append([lh, (temp_r1+temp_r2)/2.])
+
+    bottom_rad = numpy.mean(r[0:8])
+    for j in range(len(r)):
+        if r[j][1]>3*bottom_rad:
+            trunk_height = r[j][0]
+            crown_height = zmax-trunk_height;
+            break
     # Geometric mean of crown
     mu_x = numpy.mean(pts[pts[:,2]>trunk_height,0])
     mu_y = numpy.mean(pts[pts[:,2]>trunk_height,1])
@@ -191,26 +195,46 @@ def calc_growth_space_vx(pts):
     eu = numpy.array([u_et1,u_e1,u_e2])
     return bbox, trunk_height, crown_height, mu_c, el, eu#bbox,trunk_height,crown_height,mu_c,el,eu
 
+def load_mtg_file(fname):
+	mtg_file = fname
+	print "Reading file: %s" % mtg_file
+	with open(mtg_file) as f:
+		lines = f.readlines()
+	i=0
+	while(1):
+		if lines[i].startswith("ENTITY-CODE"):
+			break
+		else:
+			i=i+1
+	# Columns are 1=y, 2=radius, 3=z, 4=z
+	pts = np.genfromtxt(mtg_file,skip_header=i+1,usecols=(4,1,3))
+	return pts
+
 def load_normalised_voxel_growth_space():
-    # Function reads growth_space file, shifts x,y coordinates
+	# Function reads growth_space file, shifts x,y coordinates
     # to zero mean, sets min z coordinate to 0.
-    gs = numpy.genfromtxt(gs_filename,delimiter=',')
+    gs = numpy.genfromtxt(gs_dir+gs_filename,delimiter=',')
+    gs = gs*resolution/100.
     gs[:,0] = gs[:,0] - numpy.mean(gs[:,0])
     gs[:,1] = gs[:,1] - numpy.mean(gs[:,1])
     gs[:,2] = gs[:,2] - numpy.min(gs[:,2])
     return gs
 
 # Global variable
-target_filename='../../obj_files/target.obj'
-gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
+#target_filename='../../obj_files/target.obj'
+#gs_filename='../../growth-space/20171120 Tree25_VoxelCenters_10pts_25cm.csv'
+gs_dir = '../../growth-space/voxel_size_tests/'
+gs_filename='Tree1_50cm_5pts.csv'
+resolution=50
+
 
 # Uncomment to use obj as target
 # Actual params were 20,5,8,75,25,2,1
-tpts = numpy.genfromtxt(target_filename,delimiter=' ',usecols=(1,2,3))
-targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_ls(tpts)
+# tpts = numpy.genfromtxt(target_filename,delimiter=' ',usecols=(1,2,3))
+# targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_ls(tpts)
 
-#tpts = load_normalised_voxel_growth_space()
-#targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_vx(tpts)
+tpts = load_normalised_voxel_growth_space()
+targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = calc_growth_space_vx(tpts)
 
 def estimate_error_1(params):
 # Estimate_error function takes in:
@@ -233,105 +257,137 @@ def estimate_error_1(params):
         [Eth,Ech,Eel_radii,Eeu_radii]))
     #print params, E_total
     return E_total
-    
+
 def estimate_error_2(params):
-# To do
+# Estimate_error function takes in:
+# params: parameters used to create tree from L-System
+# fname: filename of obj file (comparison data)
+    # Generate L-system points for params
+    ls_pts = generate_lsystem_tree_points(params)
+    ls_pts = numpy.asarray(ls_pts)
+    ls_bbox, ls_th, ls_ch, ls_mu, ls_el, ls_eu = calc_growth_space_ls(ls_pts)
+    # Calculate error
+    Ebbox = numpy.sqrt((((ls_bbox[1]-ls_bbox[0])-(targ_bbox[1]-targ_bbox[0]))/(targ_bbox[1]-targ_bbox[0]))**2 + \
+        (((ls_bbox[3]-ls_bbox[2])-(targ_bbox[3]-targ_bbox[2]))/(targ_bbox[3]-targ_bbox[2]))**2) #BBox error
+    Eth = numpy.sqrt(((ls_th-targ_th)/targ_th)**2) # Trunk height error
+    Ech = numpy.sqrt(((ls_ch-targ_ch)/targ_ch)**2) # Crown height error
+    #Eel_theta = (ls_el[0]-targ_el[0])/(2*numpy.pi)
+    Eel_radii = numpy.mean(((ls_el[1:2]-targ_el[1:2])/(targ_el[1:2]))**2)
+    #Eeu_theta = (ls_eu[0]-targ_eu[0])/(2*numpy.pi)
+    Eeu_radii = numpy.mean(((ls_eu[1:2]-targ_eu[1:2])/(targ_eu[1:2]))**2)
 
-    return E_total    
+	E_mu = numpy.mean(ls_mu-targ_mu)
 
-def optimise(npts,means,stds,ranges):
-# Optimise function takes in:
-# npts:     number of sample points for Latin Hypercube sampling
-# rflags:   array of flags to indicate whether we know ranges
-# ranges:   ranges of known variables (same length as rflags)
-# indices:  this should be used in a loop...
-# Returns variables:
-# result: list of optimum values obtained from each initial condition
-# error according to 'result'
-    r=[];e=[];
-    nparams = len(means);
-    
-    # Construct sample points
-    sample_points = pyDOE.lhs(nparams,samples=nparams*npts,criterion='center')
-    
-    # Centre around means and stds
-    for i in xrange(nparams):
-        sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
-    
-    initial_points = [];
-        
-    # Test points    
-    for i in range(len(sample_points)):
-        p = sample_points[i,:]
-		#print p
-        try:
-            print "Trying point:", i
-            print "\tParams:     ", p
-            opt_params=optimize.minimize(estimate_error_1,p,method='L-BFGS-B',bounds=ranges)
-            print "\tOpt params: ", opt_params.x
-            r.append(opt_params.x); e.append(opt_params.fun)
-            print "\tError:      ", opt_params.fun
-            initial_points.append(p)
-        except:
-            pass
-    i = numpy.asarray(initial_points)
-    r = numpy.asarray(r); e = numpy.asarray(e);
-    
-    return i,r,e
+    E_total = numpy.sum(numpy.array(\
+        [Eth,Ech,Eel_radii,Eeu_radii,E_mu]))
+    #print params, E_total
+    return E_total
+
+def create_sample_points(npts,means,stds):
+	# Number of parameters
+	nparams = len(means);
+	# Construct initial sample points
+	sample_points = pyDOE.lhs(nparams,samples=nparams*npts,criterion='center')
+	# Centre around means and stds
+	for i in xrange(nparams):
+		sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
+	return sample_points
+
+def optimise(points,ranges):
+	r=[]; e=[]; i=[];
+	try:
+#		opt_params=optimize.minimize(estimate_error_1,points,\
+#				method='SLSQP',bounds=ranges)
+
+		opt_params=optimize.minimize(estimate_error_1,points,\
+				method='TNC',bounds=ranges)
+		#print "\tOpt params: ", opt_params.x
+		r = opt_params.x; e = opt_params.fun
+		#print "\tError:      ", opt_params.fun
+		i = points
+	except:
+		r = points
+		e = 100.0;
+		i = points
+		pass
+	i = numpy.asarray(i)
+	r = numpy.asarray(r); e = numpy.asarray(e);
+	return i,r,e
 
 def main():
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
-    # Number of params in model
-    nparams = 7;
-    # Setting of default ranges - LIMITS
-    default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60],[0.1,3],[0.05,3]]     
-    rflags = numpy.asarray([1,1,1,0,0,0,0]) # Array to indicate number of known ranges
-    ranges = default_ranges;
-    # Setting of known ranges (overwrite defaults)
-    ranges[0][0]=5; ranges[0][1]=30;
-    ranges[1][0]=3;  ranges[1][1]=5;
-    ranges[2][0]=1;  ranges[2][1]=10;
-    # Setting of default means
-    means = [20,5,8,75,25,2.,1.];
-    stds = [3,2,2,25,10,0.5,0.25];
-        
-    print "------------------------------------------------"
-    print "Running main function of opt.py..."
-    print "Target values:"
-    print "\tTree height:              ", targ_th+targ_ch
-    print "Setting the following constraints:"
-    print "\tAge:                     5-30 years"
-    print "\tNo 1st order branches:   3-5"
-    print "\tNo 2nd order branches:   1-10"
-    print "Params with unknown range:"
-    print "\tBranching angle (roll)\n\tBranching angle (pitch)";
+	# Number of params in model
+	nparams = 7;
+	# Setting of default ranges - LIMITS
+	default_ranges = [[0,60],[0,10],[0,10],[20,160],[0,60],[0.1,3],[0.05,3]]
+	rflags = numpy.asarray([1,1,1,0,0,0,0]) # Array to indicate number of known ranges
+	ranges = default_ranges;
+	# Setting of known ranges (overwrite defaults)
+	ranges[0][0]=5; ranges[0][1]=30;
+	ranges[1][0]=2;  ranges[1][1]=6;
+	ranges[2][0]=1;  ranges[2][1]=8;
+	# Setting of default means
+	means = [20,3,3,75,25,2.,1.];
+	stds = [3,1,1,25,10,0.5,0.25];
 
-    initials,result,error = optimise(100,means,stds,ranges)
+	print "------------------------------------------------"
+	print "Running main function of opt.py..."
+	print "Target values:"
+	print "\tTrunk height:              ", targ_th
+	print "\tCrown height:              ", targ_ch
+	print "Setting the following constraints:"
+	print "\tAge:                 :   5-30"
+	print "\tNo 1st order branches:   2-4"
+	print "\tNo 2nd order branches:   1-4"
+	print "Params with unknown range:"
+	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
 
-    initials = numpy.asarray(initials)
-    result = numpy.asarray(result)
-    error = numpy.asarray(numpy.abs(error))
-    loc = numpy.where(error == error.min())        
-                
-    res = numpy.zeros(nparams)
-    res[0] = result[loc,0]; res[1] = result[loc,1]
-    res[2] = result[loc,2]; res[3] = result[loc,3]
-    res[4] = result[loc,4]; res[5] = result[loc,5]
-    res[6] = result[loc,6];
+	run=1; save_npy=0; save_obj=1;
+	npoints = int(sys.argv[1]);
+	num_threads=mp.cpu_count();
 
-    print "Result of optimisation:"
-    print "\tOpt params:",res
-    print "\tError:\t", error.min()
-        
-    output = generate_lsystem_tree_points(res)
-    file = open('output.obj', 'w')
-    for item in output:
-        file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
-    file.close()
 
-    print result[loc,:], error.min()
-    numpy.save('results.npy',result); numpy.save('errors.npy',error);
-    numpy.save('initial_points.npy',initials)
+	if run==1:
+		# Run optimisation routine
+		sample_points = create_sample_points(npoints,means,stds)
+		print "Testing %i sample points with %i cpus" % (len(sample_points), num_threads)
+		# Create pool of threads
+		pool = mp.Pool(processes=num_threads);
+		# Run on nprocs
+		result = [ pool.apply_async(optimise,args=(i,ranges,)) for i in sample_points]
+		# Collect data when ready
+		output = numpy.asarray([p.get() for p in result])
+		# Reorganise results
+		initial_points = numpy.asarray(output[:,0])
+		results = numpy.asarray(output[:,1])
+		error = numpy.asarray(output[:,2])
+		loc = numpy.where(error==error.min())
+		loc = int(loc[0])
+		#Convert result to array (don't remember why it was necessary
+		# to do it like this
+		res = numpy.zeros(nparams)
+		res[0] = results[loc][0]; res[1] = results[loc][1]
+		res[2] = results[loc][2]; res[3] = results[loc][3]
+		res[4] = results[loc][4]; res[5] = results[loc][5]
+		res[6] = results[loc][6];
+		# Print results to screen
+		print "Result of optimisation:"
+		print "\tOpt params:",res
+		print "\tError:\t", error.min()
+		# Save as obj?
+		if save_obj==1:
+			output = generate_lsystem_tree_points(res)
+			out_file = 'opt_npts' + str(npoints) + '.obj'
+			file = open(out_file, 'w')
+			for item in output:
+				file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
+			file.close()
+		# Save as npy
+		if save_npy==1:
+			numpy.save('results.npy',result); numpy.save('errors.npy',error);
+			numpy.save('initial_points.npy',initials)
+	print "------------------------------------------------"
+
 
 if __name__ == "__main__":
     main()

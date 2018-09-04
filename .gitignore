@@ -4,3 +4,7 @@
 *.vtk
 *.iml
 .idea/
+*.txt
+log.*
+nohup.out
+
