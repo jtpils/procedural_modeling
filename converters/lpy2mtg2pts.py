@@ -54,6 +54,7 @@ def lsystem_run(age=10,
 
     #l = lpy.Lsystem(input_file)
     l = lpy.Lsystem(input_file, parameter_dict)
+    #l.useGroup(0)       #use rules for determinate growth pattern
     axialtree = l.animate()
     #axialtree = l.iterate()
 
@@ -176,3 +177,4 @@ def lsystem_run(age=10,
 
 if __name__ == "__main__":
     lsystem_run()
+    raw_input()

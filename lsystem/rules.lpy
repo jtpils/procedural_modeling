@@ -1,11 +1,12 @@
 import random
+import numpy
 
 #initial turtle's orientation: Head Z+ [0,0,1], Up Y+ [0,1,0], Left X+ [1,0,0]
 #to align turtle's Right X- [-1,0,0] to Earth's North [0,1,0], rotate the world by -90degrees around Z+ axis, i.e., roll angle offset -90degrees
 #order of rotations: roll first, then pitch
 #assumption: young branches and leaves never grow until the trunk height at mature phase (in reality, branches and leaves have been falling off at lower trunk segments before matured tree trunk appears smooth)
 
-#age = 10
+#age = 20
 #trunk_pitch_angle = 5.0            #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0             #roll left wrt turtle's head, in degrees
 #trunk_height = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
@@ -17,13 +18,14 @@ import random
 #annual_no_new_nodes = 30.0  #number of new buds per year
 #avg_internode_length = 0.03 #unit: m
 
-steps = 3                  #timestep: 'steps' steps/year)
+steps = 1                  #timestep: 'steps' steps/year)
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 30
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 turtle_draw_zero_length_error_prevention = 0.0000001
+determinate_height = 10.0
 
 print 'Derivation length:',
 print germination_offset+age*steps
@@ -65,6 +67,12 @@ S:      #shoot
   if germination_offset is 1:
     produce B(0,2)
 
+#group 1:    #rules for determinate terminal meristem growth pattern
+I(order, distanceFromBase, length, radius) < B(bud_order, 1):      #determinate growth pattern: stop vertical growth after reaching certain height
+  if distanceFromBase > determinate_height: #check for the right condition to terminate apical bud's growth by dying
+    produce *
+#endgroup
+
 B(order, status):      #bud
   if status is 2:     #apical bud grows a node & internode
     produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0)I(0,0.0,0.0,0.0)B(0,1)
@@ -72,6 +80,7 @@ B(order, status):      #bud
     produce I(order,0.0,0.0,0.0)B(order,1)
   elif status < 0:   #bud grows into a flower
     produce W
+    #note: when order=0 (apical bud) and status < 0, the bud will blossom into a flower
                       #status is 0: bud is suppressed, 1: bud is growing new nodes
 
 N(order, branchingSignal):      #node
@@ -115,7 +124,7 @@ I(order, distanceFromBase, length, radius) > B(bud_order,1):        #distanceFro
       cur_distanceFromBase = distanceFromBase+(i+1)*avg_internode_length
       #print 'cur_distanceFromBase,trunk_height,avg_internode_length=',
       #print cur_distanceFromBase, trunk_height, avg_internode_length, cur_distanceFromBase>=trunk_height, cur_distanceFromBase<trunk_height+avg_internode_length
-      if (cur_distanceFromBase >= trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
+      if (numpy.isclose(cur_distanceFromBase, trunk_height) or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
         branchOut = 1     #signal node to form active axillary bud
       elif i==eff_new_nodes-1:
         branchOut = 2     #signal node to form leaf and dormant axillary bud
@@ -143,7 +152,6 @@ U:      #fruit
   pass
   #produce *
   #fallen
-
 
 homomorphism:
 B(0,1) --> SetColor(3)@O(0.02)      #active apical bud
