@@ -3,8 +3,8 @@
 *.xml
 *.vtk
 *.iml
+*.mtg
 .idea/
 *.txt
 log.*
 nohup.out
-
