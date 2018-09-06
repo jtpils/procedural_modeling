@@ -3,7 +3,10 @@
 import numpy
 from pyquaternion import Quaternion
 import os
-from converters.lpy2mtg2pts import lsystem_run
+import sys
+sys.path.append('../converters/')
+#from converters.lpy2mtg2pts import lsystem_run
+from lpy2mtg2pts import lsystem_run
 
 def estimate_age(species, size):
     'Estimate tree age based on scanned size of tree of certain species'

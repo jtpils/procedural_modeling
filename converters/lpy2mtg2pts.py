@@ -54,11 +54,11 @@ def lsystem_run(age=10,
 
     #l = lpy.Lsystem(input_file)
     l = lpy.Lsystem(input_file, parameter_dict)
-    axialtree = l.animate()
-    #axialtree = l.iterate()
+    #axialtree = l.animate()
+    axialtree = l.iterate()
 
-    l.plot(axialtree)
-    Viewer.frameGL.saveImage(output_lpy, 'png')
+    #l.plot(axialtree)
+    #Viewer.frameGL.saveImage(output_lpy, 'png')
 
     #print axialtree
     #for num, element in enumerate(axialtree):
