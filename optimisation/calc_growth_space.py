@@ -74,10 +74,12 @@ def cgs_vx(pts):
         p_a_h = numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh)
         sum_p_a_h = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
         if sum_p_a_h>1:
-            temp_thet,temp_r1,temp_r2 = fit_ellipse(pts[p_a_h,0],pts[p_a_h,1])
-            if ((temp_r1+temp_r2)/2.<30.):
-                r.append([lh, (temp_r1+temp_r2)/2.])
-
+            try:
+                temp_thet,temp_r1,temp_r2 = fit_ellipse(pts[p_a_h,0],pts[p_a_h,1])
+                if ((temp_r1+temp_r2)/2.<30.):
+                    r.append([lh, (temp_r1+temp_r2)/2.])
+            except:
+                continue
     bottom_rad = numpy.mean(r[0:8])
     for j in range(len(r)):
         if r[j][1]>3*bottom_rad:

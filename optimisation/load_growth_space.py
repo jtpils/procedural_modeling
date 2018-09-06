@@ -1,4 +1,10 @@
+import read_xml as rxml
 import numpy
+
+def xml_file_gs(fname):
+	b_voxsz, b_coords, c_voxsz, c_coords = rxml.rxml_growthspace(fname)
+	gs = numpy.vstack((b_coords, c_coords))
+	return gs
 
 def mtg_file_gs(fname):
 	mtg_file = fname

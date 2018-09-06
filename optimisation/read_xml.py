@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import numpy
 
-def read_xml_growthspace(fname):
+def rxml_growthspace(fname):
 	tree = ET.parse(fname)
 	root = tree.getroot()
 	for gs in root.findall('GROWTHSPC'):
@@ -21,7 +21,7 @@ def read_xml_growthspace(fname):
 			c_coords = numpy.reshape(c_coords,(-1,3))
 	return b_voxsz, b_voxsz*b_coords, c_voxsz, c_voxsz*c_coords
 
-def read_xml_treeparams(fname):
+def rxml_treeparams(fname):
 	tree = ET.parse(fname)
 	root = tree.getroot()
 	for identity in root.findall('IDENTITY'):
@@ -35,8 +35,8 @@ def read_xml_treeparams(fname):
 
 def main():
 	xml_fname = '../../growth-space/example_xml/Tree1_Parameters.xml'
-	common_name, species, location, height = read_xml_treeparams(xml_fname)
-	b_voxsz, b_coords, c_voxsz, c_coords = read_xml_growthspace(xml_fname)
+	common_name, species, location, height = rxml_treeparams(xml_fname)
+	b_voxsz, b_coords, c_voxsz, c_coords = rxml_growthspace(xml_fname)
 
 
 	print "#-------------------------------------------------#"
@@ -58,6 +58,8 @@ def main():
 	print "#   \ty:\t\t(%f) - (%f)" % (numpy.min(c_coords[:,1]),numpy.max(c_coords[:,1]))
 	print "#   \tz:\t\t(%f) - (%f)" % (numpy.min(c_coords[:,2]),numpy.max(c_coords[:,2]))
 	print "#-------------------------------------------------#"
+
+	print numpy.shape(numpy.vstack((b_coords,c_coords)))
 
 if __name__ == "__main__":
 	main()

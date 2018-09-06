@@ -19,9 +19,18 @@ import pyDOE
 gs_dir = '../../growth-space/voxel_size_tests/'
 gs_filename='Tree1_50cm_5pts.csv'
 resolution=50
+xml_filename='../../growth-space/example_xml/Tree1_Parameters.xml'
 
+# Read from gs csv
 tpts = lgs.normalised_voxel_gs(gs_dir+gs_filename,resolution)
+print numpy.shape(tpts)
+
+# Read from xml
+#tpts = lgs.xml_file_gs(xml_filename)
+print numpy.shape(tpts)
+
 targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = cgs.cgs_vx(tpts)
+
 
 def estimate_error_1(params):
 # Estimate_error function takes in:
@@ -132,12 +141,12 @@ def main():
 	print "Params with unknown range:"
 	print "\tBranching angle (roll)\n\tBranching angle (pitch)";
 
-	run=1; save_npy=0; save_obj=1; method='SLSQP'
+	run=0; save_npy=0; save_obj=1; method='SLSQP'
 	npoints = int(sys.argv[1]);
 	num_threads=mp.cpu_count();
 
 
-	if run==1:
+	if run==0:
 		# Run optimisation routine
 		sample_points = create_sample_points(npoints,means,stds)
 		print "Testing %i sample points with %i cpus" % (len(sample_points), num_threads)
