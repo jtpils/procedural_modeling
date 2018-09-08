@@ -81,7 +81,6 @@ def lsystem_run(age=10,
     suppress()
     axialtree = l.iterate(); # This outputs Lstring to screen, how to mute?
     allow()
-    print "Hello"
     #l.plot(axialtree)
     #Viewer.frameGL.saveImage(output_lpy, 'png')
 
