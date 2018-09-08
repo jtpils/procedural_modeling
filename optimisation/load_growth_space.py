@@ -8,7 +8,7 @@ def xml_file_gs(fname):
 
 def mtg_file_gs(fname):
 	mtg_file = fname
-	print "Reading file: %s" % mtg_file
+	#print "Reading file: %s" % mtg_file
 	with open(mtg_file) as f:
 		lines = f.readlines()
 	i=0
