@@ -18,23 +18,6 @@ from openalea.plantgl.scenegraph._pglsg import *
 
 sys.path.append('../optimisation/')
 
-class NullWriter(object):
-    def write(self,arg):
-        pass
-
-nullwrite = NullWriter()
-oldstdout = sys.stdout
-sys.stdout = nullwrite
-
-def suppress():
-    sys.stdout = nullwrite
-
-def allow():
-    sys.stdout = oldstdout
-
-
-
-
 from load_growth_space import mtg_file_gs
 
 
@@ -78,9 +61,7 @@ def lsystem_run(age=10,
     #l = lpy.Lsystem(input_file)
     l = lpy.Lsystem(input_file, parameter_dict);
     #axialtree = l.animate()
-    suppress()
     axialtree = l.iterate(); # This outputs Lstring to screen, how to mute?
-    allow()
     #l.plot(axialtree)
     #Viewer.frameGL.saveImage(output_lpy, 'png')
 

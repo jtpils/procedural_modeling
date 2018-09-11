@@ -80,9 +80,9 @@ def cgs_vx(pts):
                     r.append([lh, (temp_r1+temp_r2)/2.])
             except:
                 continue
-    bottom_rad = numpy.mean(r[0:8])
+    bottom_rad = numpy.mean(r[0:2])
     for j in range(len(r)):
-        if r[j][1]>3*bottom_rad:
+        if r[j][1]>1.5*bottom_rad:
             trunk_height = r[j][0]
             crown_height = zmax-trunk_height;
             break

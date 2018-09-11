@@ -25,8 +25,8 @@ partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 turtle_draw_zero_length_error_prevention = 0.0000001
 
-print 'Derivation length:',
-print germination_offset+age*steps
+#print 'Derivation length:',
+#print germination_offset+age*steps
 
 derivation length: germination_offset + age*steps
 
