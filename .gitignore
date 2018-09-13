@@ -3,8 +3,10 @@
 *.xml
 *.vtk
 *.iml
+*.json
+*.pyc
+.vscode/
 .idea/
 *.txt
 log.*
 nohup.out
-

@@ -24,7 +24,7 @@ phyllotaxis_angle = 0
 phyllotaxis_increment = 30
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
-turtle_draw_zero_length_error_prevention = 0.0000001
+turtle_draw_zero_length_error_prevention = 0.0000000001
 determinate_height = 10.0
 
 print 'Derivation length:',
@@ -68,22 +68,28 @@ S:      #shoot
     produce B(0,2)
 
 #group 1:    #rules for determinate terminal meristem growth pattern
-I(order, distanceFromBase, length, radius) < B(bud_order, 1):      #determinate growth pattern: stop vertical growth after reaching certain height
-  if distanceFromBase > determinate_height: #check for the right condition to terminate apical bud's growth by dying
-    produce *
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) < B(bud_order, 1):      #determinate growth pattern: stop vertical growth after reaching certain height
+  #if season is 'spring':     #signal the bud to transform into flower
+  #  produce B(bud_order, -1)
+  if distanceFromGroundToBase+distanceFromBase > determinate_height: #check for the right condition to terminate apical bud's growth by abortion
+    if random.randint(1,10) < 8:  #todo: to convert this to time-wise signal for spring season (time for bud to blossom into flower)
+      produce B(bud_order,-1)
+    else:
+      #produce *
+      produce I(order, distanceFromGroundToBase, distanceFromBase, 0.0, 0.0)
 #endgroup
 
 B(order, status):      #bud
   if status is 2:     #apical bud grows a node & internode
-    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0)I(0,0.0,0.0,0.0)B(0,1)
+    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0,0.0)I(0,0.0,0.0,0.0,0.0)B(0,1)
   elif status is 3:   #dormant bud comes alive
-    produce I(order,0.0,0.0,0.0)B(order,1)
+    produce B(order,1)
   elif status < 0:   #bud grows into a flower
     produce W
     #note: when order=0 (apical bud) and status < 0, the bud will blossom into a flower
-                      #status is 0: bud is suppressed, 1: bud is growing new nodes
+                      #status is 0: bud is suppressed, 1: bud is growing new nodes (note: for status 1, only contextual rule I<B will be applied)
 
-N(order, branchingSignal):      #node
+N(order, distanceFromGround, branchingSignal):      #node
   no_branches = 1       #default
   if branchingSignal is 1:    #branchingSignal = 1 will signal axillary bud to branch out
     if order is 0:
@@ -91,12 +97,12 @@ N(order, branchingSignal):      #node
     else:
       no_branches = no_second_ord_branches
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)I(order+1,0.0,0.0,0.0)B(order+1,branchingSignal)]
+      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(1,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1)]
   elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(0,0)B(order+1,0)]
+      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(0,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,0)]
 
-I(order, distanceFromBase, length, radius) > B(bud_order,1):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order,1):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
   length_norm = 0.0
   if (length < avg_internode_length):
     length_norm = length / avg_internode_length   #float
@@ -129,12 +135,12 @@ I(order, distanceFromBase, length, radius) > B(bud_order,1):        #distanceFro
       elif i==eff_new_nodes-1:
         branchOut = 2     #signal node to form leaf and dormant axillary bud
 
-      nproduce I(order, cur_distanceFromBase, avg_internode_length, cur_radius)N(order, branchOut)
+      nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, avg_internode_length, cur_radius)N(order, distanceFromGroundToBase+cur_distanceFromBase, branchOut)
       cur_radius = cur_radius - 0.5*diameter_growth_per_node
-  produce I(order, distanceFromBase+avg_internode_length*(eff_new_nodes+aggregate_partial_node_per_step), avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
+  produce I(order, distanceFromGroundToBase, distanceFromBase+avg_internode_length*(eff_new_nodes+aggregate_partial_node_per_step), avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
 
-I(order, distanceFromBase, length, radius):        #distanceFromBase measures internode's tip distance to parent branching node
-  produce I(order, distanceFromBase, length, radius+0.5*diameter_growth_rate/steps)
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius):        #distanceFromBase measures internode's tip distance to parent branching node
+  produce I(order, distanceFromGroundToBase, distanceFromBase, length, radius+0.5*diameter_growth_rate/steps)
 
 
 L(fallen, duration):      #leaf
@@ -154,9 +160,9 @@ U:      #fruit
   #fallen
 
 homomorphism:
-B(0,1) --> SetColor(3)@O(0.02)      #active apical bud
-B(order,1) --> SetColor(6)@O(0.02)  #active axillary bud
-B(order,0) --> SetColor(7)@O(0.02)  #dormant bud
+B(0,1) --> SetColor(6)@O(0.02)      #active apical bud
+B(order,1) --> SetColor(5)@O(0.02)  #active axillary bud
+B(order,0) --> SetColor(0)@O(0.02)  #dormant bud
 L(fallen, duration):
   global phyllotaxis_angle
   phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
@@ -165,6 +171,7 @@ L(fallen, duration):
     produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
   else:    #yellow old leaf, falling off soon
     produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
-I(order, distanceFromBase, length, radius) --> SetColor(1)F(length+turtle_draw_zero_length_error_prevention, radius)
+W --> SetColor(3)@O(0.1)    #flower
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) --> SetColor(1)F(length+turtle_draw_zero_length_error_prevention, radius)
 
 endlsystem

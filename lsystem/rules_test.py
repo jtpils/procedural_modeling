@@ -17,7 +17,7 @@ parameter_dict={'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_
                 'no_first_ord_branches':' ','no_second_ord_branches':' ',
                 'branching_pitch_angle':' ','branching_roll_angle':' ',
                 'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
-parameter_dict['age']=10
+parameter_dict['age']=20
 parameter_dict['trunk_pitch_angle'] = 5.0            #pitch down wrt turtle's left, in degrees
 parameter_dict['trunk_roll_angle'] = 0.0             #roll left wrt turtle's head, in degrees
 parameter_dict['trunk_height'] = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time

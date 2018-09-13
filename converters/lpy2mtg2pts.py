@@ -1,10 +1,10 @@
 #Note: to copy file 'io.py' in this folder to the equivalent location of 'C:\Python27\Lib\site-packages\OpenAlea.Mtg-1.2.0-py2.7.egg\openalea\mtg' (overwrite existing io.py to modify mtg writing)
 
 import os
-import time
+#import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import numpy
+#import numpy
 import openalea.lpy as lpy
 from openalea.mtg.plantframe import *
 from openalea.mtg.mtg import *
@@ -14,6 +14,7 @@ from openalea.mtg.io import *
 from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
+
 
 def lsystem_run(age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
@@ -28,19 +29,19 @@ def lsystem_run(age=10,
     input_file = os.path.abspath(os.path.realpath(input_file))
     #input_file = os.path.join(current_path, 'example.lpy')
     output_lpy = os.path.join(current_path, 'lpy_output.png')
-    output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
-    output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
-    output_mtg = os.path.join(current_path, 'mtg_output.png')
+    #output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
+    #output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
+    #output_mtg = os.path.join(current_path, 'mtg_output.png')
     mtg_file = os.path.join(current_path, 'lstring_output.mtg')
-    mtg2d_file = os.path.join(current_path, 'mtg2d.png')
+    #mtg2d_file = os.path.join(current_path, 'mtg2d.png')
     #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
-    test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
+    #test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
 
-    parameter_dict={'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
-                    'no_first_ord_branches':' ','no_second_ord_branches':' ',
-                    'branching_pitch_angle':' ','branching_roll_angle':' ',
-                    'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
-    parameter_dict['age']=age
+    parameter_dict = {'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
+                            'no_first_ord_branches':' ','no_second_ord_branches':' ',
+                            'branching_pitch_angle':' ','branching_roll_angle':' ',
+                            'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
+    parameter_dict['age'] = age
     parameter_dict['trunk_pitch_angle'] = trunk_pitch_angle            #pitch down wrt turtle's left, in degrees
     parameter_dict['trunk_roll_angle'] = trunk_roll_angle             #roll left wrt turtle's head, in degrees
     parameter_dict['trunk_height'] = trunk_height            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
@@ -52,13 +53,13 @@ def lsystem_run(age=10,
     parameter_dict['annual_no_new_nodes'] = annual_no_new_nodes  #number of new buds per year
     parameter_dict['avg_internode_length'] = avg_internode_length #unit: m
 
-    #l = lpy.Lsystem(input_file)
-    l = lpy.Lsystem(input_file, parameter_dict)
-    #l.useGroup(0)       #use rules for determinate growth pattern
-    axialtree = l.animate()
-    #axialtree = l.iterate()
+    #lsys = lpy.Lsystem(input_file)
+    lsys = lpy.Lsystem(input_file, parameter_dict)
+    #lsys.useGroup(0)       #use rules for determinate growth pattern
+    axialtree = lsys.animate()
+    #axialtree = lsys.iterate()
 
-    l.plot(axialtree)
+    lsys.plot(axialtree)
     Viewer.frameGL.saveImage(output_lpy, 'png')
 
     #print axialtree
@@ -69,7 +70,7 @@ def lsystem_run(age=10,
     #scale = {'A':1, 'B':1, 'L':1, 'I':1}
     scale = {'I':1}
     #scene = l.generateScene(axialtree)
-    scene = l.sceneInterpretation(axialtree)
+    scene = lsys.sceneInterpretation(axialtree)
     #scene = l.Tree2Scene(axialtree)
     #print 'Homomorphism:',
     #print l.homomorphism(axialtree)
@@ -96,8 +97,8 @@ def lsystem_run(age=10,
             print 'Unknown shape geometry'
     '''
 
-    #mtg = lpy2mtg(axialtree, l, scene)
-    #mtg_lines = lpy2mtg(mtg, axialtree, l)
+    #mtg = lpy2mtg(axialtree, lsys, scene)
+    #mtg_lines = lpy2mtg(mtg, axialtree, lsys)
     #mtg_lines = write_mtg(mtg)
 
     mtg = axialtree2mtg(axialtree, scale, scene)
@@ -176,5 +177,9 @@ def lsystem_run(age=10,
 
 
 if __name__ == "__main__":
-    lsystem_run()
+    lsystem_run(age=25,
+                trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
+                no_first_ord_branches=3, no_second_ord_branches=5,
+                branching_pitch_angle=45.0, branching_roll_angle=30.0,
+                diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03)
     raw_input()
