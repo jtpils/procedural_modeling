@@ -6,7 +6,7 @@ import numpy
 #order of rotations: roll first, then pitch
 #assumption: young branches and leaves never grow until the trunk height at mature phase (in reality, branches and leaves have been falling off at lower trunk segments before matured tree trunk appears smooth)
 
-#age = 11
+#age = 10
 #trunk_pitch_angle = 5.0            #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0             #roll left wrt turtle's head, in degrees
 #trunk_height = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
@@ -18,7 +18,7 @@ import numpy
 #annual_no_new_nodes = 30.0  #number of new buds per year
 #avg_internode_length = 0.03 #unit: m
 
-steps = 1                  #timestep: 'steps' steps/year)
+steps = int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 30
@@ -184,8 +184,8 @@ L(fallen, duration):
   else:    #yellow old leaf, falling off soon
     produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
 W --> SetColor(3)@O(0.1)    #flower - red
-#I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)F(turtle_draw_zero_length_error_prevention, radius)
-I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing
+I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)F(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
+#I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius) --> SetColor(1)F(length, radius)
 
 endlsystem
