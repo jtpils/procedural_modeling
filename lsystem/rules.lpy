@@ -6,26 +6,33 @@ import numpy
 #order of rotations: roll first, then pitch
 #assumption: young branches and leaves never grow until the trunk height at mature phase (in reality, branches and leaves have been falling off at lower trunk segments before matured tree trunk appears smooth)
 
-#age = 10
-#trunk_pitch_angle = 5.0            #pitch down wrt turtle's left, in degrees
-#trunk_roll_angle = 0.0             #roll left wrt turtle's head, in degrees
-#trunk_height = 3.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-#no_first_ord_branches = 3   #number of first order branches
-#no_second_ord_branches = 5  #number of second order branches (assume uniformity)
-#branching_pitch_angle = 45.0
-#branching_roll_angle = 30.0
-#diameter_growth_rate = 0.1  #m/year? relative growth rate?
-#annual_no_new_nodes = 30.0  #number of new buds per year
-#avg_internode_length = 0.03 #unit: m
+#Average tree parameters for:
+#generic tree: age=10, trunk_pitch_angle=5.0, trunk_height=3.0, no_first_ord_branches=3, no_second_ord_branches=5, branching_pitch_angle=45.0, branching_roll_angle=30.0, diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03
+#raintree: age=30, trunk_pitch_angle=2.0, trunk_height=2.205, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.619/30, annual_no_new_nodes=28.5, avg_internode_length=0.0589
+#yellow flame: age=20, trunk_pitch_angle=2.0, trunk_height=2.8497, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4725/20, annual_no_new_nodes=44.148, avg_internode_length=0.03232
+#khaya: age=10, trunk_pitch_angle=0.0, trunk_height=3.872, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.983/10, annual_no_new_nodes=117.231, avg_internode_length=0.02727
+#sterculia: age=8, trunk_pitch_angle=0.0, trunk_height=4.0356, no_first_ord_branches=3, no_second_ord_branches=3, branching_pitch_angle=25.0, branching_roll_angle=120.0, diameter_growth_rate=0.3139/8, annual_no_new_nodes=47.684, avg_internode_length=0.09425
 
-steps = int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
+age = 20
+trunk_pitch_angle = 2.0            #pitch down wrt turtle's left, in degrees
+trunk_roll_angle = 0.0             #roll left wrt turtle's head, in degrees
+trunk_height = 2.8497            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+no_first_ord_branches = 2   #number of first order branches
+no_second_ord_branches = 2  #number of second order branches (assume uniformity)
+branching_pitch_angle = 30.0
+branching_roll_angle = 180.0
+diameter_growth_rate = 0.4725/20  #m/year? relative growth rate?
+annual_no_new_nodes = 44.148  #number of new buds per year
+avg_internode_length = 0.03232 #unit: m
+
+steps = 8 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 30
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 turtle_draw_zero_length_error_prevention = 0.0000000001
-determinate_height = 100.0
+determinate_height = 30.0
 
 print 'partial_node_per_step=', partial_node_per_step
 print 'no_new_nodes_per_step=', no_new_nodes_per_step
@@ -174,7 +181,7 @@ U:      #fruit
 homomorphism:
 B(0,1) --> SetColor(6)@O(0.02)      #active apical bud - pink
 B(order,1) --> SetColor(5)@O(0.02)  #active axillary bud - blue
-B(order,0) --> SetColor(0)@O(0.02)  #dormant bud - white
+B(order,0) --> SetColor(0)@O(0.01)  #dormant bud - white
 L(fallen, duration):
   global phyllotaxis_angle
   phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
@@ -183,9 +190,9 @@ L(fallen, duration):
     produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
   else:    #yellow old leaf, falling off soon
     produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
-W --> SetColor(3)@O(0.1)    #flower - red
-I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)F(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
-#I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg
+W --> SetColor(3)@O(0.4)    #flower - red
+#I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)F(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
+I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius) --> SetColor(1)F(length, radius)
 
 endlsystem
