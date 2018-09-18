@@ -82,7 +82,7 @@ def create_sample_points(npts,means,stds):
 		sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
 	return sample_points
 
-def optimise(points,ranges,method):
+def optimise_p(points,ranges,method):
 	r=[]; e=[]; i=[];
 	try:
 		if method=='SLSQP':
@@ -104,6 +104,32 @@ def optimise(points,ranges,method):
 		pass
 	i = numpy.asarray(i)
 	r = numpy.asarray(r); e = numpy.asarray(e);
+	return i,r,e
+
+def optimise_s(points,ranges,method):
+	r=[]; e=[]; i=[];
+	for j in range(len(points)):
+		try:
+			if method=='SLSQP':
+				opt_params=optimize.minimize(estimate_error_1,points[j,:],\
+				    method='SLSQP',bounds=ranges)
+			elif method=='TNC':
+				opt_params=optimize.minimize(estimate_error_1,points[j,:],\
+				    method='TNC',bounds=ranges)
+			else:
+				print "Optimisation method not recognised."
+		    #print "\tOpt params: ", opt_params.x
+			r.append(opt_params.x); e.append(opt_params.fun)
+		    #print "\tError:      ", opt_params.fun
+			i.append(points[j,:])
+		except:
+			r.append(points[j,:])
+			e.append(100.0)
+			i.append(points[j,:])
+			pass
+	i = numpy.asarray(i);
+	r = numpy.asarray(r);
+	e = numpy.asarray(e);		      
 	return i,r,e
 
 def main():
@@ -141,33 +167,46 @@ def main():
     print "\tTrunk height:              ", targ_th
     print "\tCrown height:              ", targ_ch
     print "Setting the following constraints:"
-    print "\tAge:                 :   5-30"
-    print "\tNo 1st order branches:   2-4"
-    print "\tNo 2nd order branches:   1-4"
-    print "Params with unknown range:"
-    print "\tBranching angle (roll)\n\tBranching angle (pitch)";
-
+    print "\tAge:                       ", ranges[0][0],"-",ranges[0][1]
+    print "\tTrunk pitch angle:         ", ranges[1][0],"-",ranges[1][1]
+    print "\tTrunk roll angle:          ", ranges[2][0],"-",ranges[2][1]
+    print "\tTrunk height:              ", ranges[3][0],"-",ranges[3][1]
+    print "\tNo. 1st order branches:    ", ranges[4][0],"-",ranges[4][1]
+    print "\tNo. 2nd order branches:    ", ranges[5][0],"-",ranges[5][1]
+    print "\tBranch pitch angle:        ", ranges[6][0],"-",ranges[6][1]
+    print "\tBranch roll angle:         ", ranges[7][0],"-",ranges[7][1]
+    print "\tDiameter growth rate:      ", ranges[8][0],"-",ranges[8][1]
+    print "\tAnnual no. new nodes:      ", ranges[9][0],"-",ranges[9][1]
+    print "\tAverage internode length:  ", ranges[10][0],"-",ranges[10][1]
+    print "------------------------------------------------"
     run=1; save_npy=0; save_obj=1; method='SLSQP'
-    npoints = int(sys.argv[1]);
-    num_threads=mp.cpu_count();
-
+    npoints = int(raw_input("Select number of sample points per variable: "));
+    avail_threads=mp.cpu_count();
+    thread_string = "Select number of processors (%i available): " % avail_threads
+    num_threads = int(raw_input(thread_string))
 
     if run==1:
 		# Run optimisation routine
         sample_points = create_sample_points(npoints,means,stds)
         print "Testing %i sample points with %i cpus" % (len(sample_points), num_threads)
+        print "------------------------------------------------"
         suppress()
 		# Create pool of thread
-        pool = mp.Pool(processes=num_threads);
-		# Run on nprocs
-        result = [ pool.apply_async(optimise,args=(i,ranges,method)) for i in sample_points]
+        if num_threads>1:
+            pool = mp.Pool(processes=num_threads);
+		    # Run on nprocs
+            result = [ pool.apply_async(optimise_p,args=(i,ranges,method)) for i in sample_points]
+            output = numpy.asarray([p.get() for p in result])
+            initial_points = numpy.asarray(output[:,0])
+            results = numpy.asarray(output[:,1])
+            error = numpy.asarray(output[:,2])
+        else:
+            initial_points, results, error = optimise_s(sample_points,ranges,method)
         allow()
         # Collect data when ready
-        output = numpy.asarray([p.get() for p in result])
+
 		# Reorganise results
-        initial_points = numpy.asarray(output[:,0])
-        results = numpy.asarray(output[:,1])
-        error = numpy.asarray(output[:,2])
+
         loc = numpy.where(error==error.min())
         loc = int(loc[0])
 		#Convert result to array (don't remember why it was necessary
@@ -183,7 +222,7 @@ def main():
         print "\tError:\t", error.min()
 		# Save as obj?
         if save_obj==1:
-			output = lsys.generate_lsystem_tree_points(res)
+			output = interf.generate_lsystem_tree_points(res)
 			out_file = 'opt_npts' + str(npoints) + '.obj'
 			file = open(out_file, 'w')
 			for item in output:
