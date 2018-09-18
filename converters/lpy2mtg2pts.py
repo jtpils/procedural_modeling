@@ -177,9 +177,9 @@ def lsystem_run(age=10,
 
 
 if __name__ == "__main__":
-    lsystem_run(age=25,
-                trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
-                no_first_ord_branches=3, no_second_ord_branches=5,
-                branching_pitch_angle=45.0, branching_roll_angle=30.0,
-                diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03)
+    lsystem_run(age=20,
+                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.8497,
+                no_first_ord_branches=2, no_second_ord_branches=2,
+                branching_pitch_angle=30.0, branching_roll_angle=180.0,
+                diameter_growth_rate=0.4725/20, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
     raw_input()
