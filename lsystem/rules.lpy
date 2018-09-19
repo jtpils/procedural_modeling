@@ -12,18 +12,25 @@ import numpy
 #yellow flame: age=20, trunk_pitch_angle=2.0, trunk_height=2.8497, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4725/20, annual_no_new_nodes=44.148, avg_internode_length=0.03232
 #khaya: age=10, trunk_pitch_angle=0.0, trunk_height=3.872, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.983/10, annual_no_new_nodes=117.231, avg_internode_length=0.02727
 #sterculia: age=8, trunk_pitch_angle=0.0, trunk_height=4.0356, no_first_ord_branches=3, no_second_ord_branches=3, branching_pitch_angle=25.0, branching_roll_angle=120.0, diameter_growth_rate=0.3139/8, annual_no_new_nodes=47.684, avg_internode_length=0.09425
+#palm:
+#hopea:
+#mahogany:
+#syzygium grande:
+#tabebuia rosea:
+#syzygium myrtifolium:
 
-age = 20
-trunk_pitch_angle = 2.0            #pitch down wrt turtle's left, in degrees
-trunk_roll_angle = 0.0             #roll left wrt turtle's head, in degrees
-trunk_height = 2.8497            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-no_first_ord_branches = 2   #number of first order branches
-no_second_ord_branches = 2  #number of second order branches (assume uniformity)
-branching_pitch_angle = 30.0
-branching_roll_angle = 180.0
-diameter_growth_rate = 0.4725/20  #m/year? relative growth rate?
-annual_no_new_nodes = 44.148  #number of new buds per year
-avg_internode_length = 0.03232 #unit: m
+
+#age = 20
+#trunk_pitch_angle = 2.0            #pitch down wrt turtle's left, in degrees
+#trunk_roll_angle = 0.0             #roll left wrt turtle's head, in degrees
+#trunk_height = 2.8497            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#no_first_ord_branches = 2   #number of first order branches
+#no_second_ord_branches = 2  #number of second order branches (assume uniformity)
+#branching_pitch_angle = 30.0
+#branching_roll_angle = 180.0
+#diameter_growth_rate = 0.4725/20  #m/year? relative growth rate?
+#annual_no_new_nodes = 44.148  #number of new buds per year
+#avg_internode_length = 0.03232 #unit: m
 
 steps = 8 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
@@ -32,11 +39,13 @@ phyllotaxis_increment = 30
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 turtle_draw_zero_length_error_prevention = 0.0000000001
-determinate_height = 30.0
+#determinate_height = 30.0
+apical_determinate = False  #flag of determinate or indeterminate growth for apical bud
+lateral_determinate = False #flag of determinate or indeterminate growth for lateral bud
+determinate_bud_lifespan = 0.5 * age * steps    #x * steps means annual life cycle (the bud will turn to flower in x yrs); trees are either annual(x=1), biennial(x=2), or perennial(x>2)
 
-print 'partial_node_per_step=', partial_node_per_step
-print 'no_new_nodes_per_step=', no_new_nodes_per_step
-
+#print 'partial_node_per_step=', partial_node_per_step
+#print 'no_new_nodes_per_step=', no_new_nodes_per_step
 print 'Derivation length:',
 print germination_offset+age*steps
 
@@ -55,8 +64,9 @@ module U    #fruit
 Axiom: O
 
 def EndEach(lstring):
-  pass
+  #pass
   #print 'Current lstring:', lstring
+  print 'Derivation number:', getIterationNb()
 
 production:
 
@@ -75,25 +85,39 @@ S:      #shoot
   #print 'Debug in S:',
   #print germination_offset
   if germination_offset is 1:
-    produce B(0,2)
+    if apical_determinate is True:
+      timeLeft = determinate_bud_lifespan
+    else:
+      timeLeft = -1
+    produce B(0,2,timeLeft)
 
 #group 1:    #rules for determinate terminal meristem growth pattern
-I(order, distanceFromGroundToBase, distanceFromBase, length, radius) < B(bud_order, 1):      #determinate growth pattern: stop vertical growth after reaching certain height
-  #if season is 'spring':     #signal the bud to transform into flower
-  #  produce B(bud_order, -1)
-  if distanceFromGroundToBase+distanceFromBase > determinate_height: #check for the right condition to terminate apical bud's growth by abortion
-    if random.randint(1,10) < 8:  #todo: to convert this to time-wise signal for spring season (time for bud to blossom into flower)
-      produce B(bud_order,-1)
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) < B(bud_order, 1, timeLeft):      #determinate growth pattern: stop elongation after a period of time/season
+  if timeLeft > 0:
+    produce B(bud_order, 1, timeLeft-1)
+  elif timeLeft == 0:
+    if random.randint(1,10) < 8:  #todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
+      produce B(bud_order,-1,0)
     else:
       #produce *
       produce I(order, distanceFromGroundToBase, distanceFromBase, 0.0, 0.0)
+  #else: #timeLeft < 0
+    #pass
+
+  #obsolete: the following section use determinate_height to signal bud to abort/flower hence stopping elongation
+  #if distanceFromGroundToBase+distanceFromBase > determinate_height: #check for the right condition to terminate apical bud's growth by abortion
+  #  if random.randint(1,10) < 8:  #todo: to convert this to time-wise signal for spring season (time for bud to blossom into flower)
+  #    produce B(bud_order,-1)
+  #  else:
+  #    #produce *
+  #    produce I(order, distanceFromGroundToBase, distanceFromBase, 0.0, 0.0)
 #endgroup
 
-B(order, status):      #bud
+B(order, status, timeLeft):      #bud, timeLeft>0 for active bud with determinate life, timeLeft=0 for active bud to abort, timeLeft<0 for forever active bud
   if status is 2:     #apical bud grows a node & internode
-    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0,0.0)I(0,0.0,0.0,0.0,0.0)B(0,1)
+    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0,0.0)I(0,0.0,0.0,0.0,0.0)B(0,1,timeLeft)
   elif status is 3:   #dormant bud comes alive
-    produce B(order,1)
+    produce B(order,1,timeLeft)
   elif status < 0:   #bud grows into a flower
     produce W
     #note: when order=0 (apical bud) and status < 0, the bud will blossom into a flower
@@ -101,18 +125,22 @@ B(order, status):      #bud
 
 N(order, distanceFromGround, branchingSignal):      #node
   no_branches = 1       #default
+  if lateral_determinate is True:
+    timeLeft = determinate_bud_lifespan
+  else:
+    timeLeft = -1
   if branchingSignal is 1:    #branchingSignal = 1 will signal axillary bud to branch out
     if order is 0:
       no_branches = no_first_ord_branches
     else:
       no_branches = no_second_ord_branches
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(1,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1)]
+      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(1,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1,timeLeft)]
   elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(0,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,0)]
+      nproduce [/((i+1)*(branching_roll_angle-90))&(branching_pitch_angle)L(0,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,0,timeLeft)]
 
-I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order,1):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 1, timeLeft):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
   length_norm = 0.0
   if (length < avg_internode_length):
     length_norm = length / avg_internode_length   #float
@@ -154,7 +182,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_ord
       cur_radius = cur_radius - 0.5*diameter_growth_per_node
   produce I(order, distanceFromGroundToBase, distanceFromBase+avg_internode_length*(eff_new_nodes+aggregate_partial_node_per_step), avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
 
-I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order,0):        #don't grow radius if bud is dormant
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 0, timeLeft):        #don't grow radius if bud is dormant
   produce I(order, distanceFromGroundToBase, distanceFromBase, length, radius)
 
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius):        #distanceFromBase measures internode's tip distance to parent branching node
@@ -179,18 +207,20 @@ U:      #fruit
   #fallen
 
 homomorphism:
-B(0,1) --> SetColor(6)@O(0.02)      #active apical bud - pink
-B(order,1) --> SetColor(5)@O(0.02)  #active axillary bud - blue
-B(order,0) --> SetColor(0)@O(0.01)  #dormant bud - white
+B(0,1,timeLeft) --> SetColor(6)@O(0.02)      #active apical bud - pink
+B(order,1,timeLeft) --> SetColor(5)@O(0.02)  #active axillary bud - blue
+B(order,0,timeLeft) --> SetColor(0)@O(0.01)  #dormant bud - white
 L(fallen, duration):
   global phyllotaxis_angle
   phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
   oldage = 0.2*steps
   if duration < oldage:  #green leaf
-    produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
+    #produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
+    produce SetColor(2)[/(phyllotaxis_angle)&(45)~l(1,0.01*duration/oldage)]
   else:    #yellow old leaf, falling off soon
-    produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
-W --> SetColor(3)@O(0.4)    #flower - red
+    #produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
+    produce Setcolor(4)[/(phyllotaxis_angle)&(60)~l(1,0.01*duration/oldage)]
+W --> SetColor(3)@O(0.25)    #flower - red
 #I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)F(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
 I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius) --> SetColor(1)F(length, radius)
