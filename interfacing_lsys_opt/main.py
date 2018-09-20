@@ -182,7 +182,7 @@ def main():
                                             no_first_ord_branches=3,
                                             no_second_ord_branches=5,
                                             branching_pitch_angle=45.0,
-                                            branching_roll_angle=30.0,
+                                            branching_roll_angle=80.0,
                                             diameter_growth_rate=0.1,
                                             annual_no_new_nodes=30.0,
                                             avg_internode_length=0.03 )
