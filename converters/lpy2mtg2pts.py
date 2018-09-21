@@ -5,7 +5,7 @@ import sys
 import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import numpy
+#import numpy
 import openalea.lpy as lpy
 from openalea.mtg.plantframe import *
 from openalea.mtg.mtg import *
@@ -20,7 +20,6 @@ sys.path.append('../optimisation/')
 
 from load_growth_space import mtg_file_gs
 
-
 def lsystem_run(age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
                 no_first_ord_branches=3, no_second_ord_branches=5,
@@ -34,19 +33,19 @@ def lsystem_run(age=10,
     input_file = os.path.abspath(os.path.realpath(input_file))
     #input_file = os.path.join(current_path, 'example.lpy')
     output_lpy = os.path.join(current_path, 'lpy_output.png')
-    output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
-    output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
-    output_mtg = os.path.join(current_path, 'mtg_output.png')
+    #output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
+    #output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
+    #output_mtg = os.path.join(current_path, 'mtg_output.png')
     mtg_file = os.path.join(current_path, 'lstring_output.mtg')
-    mtg2d_file = os.path.join(current_path, 'mtg2d.png')
+    #mtg2d_file = os.path.join(current_path, 'mtg2d.png')
     #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
-    test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
+    #test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
 
-    parameter_dict={'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
-                    'no_first_ord_branches':' ','no_second_ord_branches':' ',
-                    'branching_pitch_angle':' ','branching_roll_angle':' ',
-                    'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
-    parameter_dict['age']=age
+    parameter_dict = {'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
+                            'no_first_ord_branches':' ','no_second_ord_branches':' ',
+                            'branching_pitch_angle':' ','branching_roll_angle':' ',
+                            'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
+    parameter_dict['age'] = age
     parameter_dict['trunk_pitch_angle'] = trunk_pitch_angle            #pitch down wrt turtle's left, in degrees
     parameter_dict['trunk_roll_angle'] = trunk_roll_angle             #roll left wrt turtle's head, in degrees
     parameter_dict['trunk_height'] = trunk_height            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
@@ -58,12 +57,14 @@ def lsystem_run(age=10,
     parameter_dict['annual_no_new_nodes'] = annual_no_new_nodes  #number of new buds per year
     parameter_dict['avg_internode_length'] = avg_internode_length #unit: m
 
-    #l = lpy.Lsystem(input_file)
-    l = lpy.Lsystem(input_file, parameter_dict);
-    #axialtree = l.animate()
-    axialtree = l.iterate(); # This outputs Lstring to screen, how to mute?
-    #l.plot(axialtree)
-    #Viewer.frameGL.saveImage(output_lpy, 'png')
+    #lsys = lpy.Lsystem(input_file)
+    lsys = lpy.Lsystem(input_file, parameter_dict)
+    #lsys.useGroup(0)       #use rules for determinate growth pattern
+    #axialtree = lsys.animate()
+    axialtree = lsys.iterate()  #lstring output muted in rules.lpy's function EndEach
+
+    lsys.plot(axialtree)
+    Viewer.frameGL.saveImage(output_lpy, 'png')
 
     #print axialtree
     #for num, element in enumerate(axialtree):
@@ -73,13 +74,12 @@ def lsystem_run(age=10,
     #scale = {'A':1, 'B':1, 'L':1, 'I':1}
     scale = {'I':1}
     #scene = l.generateScene(axialtree)
-    scene = l.sceneInterpretation(axialtree);
-
-    #scene = l.Tree2Scene(axialtree)
+    scene = lsys.sceneInterpretation(axialtree)
+    #scene = lsys.Tree2Scene(axialtree)
     #print 'Homomorphism:',
-    #print l.homomorphism(axialtree)
+    #print lsys.homomorphism(axialtree)
 
-    #scene = l.Tree2Scene(axialtree)
+    #scene = lsys.Tree2Scene(axialtree)
     '''
 
 #    print 'Scene:'
@@ -103,8 +103,8 @@ def lsystem_run(age=10,
 #    '''
 
 
-    #mtg = lpy2mtg(axialtree, l, scene)
-    #mtg_lines = lpy2mtg(mtg, axialtree, l)
+    #mtg = lpy2mtg(axialtree, lsys, scene)
+    #mtg_lines = lpy2mtg(mtg, axialtree, lsys)
     #mtg_lines = write_mtg(mtg)
 
     mtg = axialtree2mtg(axialtree, scale, scene)
@@ -172,19 +172,21 @@ def lsystem_run(age=10,
     #properties = [(p, 'REAL') for p in mtg.property_names()]
     #properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
     #print properties
-    f = open(mtg_file, 'w')
+    #f = open(mtg_file, 'w')
     #f.write(mtg_lines)
     #f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
-    f.write(write_mtg(mtg, properties))
+    mtg_string_output = write_mtg(mtg, properties)
+    #f.write(lstring_output)
+    #f.close()
 
-    f.close()
+    #pts = mtg_file_gs(mtg_file)
 
-    pts = mtg_file_gs(mtg_file)
-
-
-    #lstring_output = ''
-    return pts
-
+    return mtg_string_output
 
 if __name__ == "__main__":
-    lsystem_run()
+    print lsystem_run(age=10,
+                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=1.0,
+                no_first_ord_branches=2, no_second_ord_branches=2,
+                branching_pitch_angle=30.0, branching_roll_angle=180.0,
+                diameter_growth_rate=0.04, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
+    raw_input()

@@ -3,7 +3,9 @@
 *.xml
 *.vtk
 *.iml
-*.mtg
+*.json
+*.pyc
+.vscode/
 .idea/
 *.txt
 log.*
