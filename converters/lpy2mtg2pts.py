@@ -165,14 +165,14 @@ def lsystem_run(age=10,
     #properties = [(p, 'REAL') for p in mtg.property_names()]
     #properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
     #print properties
-    f = open(mtg_file, 'w')
+    #f = open(mtg_file, 'w')
     #f.write(mtg_lines)
     #f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
-    lstring_output = write_mtg(mtg, properties)
-    f.write(lstring_output)
-    f.close()
+    mtg_string_output = write_mtg(mtg, properties)
+    #f.write(lstring_output)
+    #f.close()
 
-    return lstring_output
+    return mtg_string_output
 
 
 if __name__ == "__main__":

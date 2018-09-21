@@ -186,12 +186,12 @@ def main():
                                             diameter_growth_rate=0.1,
                                             annual_no_new_nodes=30.0,
                                             avg_internode_length=0.03 )
-    print output
-    file = open('lsys_optimisation_output.vtk', 'w')
-    file.write("# vtk DataFile Version 3.0\nTree points\nASCII\nDATASET POLYDATA\n\nPOINTS "+str(len(output))+" integer ")
-    for item in output:
-        file.write("%d %d %d\n" % (item[0], item[1], item[2]))
-    file.close()
+    print output        #mtg string output
+    #file = open('lsys_optimisation_output.vtk', 'w')
+    #file.write("# vtk DataFile Version 3.0\nTree points\nASCII\nDATASET POLYDATA\n\nPOINTS "+str(len(output))+" integer ")
+    #for item in output:
+    #    file.write("%d %d %d\n" % (item[0], item[1], item[2]))
+    #file.close()
 
 
 if __name__ == "__main__":
