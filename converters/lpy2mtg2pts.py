@@ -168,18 +168,17 @@ def lsystem_run(age=10,
     f = open(mtg_file, 'w')
     #f.write(mtg_lines)
     #f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
-    f.write(write_mtg(mtg, properties))
-
+    lstring_output = write_mtg(mtg, properties)
+    f.write(lstring_output)
     f.close()
 
-    lstring_output = ''
     return lstring_output
 
 
 if __name__ == "__main__":
-    lsystem_run(age=20,
-                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.8497,
+    lsystem_run(age=10,
+                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=1.0,
                 no_first_ord_branches=2, no_second_ord_branches=2,
                 branching_pitch_angle=30.0, branching_roll_angle=180.0,
-                diameter_growth_rate=0.4725/20, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
+                diameter_growth_rate=0.04, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
     raw_input()

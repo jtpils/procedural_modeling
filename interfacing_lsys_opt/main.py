@@ -175,14 +175,14 @@ def hardcoded_ngenerate_lsystem_tree_points():
 
 def main():
     #output = generate_lsystem_tree_points(numpy.array([10, 5.0, 0.0, 3.0, 3, 5, 45.0, 30.0, 0.1, 30.0, 0.03]))
-    output = ngenerate_lsystem_tree_points( age=20,
+    output = ngenerate_lsystem_tree_points( age=10,
                                             trunk_pitch_angle=5.0,
                                             trunk_roll_angle=0.0,
                                             trunk_height=3.0,
                                             no_first_ord_branches=3,
                                             no_second_ord_branches=5,
                                             branching_pitch_angle=45.0,
-                                            branching_roll_angle=80.0,
+                                            branching_roll_angle=120.0,
                                             diameter_growth_rate=0.1,
                                             annual_no_new_nodes=30.0,
                                             avg_internode_length=0.03 )
