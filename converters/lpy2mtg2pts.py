@@ -1,7 +1,8 @@
 #Note: to copy file 'io.py' in this folder to the equivalent location of 'C:\Python27\Lib\site-packages\OpenAlea.Mtg-1.2.0-py2.7.egg\openalea\mtg' (overwrite existing io.py to modify mtg writing)
 
 import os
-#import time
+import sys
+import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 #import numpy
@@ -15,6 +16,9 @@ from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
+sys.path.append('../optimisation/')
+
+from load_growth_space import mtg_file_gs
 
 def lsystem_run(age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
@@ -56,8 +60,8 @@ def lsystem_run(age=10,
     #lsys = lpy.Lsystem(input_file)
     lsys = lpy.Lsystem(input_file, parameter_dict)
     #lsys.useGroup(0)       #use rules for determinate growth pattern
-    axialtree = lsys.animate()
-    #axialtree = lsys.iterate()
+    #axialtree = lsys.animate()
+    axialtree = lsys.iterate()  #lstring output muted in rules.lpy's function EndEach
 
     lsys.plot(axialtree)
     Viewer.frameGL.saveImage(output_lpy, 'png')
@@ -71,31 +75,33 @@ def lsystem_run(age=10,
     scale = {'I':1}
     #scene = l.generateScene(axialtree)
     scene = lsys.sceneInterpretation(axialtree)
-    #scene = l.Tree2Scene(axialtree)
+    #scene = lsys.Tree2Scene(axialtree)
     #print 'Homomorphism:',
-    #print l.homomorphism(axialtree)
+    #print lsys.homomorphism(axialtree)
 
-    #scene = l.Tree2Scene(axialtree)
+    #scene = lsys.Tree2Scene(axialtree)
     '''
-    print 'Scene:'
-    print scene
-    print 'Components in scene:'
-    for shape in scene:
-        print shape.geometry.name, shape.geometry.getPglReferenceCount
-        #print isinstance(shape, scenegraph._pglsg.Cylinder)
-        if type(shape.geometry) is Cylinder:
-            print shape.geometry.radius, shape.geometry.height
-        elif type(shape.geometry) is Translated:
-            print shape.geometry.translation
-        elif type(shape.geometry) is Frustum:
-            print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
-        elif type(shape.geometry) is TriangleSet:
-            print 'TriangleSet geometry'
-        elif type(shape.geometry) is Oriented:
-            print 'Oriented geometry'
-        else:
-            print 'Unknown shape geometry'
-    '''
+
+#    print 'Scene:'
+#    print scene
+#    print 'Components in scene:'
+#    for shape in scene:
+#        print shape.geometry.name, shape.geometry.getPglReferenceCount
+#        #print isinstance(shape, scenegraph._pglsg.Cylinder)
+#        if type(shape.geometry) is Cylinder:
+#            print shape.geometry.radius, shape.geometry.height
+#        elif type(shape.geometry) is Translated:
+#            print shape.geometry.translation
+#        elif type(shape.geometry) is Frustum:
+#            print shape.geometry.radius, shape.geometry.height, shape.geometry.taper
+#        elif type(shape.geometry) is TriangleSet:
+#            print 'TriangleSet geometry'
+#        elif type(shape.geometry) is Oriented:
+#            print 'Oriented geometry'
+#        else:
+#            print 'Unknown shape geometry'
+#    '''
+
 
     #mtg = lpy2mtg(axialtree, lsys, scene)
     #mtg_lines = lpy2mtg(mtg, axialtree, lsys)
@@ -154,11 +160,12 @@ def lsystem_run(age=10,
     #pf3.run()          #called compute_axes & algo_diameter
     #scene = pf3.build_scene(pf3.g, pf3.origin, axes, pf3.points, diameters, 10000) #obsolete function
     #Viewer.display(scene)      #called in plot()
-    print "pf3"
-    print pf3.points
-    pf3.plot(gc=True)
-    Viewer.frameGL.saveImage(output_mtg, 'png')
+    #print "pf3"
+    #print pf3.points
+    #pf3.plot(gc=True)
+    #Viewer.frameGL.saveImage(output_mtg, 'png')
     '''
+
 
     #properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label', '_axial_id', 'geometry']]
     properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'radius']]
@@ -172,11 +179,12 @@ def lsystem_run(age=10,
     #f.write(lstring_output)
     #f.close()
 
+    #pts = mtg_file_gs(mtg_file)
+
     return mtg_string_output
 
-
 if __name__ == "__main__":
-    lsystem_run(age=10,
+    print lsystem_run(age=10,
                 trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=1.0,
                 no_first_ord_branches=2, no_second_ord_branches=2,
                 branching_pitch_angle=30.0, branching_roll_angle=180.0,

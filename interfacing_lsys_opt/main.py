@@ -3,7 +3,13 @@
 import numpy
 from pyquaternion import Quaternion
 import os
-from converters.lpy2mtg2pts import lsystem_run
+import sys
+sys.path.append('../converters/')
+#from converters.lpy2mtg2pts import lsystem_run
+from lpy2mtg2pts import lsystem_run
+import warnings
+warnings.filterwarnings("ignore")
+
 
 
 def estimate_age(species, size):
