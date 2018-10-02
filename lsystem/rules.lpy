@@ -90,18 +90,18 @@ S:      #shoot
       timeLeft = determinate_bud_lifespan
     else:
       timeLeft = -1
-    produce B(0,2,timeLeft)
+    produce B(0,2,timeLeft, 0.0, 0.0)
 
 #group 1:    #rules for determinate terminal meristem growth pattern
-I(order, distanceFromGroundToBase, distanceFromBase, length, radius) < B(bud_order, 1, timeLeft):      #determinate growth pattern: stop elongation after a period of time/season
+I(order, distanceFromGroundToBase, distanceFromBase_i, length, radius) < B(bud_order, 1, timeLeft, distanceFromGround, distanceFromBase):      #determinate growth pattern: stop elongation after a period of time/season
   if timeLeft > 0:
-    produce B(bud_order, 1, timeLeft-1)
+    produce B(bud_order, 1, timeLeft-1, distanceFromGround, distanceFromBase)
   elif timeLeft == 0:
     if random.randint(1,10) < 8:  #todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
-      produce B(bud_order,-1,0)
+      produce B(bud_order, -1, 0, distanceFromGround, distanceFromBase)
     else:
       #produce *
-      produce I(order, distanceFromGroundToBase, distanceFromBase, 0.0, 0.0)
+      produce I(order, distanceFromGroundToBase, distanceFromBase_i, 0.0, 0.0)
   #else: #timeLeft < 0
     #pass
 
@@ -114,11 +114,11 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) < B(bud_ord
   #    produce I(order, distanceFromGroundToBase, distanceFromBase, 0.0, 0.0)
 #endgroup
 
-B(order, status, timeLeft):      #bud, timeLeft>0 for active bud with determinate life, timeLeft=0 for active bud to abort, timeLeft<0 for forever active bud
+B(order, status, timeLeft, distanceFromGround, distanceFromBase):      #bud, timeLeft>0 for active bud with determinate life, timeLeft=0 for active bud to abort, timeLeft<0 for forever active bud
   if status is 2:     #apical bud grows a node & internode
-    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(0,0.0,0.0,0.0,0.0)I(0,0.0,0.0,0.0,0.0)B(0,1,timeLeft)
+    produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(order,distanceFromGround,distanceFromBase,0.0,0.0)B(order,1,timeLeft,distanceFromGround,distanceFromBase)
   elif status is 3:   #dormant bud comes alive
-    produce B(order,1,timeLeft)
+    produce I(order,distanceFromGround,distanceFromBase,0.0,0.0)B(order,1,timeLeft,distanceFromGround,distanceFromBase)
   elif status < 0:   #bud grows into a flower
     produce W
     #note: when order=0 (apical bud) and status < 0, the bud will blossom into a flower
@@ -136,12 +136,12 @@ N(order, distanceFromGround, branchingSignal):      #node
     timeLeft = -1
   if branchingSignal is 1:    #branchingSignal = 1 will signal axillary bud to branch out
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce [/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)L(1,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1,timeLeft)]
+      nproduce [/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)L(1,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1,timeLeft,distanceFromGround,0.0)]
   elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce [/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)L(0,0)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,0,timeLeft)]
+      nproduce [/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)L(0,0)B(order+1,0,timeLeft,distanceFromGround,0.0)]
 
-I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 1, timeLeft):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 1, timeLeft, distanceFromGround, distanceFromBase_b):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
   length_norm = 0.0
   if (length < avg_internode_length):
     length_norm = length / avg_internode_length   #float
@@ -183,7 +183,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_ord
       cur_radius = cur_radius - 0.5*diameter_growth_per_node
   produce I(order, distanceFromGroundToBase, distanceFromBase+avg_internode_length*(eff_new_nodes+aggregate_partial_node_per_step), avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
 
-I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 0, timeLeft):        #don't grow radius if bud is dormant
+I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 0, timeLeft, distanceFromGround, distanceFromBase_b):        #don't grow radius if bud is dormant
   produce I(order, distanceFromGroundToBase, distanceFromBase, length, radius)
 
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius):        #distanceFromBase measures internode's tip distance to parent branching node
@@ -208,9 +208,9 @@ U:      #fruit
   #fallen
 
 homomorphism:
-B(0,1,timeLeft) --> SetColor(6)@O(0.02)      #active apical bud - pink
-B(order,1,timeLeft) --> SetColor(5)@O(0.02)  #active axillary bud - blue
-B(order,0,timeLeft) --> SetColor(0)@O(0.01)  #dormant bud - white
+B(0,1,timeLeft,distanceFromGround,distanceFromBase) --> SetColor(6)@O(0.02)      #active apical bud - pink
+B(order,1,timeLeft,distanceFromGround,distanceFromBase) --> SetColor(5)@O(0.02)  #active axillary bud - blue
+B(order,0,timeLeft,distanceFromGround,distanceFromBase) --> SetColor(0)@O(0.01)  #dormant bud - white
 L(fallen, duration):
   global phyllotaxis_angle
   phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
@@ -224,7 +224,7 @@ L(fallen, duration):
     produce Setcolor(4)[/(phyllotaxis_angle)&(180)~l(0.3)]
     #produce SetColor(2)[/(phyllotaxis_angle)&(120)~l(3.0)]  #for palm
 W --> SetColor(3)@O(0.25)    #flower - red
-I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)F(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
+#I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)f(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
 #I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius) --> SetColor(1)F(length, radius)
 
