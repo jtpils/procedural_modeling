@@ -17,10 +17,6 @@ def estimate_age(species, size):
     age = 4
     return age
 
-def parse_lstring(lstring):
-    #todo
-
-    return output_point_list
 
 def generate_lsystem_tree_points(params):
     'Wrapper function to map params array to individual variables'
@@ -37,6 +33,7 @@ def generate_lsystem_tree_points(params):
                                             diameter_growth_rate=params[8],
                                             annual_no_new_nodes=params[9],
                                             avg_internode_length=params[10] )
+
 
 def ngenerate_lsystem_tree_points(  age=1,
                                     trunk_pitch_angle=5.0,
@@ -61,9 +58,12 @@ def ngenerate_lsystem_tree_points(  age=1,
 
     return output_point_list
 
-def estimate_error(output_point_list, growth_space):
 
-    return cost;
+'''
+def estimate_error(output_point_list, growth_space):
+    cost = 0
+    return cost
+
 
 def optimise():
     age = estimate_age()
@@ -76,7 +76,7 @@ def optimise():
     branching_angle_roll = 0.0 #valid range [0,360]
     branching_angle_pitch = 20.0 #valid range [10,90]
 
-    if (cost>threshold):
+    if (cost > threshold):
         #backtrack
         pass
     else:  #
@@ -84,6 +84,8 @@ def optimise():
         output_point_list = generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
         cost = estimate_error(output_point_list, growth_space)
     return growth_param_list
+'''
+
 
 def main():
     #output = generate_lsystem_tree_points(numpy.array([10, 5.0, 0.0, 3.0, 3, 5, 45.0, 30.0, 0.1, 30.0, 0.03]))
@@ -105,6 +107,7 @@ def main():
 #    for item in output:
 #        file.write("%d %d %d\n" % (item[0], item[1], item[2]))
 #    file.close()
+
 
 if __name__ == "__main__":
     main()
