@@ -36,7 +36,7 @@ lateral_determinate = False        #flag of determinate or indeterminate growth 
 rhythmic_growth = True            #flag of rhythmic or continuous growth
 
 
-steps = 8 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
+steps = 12 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 30
@@ -139,7 +139,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_ord
     #if (numpy.isclose(cur_distanceFromBase, trunk_height, rtol=1e-8, atol=1e-3) or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
     if branchOut is 1:   #only allow branching out once per step
       branchOut = 2
-    elif (cur_distanceFromBase + 0.5*avg_internode_length > branching_height) and (cur_distanceFromBase - 0.5*avg_internode_length <= branching_height):
+    elif (cur_distanceFromBase + avg_internode_length > branching_height) and (cur_distanceFromBase <= branching_height):
       branchOut = 1     #signal node to form active axillary bud
     else: #elif i==eff_new_nodes-1:
       branchOut = 2     #signal node to form leaf and dormant axillary bud
