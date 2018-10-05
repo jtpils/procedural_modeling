@@ -1,6 +1,12 @@
 import numpy
 from numpy.linalg import eig, inv
 
+def compute_bbox(pts):
+    xmin,xmax = numpy.min(pts[:,0]),numpy.max(pts[:,0])
+    ymin,ymax = numpy.min(pts[:,1]),numpy.max(pts[:,1])
+    zmin,zmax = numpy.min(pts[:,2]),numpy.max(pts[:,2])
+    bbox = numpy.asarray([[xmin,xmax],[ymin,xmax],[zmin,zmax]])  
+    return bbox
 
 def fit_ellipse(x,y):
 # Fit_ellipse function takes in 2D points in x,y (i.e. 1D arrays)
@@ -39,8 +45,11 @@ def cgs_ls(pts):
     zmin,zmax = numpy.min(pts[:,2]),numpy.max(pts[:,2])
     bbox = numpy.asarray([xmin,xmax,ymin,xmax,zmin,zmax])
     # Estimation of trunk height
-    th1 = numpy.max(pts[numpy.logical_and(pts[:,0]==0,pts[:,1]==0),2])
-    th2 = numpy.min(pts[numpy.logical_and(pts[:,0]!=0,pts[:,1]!=0),2])
+    try:
+      th1 = numpy.max(pts[numpy.logical_and(pts[:,0]==0,pts[:,1]==0),2])
+      th2 = numpy.min(pts[numpy.logical_and(pts[:,0]!=0,pts[:,1]!=0),2])
+    except:
+      th1=100; th2=100;
     trunk_height = numpy.min([th1,th2])
     # Crown height
     crown_height = zmax-trunk_height
@@ -51,14 +60,18 @@ def cgs_ls(pts):
     mu_c = numpy.array([mu_x,mu_y,mu_z])
     # Calculate radii of thirds of crown
     # Lower
-    l_et1,l_e1,l_e2 = \
-        fit_ellipse(pts[numpy.logical_and(pts[:,2]>trunk_height,pts[:,2]<mu_z),0],\
+    try:
+      l_et1,l_e1,l_e2 = \
+	  fit_ellipse(pts[numpy.logical_and(pts[:,2]>trunk_height,pts[:,2]<mu_z),0],\
                     pts[numpy.logical_and(pts[:,2]>trunk_height,pts[:,2]<mu_z),1])
-    el = numpy.array([l_et1,l_e1,l_e2])
+      el = numpy.array([l_et1,l_e1,l_e2])
     # Upper
-    u_et1,u_e1,u_e2 = \
-        fit_ellipse(pts[pts[:,2]>mu_z,0],pts[pts[:,2]>mu_z,1])
-    eu = numpy.array([u_et1,u_e1,u_e2])
+      u_et1,u_e1,u_e2 = \
+	  fit_ellipse(pts[pts[:,2]>mu_z,0],pts[pts[:,2]>mu_z,1])
+      eu = numpy.array([u_et1,u_e1,u_e2])
+    except:
+      el = numpy.array([100, 100, 100])
+      eu = numpy.array([100, 100, 100])
     return bbox,trunk_height,crown_height,mu_c,el,eu
 
 def cgs_vx(pts):
@@ -70,17 +83,17 @@ def cgs_vx(pts):
     # Estimation of trunk height
     r = []
     for i in range(100):
-        lh,uh = (zmax/100.)*i, (zmax/100.)*i+1
-        p_a_h = numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh)
-        sum_p_a_h = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
-        if sum_p_a_h>1:
-            try:
+	try:
+	    lh,uh = (zmax/100.)*i, (zmax/100.)*i+1
+	    p_a_h = numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh)
+	    sum_p_a_h = numpy.sum(numpy.logical_and(pts[:,2]>lh,pts[:,2]<uh))
+	    if sum_p_a_h>1:
                 temp_thet,temp_r1,temp_r2 = fit_ellipse(pts[p_a_h,0],pts[p_a_h,1])
-                if ((temp_r1+temp_r2)/2.<30.):
+		if ((temp_r1+temp_r2)/2.<30.):
                     r.append([lh, (temp_r1+temp_r2)/2.])
-            except:
-                continue
-    bottom_rad = numpy.mean(r[0:2])
+        except:
+            continue
+    bottom_rad = numpy.mean(r[0:5])
     for j in range(len(r)):
         if r[j][1]>1.5*bottom_rad:
             trunk_height = r[j][0]

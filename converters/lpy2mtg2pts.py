@@ -63,8 +63,8 @@ def lsystem_run(age=10,
     #axialtree = lsys.animate()
     axialtree = lsys.iterate()  #lstring output muted in rules.lpy's function EndEach
 
-    lsys.plot(axialtree)
-    Viewer.frameGL.saveImage(output_lpy, 'png')
+    #lsys.plot(axialtree)
+    #Viewer.frameGL.saveImage(output_lpy, 'png')
 
     #print axialtree
     #for num, element in enumerate(axialtree):

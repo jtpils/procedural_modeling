@@ -19,23 +19,24 @@ import numpy
 #)tabebuia rosea:age=8, trunk_pitch_angle=0.0, trunk_height=3.265, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4037/8, annual_no_new_nodes=39.333, avg_internode_length=0.04753
 #)syzygium myrtifolium:age=20, trunk_pitch_angle=0.0, trunk_height=1.174, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.10/20, annual_no_new_nodes=12.0, avg_internode_length=0.02358
 #
-#age = 20
-#trunk_pitch_angle = 0.037           #pitch down wrt turtle's left, in degrees
-#trunk_roll_angle = 0.859          #roll left wrt turtle's head, in degrees
-#trunk_height = 6.389              #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-#no_first_ord_branches = 3         #number of first order branches
-#no_second_ord_branches = 1        #number of second order branches (assume uniformity)
-#branching_pitch_angle = 30.2
-#branching_roll_angle = 34.8
-#diameter_growth_rate = 0.70/age  #m/year? relative growth rate?
-#annual_no_new_nodes = 14.2    #number of new buds per year
-#avg_internode_length = 0.1    #unit: m
+params = numpy.loadtxt("/home/daniel-wise/Dropbox/Work/codes/python/vs1/source/optimisation/current_opt.txt",delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10))
+age = int(params[0])
+trunk_pitch_angle = params[1]           #pitch down wrt turtle's left, in degrees
+trunk_roll_angle = params[2]         #roll left wrt turtle's head, in degrees
+trunk_height = params[3]              #unit: m, trunk's actual length (regardless of orientation wrt ground) - whn the trunk reach this height, it will signal the tree to branch out for the first time
+no_first_ord_branches = int(params[4])         #number of first order branches
+no_second_ord_branches = int(params[5])        #number of second order branches (assume uniformity)
+branching_pitch_angle = params[6]
+branching_roll_angle = params[7]
+diameter_growth_rate = params[8]/age  #m/year? relative growth rate?
+annual_no_new_nodes = params[9]    #number of new buds per year
+avg_internode_length = params[10]    #unit: m
 
 apical_determinate = False         #flag of determinate or indeterminate growth for apical bud
 lateral_determinate = False        #flag of determinate or indeterminate growth for lateral bud
 bud_lifespan = 5                  #lifespan of a bud before it abort or transform into flower
 
-steps = 4 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
+steps = 8 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 30

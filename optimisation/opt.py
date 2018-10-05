@@ -1,10 +1,21 @@
 from os.path import isfile
 import warnings
+import random
 import glob
+import time
 import sys
+
+# Deal with overuse RAM
+import signal,time
+class TimeoutError (RuntimeError):
+  pass
+def handler (signum, frame):
+  raise TimeoutError()
+signal.signal(signal.SIGALRM,handler)
+#
+
 warnings.filterwarnings("ignore")
 sys.path.append('../interfacing_lsys_opt/')
-
 
 import calc_growth_space as cgs
 import load_growth_space as lgs
@@ -31,240 +42,241 @@ def suppress():
 
 def allow():
     sys.stdout = oldstdout
-
-
-# Global variable
-gs_dir = '../../growth-space/voxel_size_tests/'
-gs_filename='Tree1_50cm_5pts.csv'
-resolution=50
-xml_filename='../../growth-space/example_xml/Tree1_Parameters.xml'
-
-# Read from gs csv
-#tpts = lgs.normalised_voxel_gs(gs_dir+gs_filename,resolution)
-#print numpy.shape(tpts)
+    
+def write_ranges(ranges):
+  
+  return
 
 # Read from xml
-tpts = lgs.xml_file_gs(xml_filename)
-#print numpy.shape(tpts)
+xml_filename='../../growth-space/example_xml/Tree1_Parameters.xml'
+tpts = lgs.xml_file_gs(xml_filename,1)
 
-targ_bbox,targ_th,targ_ch,targ_mu,targ_el,targ_eu = cgs.cgs_vx(tpts)
+def estimate_error_2(params):
+  # Estimate error from rasterised tings
+  # Collect points
+  suppress()
+  ls_mtg = interf.generate_lsystem_tree_points(params)
+  allow()
+  ls_pts = lgs.mtg_string_gs(ls_mtg)
+  # Compute bounding boxes
+  tbbox = cgs.compute_bbox(tpts)
+  lsbbox = cgs.compute_bbox(ls_pts)
+  # Create grids
+  xmin,xmax = min(tbbox[0,0],lsbbox[0,0])-1, max(tbbox[0,1],lsbbox[0,1])
+  ymin,ymax = min(tbbox[1,0],lsbbox[1,0])-1, max(tbbox[1,1],lsbbox[1,1])
+  zmin,zmax = min(tbbox[2,0],lsbbox[2,0]), max(tbbox[2,1],lsbbox[2,1])
+  
+  xp = numpy.arange(xmin,xmax,0.5)
+  yp = numpy.arange(ymin,ymax,0.5)
+  zp = numpy.arange(zmin,zmax,0.5)
 
+  t_rast  = numpy.zeros((len(xp),len(yp),len(zp)),dtype=float)
+  ls_rast = numpy.zeros((len(xp),len(yp),len(zp)),dtype=float)
+  
+  for i in range(len(tpts)):
+    x_id = numpy.abs(xp-tpts[i,0]).argmin()
+    y_id = numpy.abs(yp-tpts[i,1]).argmin()
+    z_id = numpy.abs(zp-tpts[i,2]).argmin()
+    t_rast[x_id,y_id,z_id] = 1.0
+  for j in range(len(ls_pts)):
+    x_id = numpy.abs(xp-ls_pts[j,0]).argmin()
+    y_id = numpy.abs(yp-ls_pts[j,1]).argmin()
+    z_id = numpy.abs(zp-ls_pts[j,2]).argmin()
+    ls_rast[x_id,y_id,z_id] = 1.0
+  
+  E = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
+  
+  comments = '# '
+  
+  if (numpy.abs((lsbbox[2,1]-tbbox[2,1]))/tbbox[2,1])>0.2:
+    E = E+1.0
+    comments = comments + "tree differs in height |"
+    
+  if (lsbbox[2,1]<0.0):
+    comments = comments + " branches intersect ground |"
+    E = E+1.0
+    
+  return E,comments
 
-def estimate_error_1(params):
-# Estimate_error function takes in:
-# params: parameters used to create tree from L-System
-# fname: filename of obj file (comparison data)
-    # Generate L-system points for params
-    suppress()
-    ls_pts = interf.generate_lsystem_tree_points(params)
-    allow()
-    ls_pts = numpy.asarray(ls_pts)
-    ls_bbox, ls_th, ls_ch, ls_mu, ls_el, ls_eu = cgs.cgs_ls(ls_pts)
-    # Calculate error
-    Ebbox = numpy.sqrt((((ls_bbox[1]-ls_bbox[0])-(targ_bbox[1]-targ_bbox[0]))/(targ_bbox[1]-targ_bbox[0]))**2 + \
-        (((ls_bbox[3]-ls_bbox[2])-(targ_bbox[3]-targ_bbox[2]))/(targ_bbox[3]-targ_bbox[2]))**2) #BBox error
-    Eth = numpy.sqrt(((ls_th-targ_th)/targ_th)**2) # Trunk height error
-    Ech = numpy.sqrt(((ls_ch-targ_ch)/targ_ch)**2) # Crown height error
-    #Eel_theta = (ls_el[0]-targ_el[0])/(2*numpy.pi)
-    Eel_radii = numpy.mean(((ls_el[1:2]-targ_el[1:2])/(targ_el[1:2]))**2)
-    #Eeu_theta = (ls_eu[0]-targ_eu[0])/(2*numpy.pi)
-    Eeu_radii = numpy.mean(((ls_eu[1:2]-targ_eu[1:2])/(targ_eu[1:2]))**2)
-    E_total = numpy.sum(numpy.array(\
-        [Eth,Ech,Eel_radii,Eeu_radii]))
-    #print params, E_total
-    return E_total
-
-def create_sample_points(npts,means,stds):
+def create_sample_points(npts,means,stds,ranges):
 	# Number of parameters
 	nparams = len(means);
 	# Construct initial sample points
-	sample_points = pyDOE.lhs(nparams,samples=nparams*npts,criterion='center')
+	temp_points = pyDOE.lhs(nparams,samples=nparams*npts)
 	# Centre around means and stds
-	for i in xrange(nparams):
-		sample_points[:,i] = norm(loc=means[i], scale=stds[i]).ppf(sample_points[:,i])
+	for i in range(len(temp_points)):
+	  for j in xrange(nparams):
+	    temp_points[i,j] = ranges[j,0] + temp_points[i,j]*(ranges[j,1]-ranges[j,0])
+	sample_points = []
+	for i in range(len(temp_points)):
+	  add_flag=0
+	  for j in xrange(nparams):
+	    if temp_points[i,j]>ranges[j,1] or temp_points[i,j]<ranges[j,0]:
+	      print j, "issue"
+	      add_flag=add_flag+1
+	  if add_flag==0:
+	    sample_points.append(temp_points[i,:])
+	
+	sample_points = numpy.asarray(sample_points)
 	return sample_points
 
-def optimise_p(points,ranges,method):
-	r=[]; e=[]; i=[];
-	try:
-		suppress()
-		if method=='SLSQP':
-			opt_params=optimize.minimize(estimate_error_1,points,\
-				method='SLSQP',bounds=ranges)
-		elif method=='TNC':
-			opt_params=optimize.minimize(estimate_error_1,points,\
-				method='TNC',bounds=ranges)
-		else:
-			allow()
-			print "Optimisation method not recognised."
-		allow()
-		#print "\tOpt params: ", opt_params.x
-		r = opt_params.x; e = opt_params.fun
-		#print "\tError:      ", opt_params.fun
-		i = points
-	except:
-		r = points
-		e = 100.0;
-		i = points
-		pass
-	i = numpy.asarray(i)
-	r = numpy.asarray(r); e = numpy.asarray(e);
-	return i,r,e
-
-def optimise_s(points,ranges,method):
-	r=[]; e=[]; i=[];
-	for j in range(len(points)):
-		try:
-			suppress()
-			if method=='SLSQP':
-				opt_params=optimize.minimize(estimate_error_1,points[j,:],\
-				    method='SLSQP',bounds=ranges)
-			elif method=='TNC':
-				opt_params=optimize.minimize(estimate_error_1,points[j,:],\
-				    method='TNC',bounds=ranges)
-			else:
-				print "Optimisation method not recognised."
-		        allow()
-			print "\tPoint ", j, ": Opt params: ", opt_params.x
-			r.append(opt_params.x); e.append(opt_params.fun)
-			print "\t\tError:      ", opt_params.fun
-			i.append(points[j,:])
-		except:
-		        print "Not working"
-			r.append(points[j,:])
-			e.append(100.0)
-			i.append(points[j,:])
-			pass
-	i = numpy.asarray(i);
-	r = numpy.asarray(r);
-	e = numpy.asarray(e);		      
-	return i,r,e
+def map_error(points,fname):
+	p=[];e=[];
+	for i in range(len(points)):
+	  stat_str = "Testing point %i/%i" % (i,len(points))
+	  sys.stdout.write('%s\r' % stat_str)
+	  sys.stdout.flush()
+	  try:
+	    signal.alarm(20)
+    	    #print "\tPoint: ", points[i,:]
+	    err,comments = estimate_error_2(points[i,:])
+	    e.append(err)
+	    p.append(points[i,:])
+	    #print "\tError: ", err 
+	    signal.alarm(0)
+	    pstr = '%i\t%0.2f\t%0.2f\t%2.2f\t%i\t%i\t%2.2f\t%2.2f\t%0.2f\t%i\t%0.2f\t%f\t%s\n' % \
+	      (points[i,0], points[i,1], points[i,2], points[i,3], points[i,4], points[i,5], \
+		points[i,6], points[i,7], points[i,8], points[i,9], points[i,10], err, comments)
+	    with open(fname,'a+') as f:
+	      f.write(pstr)
+	  except TimeoutError as ex:
+	    #print "Point timed out"
+	    continue
+	return p,e    
+    
+def select_from_population(population, population_error, num_best, num_lucky):
+    sort_indices = numpy.argsort(population_error);
+    sorted_population = population[sort_indices,:]
+    sorted_error = population_error[sort_indices]
+    next_sample_points = [];
+    chosen_errors = [];
+    for i in range(num_best):
+      next_sample_points.append(sorted_population[i,:]);
+      chosen_errors.append(sorted_error[i])
+    for i in range(num_lucky):
+      ind = random.randint(0,len(sorted_population)-1)
+      next_sample_points.append(sorted_population[ind,:]);
+      chosen_errors.append(sorted_error[ind])
+    return next_sample_points, chosen_errors
+  
+def create_children(parent1,parent2,inheritance):
+    child1 = parent1; child2 = parent2;
+    child1[inheritance] = parent2[inheritance];
+    child2[inheritance] = parent1[inheritance];
+    return child1, child2
+  
+def population_breeding(population,numchildren):
+    next_population = []
+    for i in range(int(numpy.floor(len(population)/2))):
+      for j in range(numchildren):
+	parent1 = population[i]; parent2 = population[len(population)-1-i]
+	inheritance = numpy.random.choice([0,1], size=(len(parent1)), p=[0.5,0.5])
+	child1, child2 = create_children(parent1,parent2,inheritance)
+	next_population.append(child1)
+	next_population.append(child2)
+    return next_population
+  
+def mutate_child(child,amp):
+    mutation_flag = numpy.random.choice([-1,1], size=(len(child)), p=[0.5,0.5])
+    for i in range(len(child)):
+	if i==0 or i==4 or i==5:
+	  if child[i]<=1:
+	    child[i]=child[i]+numpy.abs(mutation_flag[i])
+	  else:
+	    child[i]=child[i]+mutation_flag[i]
+	else:
+	    child[i]=child[i]*(1+amp*mutation_flag[i])
+    return child
+  
+def mutate_population(population,amp,chance):
+    mutated_population=[]
+    for i in range(len(population)):
+      if random.random()<chance:
+	mutated_population.append(mutate_child(population[i],amp))
+    return mutated_population
 
 def main():
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
     # Number of params in model
-    
-    # age = params[0]
-    # trunk_pitch_angle=params[1]
-    # trunk_roll_angle=params[2],
-    # trunk_height=params[3],
-    # no_first_ord_branches=int(params[4]),
-    # no_second_ord_branches=int(params[5]),
-    # branching_pitch_angle=params[6],
-    # branching_roll_angle=params[7],
-    # diameter_growth_rate=params[8],
-    # annual_no_new_nodes=params[9],
-    # avg_internode_length=params[10]
-	# Setting of default ranges - LIMITS
+    params = ['Age', 'Trunk pitch angle', 'Trunk roll angle', 'Trunk height',\
+      'No. 1st order branches', 'No. 2nd order branches', 'Branch pitch angle',\
+	'Branch roll angle', 'Diameter growth rate', 'Annual no. new nodes',\
+	  'Average internode length']
+
     default_ranges = [\
-        [0,60], # age = params[0
-        [-10,10],[-10,10],[1,20],[1,4],[1,4],\
-        [10,70],[10,70],[0.01,1],[10,50],[0.01,0.1]]
+        [5,30], # age = params[0
+        [-10,10],[-10,10],[1,7],[1,4],[1,4],\
+        [10,70],[30,190],[0.01,1],[5,60],[0.01,0.1]]
+    
     nparams = len(default_ranges);
     ranges = default_ranges;
+    
     means = [20,0,0,6,2,2,30,30,0.05,30,0.03]
-	# Setting of known ranges (overwrite defaults)
-	# ranges[0][0]=5; ranges[0][1]=30;
-	# ranges[1][0]=2;  ranges[1][1]=6;
-	# ranges[2][0]=1;  ranges[2][1]=8;
-	# Setting of default means
     stds = [7,0.5,0.5,2,1,1,1,15,15,0.025,10,0.01];
 
     print "------------------------------------------------"
     print "Running main function of opt.py..."
-    print "Target values:"
-    print "\tTrunk height:              ", targ_th
-    print "\tCrown height:              ", targ_ch
-    print "Setting the following constraints:"
-    print "\tAge:                       ", ranges[0][0],"-",ranges[0][1]
-    print "\tTrunk pitch angle:         ", ranges[1][0],"-",ranges[1][1]
-    print "\tTrunk roll angle:          ", ranges[2][0],"-",ranges[2][1]
-    print "\tTrunk height:              ", ranges[3][0],"-",ranges[3][1]
-    print "\tNo. 1st order branches:    ", ranges[4][0],"-",ranges[4][1]
-    print "\tNo. 2nd order branches:    ", ranges[5][0],"-",ranges[5][1]
-    print "\tBranch pitch angle:        ", ranges[6][0],"-",ranges[6][1]
-    print "\tBranch roll angle:         ", ranges[7][0],"-",ranges[7][1]
-    print "\tDiameter growth rate:      ", ranges[8][0],"-",ranges[8][1]
-    print "\tAnnual no. new nodes:      ", ranges[9][0],"-",ranges[9][1]
-    print "\tAverage internode length:  ", ranges[10][0],"-",ranges[10][1]
+    print "\tTarget values set from file   : %s" % xml_filename
+    print "Setting the following ranges:"
+    for i in range(len(params)):
+      print "\t{:<30}:\t{:>6.2f} - {:<6.2f}".format(params[i], ranges[i][0], ranges[i][1])
     print "------------------------------------------------"
+
+    ranges = numpy.asarray(ranges)
+
+    run=2; save_obj=1;
     
-    run=2; save_npy=0; save_obj=1;
-    method='Buckshot';#'SLSQP'
-    npoints = int(raw_input("Select number of sample points per variable: "));
-    avail_threads=mp.cpu_count();
-    thread_string = "Select number of processors (%i available): " % avail_threads
-    num_threads = int(raw_input(thread_string))
-
-    if run==1:
-		# Run optimisation routine
-        sample_points = create_sample_points(npoints,means,stds)
-        print "Testing %i sample points with %i cpus" % (len(sample_points), num_threads)
-		# Create pool of thread
-        if num_threads>1:
-	    print "Running in parallel"
-	    print "------------------------------------------------"
-            pool = mp.Pool(processes=num_threads,maxtasksperchild=1000);
-		    # Run on nprocs
-            result = [ pool.apply_async(optimise_p,args=(i,ranges,method)) for i in sample_points]
-            output = numpy.asarray([p.get() for p in result])
-            initial_points = numpy.asarray(output[:,0])
-            results = numpy.asarray(output[:,1])
-            error = numpy.asarray(output[:,2])
-        else:
-	    print "Running in serial"
-	    print "------------------------------------------------"
-            initial_points, results, error = optimise_s(sample_points,ranges,method)
-        allow()
-        # Collect data when ready
-
-		# Reorganise results
-
-        loc = numpy.where(error==error.min())
-        loc = int(loc[0])
-		#Convert result to array (don't remember why it was necessary
-		# to do it like this
-        res = numpy.zeros(nparams)
-        for i in range(nparams):
-		res[i] = results[loc][i];
-		# Print results to screen
-        print "Result of optimisation:"
-        print "\tOpt params:",res
-        print "\tError:\t", error.min()
-		# Save as obj?
-        if save_obj==1:
-			output = interf.generate_lsystem_tree_points(res)
-			out_file = 'opt_npts' + str(npoints) + '.obj'
-			file = open(out_file, 'w')
-			for item in output:
-				file.write("v %d %d %d\n" % (item[0], item[1], item[2]))
-			file.close()
-		# Save as npy
-        if save_npy==1:
-			numpy.save('results.npy',result); numpy.save('errors.npy',error);
-			numpy.save('initial_points.npy',initials)
-    print "------------------------------------------------"
+    npoints = int(raw_input("Select number of sample points per variable for initial population: "));
+    ef_name = 'func.dat'
     
     if run==2:
-        sample_points = create_sample_points(npoints,means,stds)
-        from mystic.solvers import BuckshotSolver
-        from mystic.solvers import PowellDirectionalSolver
-        from mystic.termination import NormalizedChangeOverGeneration as NCOG
+	# Create initial population
+        initial_sample_points = create_sample_points(npoints,means,stds,ranges)        
+        print "Testing initial %i sample points" % (npoints*nparams)	
+	print "Outputting results to file: %s" % ef_name
+	res = []; err=[];
+	t0 = time.time()
 	try:
-	  from pathos.pools import ProcessPool as Pool
-	except ImportError:
-	  from mystic.pools import SerialPool as Pool
-	solver = BuckshotSolver(len(ranges),npoints)
-	solver.SetNestedSolver(PowellDirectionalSolver)
-	solver.SetMapper(Pool().map)
-	solver.SetInitialPoints(sample_points)
-)
-	solver.Solve(estimate_error_1, NCOG(1e-4), disp=1)
-	suppress()
-	solution = solver.Solution()
-	allow()
+	  rpts,error=map_error(initial_sample_points,ef_name);
+	except:
+	  pass
+	# Load all historic data from file
+	t1 = time.time()
+	print "Initial %i points took %d seconds" % (npoints*nparams,(t1-t0))
+	print "------------------------------------------------"
+	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
+	error = results[:,-1]
+	results = results[:,0:11]
+	total_pop_size = len(error);
+	# Params for selecting generations
+	num_generations = 50#int(raw_input("Select number of generations: "))
+	numbest = 75; numrandom=25;
+	# Params for mutations
+	amp=0.1; mut_chance=0.75;
+	for i in range(num_generations):
+	  t2 = time.time()
+	  print "Performing generation number: %i" % (i+1)
+	  results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
+	  error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
+	  print "\tSelecting %i best performing and %i random individuals from population of %i" % (numbest, numrandom, total_pop_size)
+	  parent_sample_points, parent_errors = select_from_population(results,error,numbest,numrandom)
+  	  print "\tMinimum error in parent population is %f" % min(parent_errors)
+	  print "\tMaximum error in parent population is %f" % max(parent_errors)
+	  child_sample_points = population_breeding(parent_sample_points,2);
+	  mutated_sample_points = mutate_population(child_sample_points,amp,mut_chance)
+	  print "\tTesting %i sample points from new population" % len(mutated_sample_points)
+	  #try:
+	  rpts,error = map_error(numpy.asarray(mutated_sample_points),ef_name)
+	  #except:
+	  #  continue
+	  t3 = time.time();
+	  print "\tTesting generation %i points took %d seconds" % (i+1,(t3-t2))
 
-
-
+	print "------------------------------------------------"
+	print "Optimisation complete in %d seconds" % ((t3-t0)/60);
+	print "------------------------------------------------"
+      
 if __name__ == "__main__":
     main()
+    
+    

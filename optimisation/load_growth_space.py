@@ -1,9 +1,12 @@
 import read_xml as rxml
 import numpy
 
-def xml_file_gs(fname):
+def xml_file_gs(fname,combined):
 	b_voxsz, b_coords, c_voxsz, c_coords = rxml.rxml_growthspace(fname)
-	gs = numpy.vstack((b_coords, c_coords))
+	if combined==1:
+	  gs = numpy.vstack((b_coords, c_coords))
+	else:
+	  gs = b_coords
 	return gs
 
 def mtg_file_gs(fname):
@@ -19,6 +22,37 @@ def mtg_file_gs(fname):
 			i=i+1
 	# Columns are 1=y, 2=radius, 3=z, 4=z
 	pts = numpy.genfromtxt(mtg_file,skip_header=i+1,usecols=(4,1,3))
+	return pts
+
+def mtg_string_gs(mtg_str):
+	split_str = []
+	for line in mtg_str.split('\n'):
+		line = line.replace("^","");
+		line = line.replace("<","");
+		line = line.replace(">","");
+		line = line.replace("I","");
+		line = line.replace("+","");
+		line = line.replace("/","");
+		line = line.lstrip()
+		new_line = line.replace("\t"," ")
+		split_str.append(new_line)
+	#print numpy.shape(split_str)
+	i=0
+	while(1):
+		if split_str[i].startswith("ENTTY-CODE"):
+			break
+		else:
+			i=i+1
+	#print split_str[i-1]
+	# Columns are 1=y, 2=radius, 3=z, 4=z
+	pts_list = numpy.asarray(split_str[i+1:-1])
+	pts = []
+	for j in range(len(pts_list)):
+		line = pts_list[j].split()
+		pts.append(numpy.asarray(line,dtype=float))
+	pts = numpy.asarray(pts)
+ 	pts = pts[:,[1,0,2]]
+ 	del pts_list, split_str, mtg_str
 	return pts
 
 def normalised_voxel_gs(fname,resolution):
