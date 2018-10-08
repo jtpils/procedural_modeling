@@ -1,6 +1,8 @@
 import random
 import numpy
 
+#Order of execution: production - decomposition - EndEach() - homomorphism/interpretation
+
 #initial turtle's orientation: Head Z+ [0,0,1], Up Y+ [0,1,0], Left X+ [1,0,0]
 #to align turtle's Right X- [-1,0,0] to Earth's North [0,1,0], rotate the world by -90degrees around Z+ axis, i.e., roll angle offset -90degrees
 #order of rotations: roll first, then pitch
@@ -35,7 +37,6 @@ apical_determinate = False         #flag of determinate or indeterminate growth 
 lateral_determinate = False        #flag of determinate or indeterminate growth for lateral bud
 rhythmic_growth = True            #flag of rhythmic or continuous growth
 
-
 steps = 12 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
@@ -46,7 +47,7 @@ turtle_draw_zero_length_error_prevention = 0.0000000001
 #determinate_height = 30.0
 determinate_bud_lifespan = 5                  #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth_period = 2      #cycle of rhythmic growth every x yrs
-branch_length_ratio = 0.8    #ratio of child to parent branch length; from one experiment: 0.666
+branch_length_ratio = 0.666    #ratio of child to parent branch length; from one experiment: 0.666
 derivation_length = germination_offset + age*steps
 
 #print 'partial_node_per_step=', partial_node_per_step
@@ -107,6 +108,7 @@ B(order, status, timeLeft, distanceFromGroundToBase, distanceFromBase):      #bu
                       #status is 0: bud is suppressed, 1: bud is growing new nodes (note: for status 1, only contextual rule I<B will be applied)
 
 I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_order, 1, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
+  #print 'Trace production I'
   length_norm = 0.0
   if (length < avg_internode_length):
     length_norm = length / avg_internode_length   #float
@@ -116,12 +118,12 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_ord
   aggregate_partial_node_per_step = partial_node_per_step + length_norm
   eff_new_nodes = no_new_nodes_per_step
 
-  if aggregate_partial_node_per_step >= 1:
-    eff_new_nodes =  eff_new_nodes + 1
-    aggregate_partial_node_per_step = aggregate_partial_node_per_step - 1
+  #print 'Before: aggregate_partial_node_per_step = ', aggregate_partial_node_per_step
 
-  #print 'aggregate_partial_node_per_step = ',
-  #print aggregate_partial_node_per_step
+  closeToOne = 0.999999999
+  if aggregate_partial_node_per_step >= closeToOne:
+    eff_new_nodes =  eff_new_nodes + 1
+    aggregate_partial_node_per_step = 0.0
 
   diameter_growth_per_node = diameter_growth_rate/annual_no_new_nodes
   cur_radius = radius+0.5*diameter_growth_rate/steps
@@ -129,27 +131,30 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_ord
   #print 'diameter_growth_per_node=', diameter_growth_per_node
   #print 'near_bud_radius=', near_bud_radius
   #print 'cur_radius=', cur_radius
+  closeToZero = 0.000000001
   branchOut = 0
+  branching_segment_factor = 1.0
   branching_height = trunk_height * numpy.power(branch_length_ratio, order)
   for i in range(eff_new_nodes+1):
     cur_distanceFromBase = distanceFromBase+i*avg_internode_length
-    #print 'cur_distanceFromBase,trunk_height,avg_internode_length=',
-    #print cur_distanceFromBase, trunk_height, avg_internode_length, cur_distanceFromBase>=trunk_height, cur_distanceFromBase<trunk_height+avg_internode_length
-    #if (cur_distanceFromBase is trunk_height or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
-    #if (numpy.isclose(cur_distanceFromBase, trunk_height, rtol=1e-8, atol=1e-3) or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
-    if branchOut is 1:   #only allow branching out once per step
-      branchOut = 2
-    elif (cur_distanceFromBase + avg_internode_length > branching_height) and (cur_distanceFromBase <= branching_height):
-      branchOut = 1     #signal node to form active axillary bud
-    else: #elif i==eff_new_nodes-1:
-      branchOut = 2     #signal node to form leaf and dormant axillary bud
-
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, avg_internode_length, cur_radius)
-    if (i<eff_new_nodes or aggregate_partial_node_per_step > 0):
+    if (i<eff_new_nodes or aggregate_partial_node_per_step > closeToZero):
+      if i==eff_new_nodes:
+        branching_segment_factor = aggregate_partial_node_per_step
+      #if (cur_distanceFromBase is trunk_height or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
+      #if (numpy.isclose(cur_distanceFromBase, trunk_height, rtol=1e-8, atol=1e-3) or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+avg_internode_length):
+      if branchOut is 1:   #only allow branching out once per step
+        branchOut = 2
+      elif (cur_distanceFromBase + branching_segment_factor*avg_internode_length > branching_height) and (cur_distanceFromBase <= branching_height):
+        branchOut = 1     #signal node to form active axillary bud
+        #print 'Branch out, cur_distanceFromBase=', cur_distanceFromBase, ' cur_distanceFromBase+avg_internode_length=', cur_distanceFromBase+avg_internode_length, ' branching_height=', branching_height
+      else: #elif i==eff_new_nodes-1:
+        branchOut = 2     #signal node to form leaf and dormant axillary bud
       nproduce N(order, distanceFromGroundToBase+cur_distanceFromBase, branchOut)
     cur_radius = cur_radius - 0.5*diameter_growth_per_node
 
-  if (aggregate_partial_node_per_step > 0):
+  if (aggregate_partial_node_per_step > closeToZero):
+    #print 'DEBUG aggreate_partial_node_per_step =', aggregate_partial_node_per_step
     cur_distanceFromBase = distanceFromBase+avg_internode_length*(eff_new_nodes+aggregate_partial_node_per_step)
     produce I(order, distanceFromGroundToBase, cur_distanceFromBase, avg_internode_length*aggregate_partial_node_per_step, near_bud_radius)
 
@@ -185,6 +190,7 @@ B(2,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(2)@O(0.02
 B(order,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(4)@O(0.02)  #active third or higher order axillary bud - yellow
 B(order,0,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(0)@O(0.01)  #dormant bud - white
 #L(fallen, duration):
+#  print 'Trace homomorphism'
 #  global phyllotaxis_angle
 #  phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
 #  oldage = 3.0*steps
@@ -222,6 +228,7 @@ N(order, distanceFromGround, branchingSignal):      #node
       nproduce [/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)L(0,0)B(order+1,0,timeLeft,distanceFromGround,0.0)]
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, length, radius) < B(bud_order, status, timeLeft, distanceFromGroundToBase, distanceFromBase):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
+  #print 'Trace decomposition I'
   if status is 1:
     if timeLeft > 0:
       produce B(bud_order, 1, timeLeft-1, distanceFromGroundToBase_i, distanceFromBase_i)
