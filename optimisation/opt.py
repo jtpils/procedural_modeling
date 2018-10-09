@@ -20,6 +20,7 @@ sys.path.append('../interfacing_lsys_opt/')
 import calc_growth_space as cgs
 import load_growth_space as lgs
 import lsystem_temp as lsys
+import read_xml as rxml
 import interface as interf
 
 import multiprocessing as mp
@@ -43,10 +44,6 @@ def suppress():
 def allow():
     sys.stdout = oldstdout
     
-def write_ranges(ranges):
-  
-  return
-
 # Read from xml
 xml_filename='../../growth-space/example_xml/Tree1_Parameters.xml'
 tpts = lgs.xml_file_gs(xml_filename,1)
@@ -88,13 +85,13 @@ def estimate_error_2(params):
   
   comments = '# '
   
-  if (numpy.abs((lsbbox[2,1]-tbbox[2,1]))/tbbox[2,1])>0.2:
+  if (lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.2:
     E = E+1.0
-    comments = comments + "tree differs in height |"
-    
-  if (lsbbox[2,1]<0.0):
-    comments = comments + " branches intersect ground |"
+    comments = comments + "LS tree differs in height (tall)"
+
+  if (tbbox[2,1]-lsbbox[2,1])/tbbox[2,1]>0.2:
     E = E+1.0
+    comments = comments + "LS tree differs in height (short)"
     
   return E,comments
 
@@ -185,7 +182,7 @@ def mutate_child(child,amp):
 	  else:
 	    child[i]=child[i]+mutation_flag[i]
 	else:
-	    child[i]=child[i]*(1+amp*mutation_flag[i])
+	    child[i]=child[i]*(1+amp*random.random()*mutation_flag[i])
     return child
   
 def mutate_population(population,amp,chance):
@@ -194,6 +191,26 @@ def mutate_population(population,amp,chance):
       if random.random()<chance:
 	mutated_population.append(mutate_child(population[i],amp))
     return mutated_population
+  
+def check_population(population,ranges):
+    clean_population=[]
+    for i in range(len(population)):
+      locs_low = population[i]<ranges[:,0]
+      locs_high = population[i]>ranges[:,1]
+      if numpy.any(locs_low):
+	population[i][locs_low] = ranges[locs_low,0]
+      if numpy.any(locs_high):
+	population[i][locs_high] = ranges[locs_high,0]
+      clean_population.append(population[i])
+    return clean_population
+  
+def write_optimums(fname,opt_params,params):
+  f = open(fname,"w")
+  for i in range(len(params)):
+    ostr = '{:<6.2f}\t# {}\n'.format(opt_params[i],params[i])
+    f.write(ostr)
+  return
+	
 
 def main():
 # Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
@@ -204,9 +221,9 @@ def main():
 	  'Average internode length']
 
     default_ranges = [\
-        [5,30], # age = params[0
-        [-10,10],[-10,10],[1,7],[1,4],[1,4],\
-        [10,70],[30,190],[0.01,1],[5,60],[0.01,0.1]]
+        [5,20], # age = params[0
+        [-5,5],[-5,5],[2,6],[2,4],[2,4],\
+        [20,40],[60,200],[0.1,1.0],[10,20],[0.1,2]]
     
     nparams = len(default_ranges);
     ranges = default_ranges;
@@ -217,6 +234,10 @@ def main():
     print "------------------------------------------------"
     print "Running main function of opt.py..."
     print "\tTarget values set from file   : %s" % xml_filename
+    cname, species, location, th = rxml.rxml_treeparams(xml_filename)
+    print "\tTree common name : %s" % cname
+    print "\tTree species     : %s" % species
+    print "\tTree height      : %d m" % th    
     print "Setting the following ranges:"
     for i in range(len(params)):
       print "\t{:<30}:\t{:>6.2f} - {:<6.2f}".format(params[i], ranges[i][0], ranges[i][1])
@@ -224,15 +245,15 @@ def main():
 
     ranges = numpy.asarray(ranges)
 
-    run=2; save_obj=1;
+    run=1; save_obj=1;
     
     npoints = int(raw_input("Select number of sample points per variable for initial population: "));
     ef_name = 'func.dat'
     
-    if run==2:
+    if run==1:
 	# Create initial population
         initial_sample_points = create_sample_points(npoints,means,stds,ranges)        
-        print "Testing initial %i sample points" % (npoints*nparams)	
+        print "Testing initial %i sample points" % len(initial_sample_points)	
 	print "Outputting results to file: %s" % ef_name
 	res = []; err=[];
 	t0 = time.time()
@@ -249,10 +270,10 @@ def main():
 	results = results[:,0:11]
 	total_pop_size = len(error);
 	# Params for selecting generations
-	num_generations = 50#int(raw_input("Select number of generations: "))
+	num_generations = 1#int(raw_input("Select number of generations: "))
 	numbest = 75; numrandom=25;
 	# Params for mutations
-	amp=0.1; mut_chance=0.75;
+	amp=0.2; mut_chance=1.0;
 	for i in range(num_generations):
 	  t2 = time.time()
 	  print "Performing generation number: %i" % (i+1)
@@ -262,19 +283,32 @@ def main():
 	  parent_sample_points, parent_errors = select_from_population(results,error,numbest,numrandom)
   	  print "\tMinimum error in parent population is %f" % min(parent_errors)
 	  print "\tMaximum error in parent population is %f" % max(parent_errors)
+	  print len(parent_sample_points)
 	  child_sample_points = population_breeding(parent_sample_points,2);
+	  print len(child_sample_points)
 	  mutated_sample_points = mutate_population(child_sample_points,amp,mut_chance)
-	  print "\tTesting %i sample points from new population" % len(mutated_sample_points)
+	  print len(mutated_sample_points)
+	  clean_sample_points = check_population(mutated_sample_points,ranges)
+	  print "\tTesting %i sample points from new population" % len(clean_sample_points)
 	  #try:
-	  rpts,error = map_error(numpy.asarray(mutated_sample_points),ef_name)
+	  rpts,error = map_error(numpy.asarray(clean_sample_points),ef_name)
 	  #except:
 	  #  continue
 	  t3 = time.time();
 	  print "\tTesting generation %i points took %d seconds" % (i+1,(t3-t2))
-
+	
+	
+	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
+	error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
+	parent_sample_points, parent_errors = select_from_population(results,error,5,0)
+	write_optimums("opt_params.txt",parent_sample_points[0],params)
 	print "------------------------------------------------"
-	print "Optimisation complete in %d seconds" % ((t3-t0)/60);
+	print "Optimisation complete in %d minutes" % ((t3-t0)/60);
+	print "Optimum parameter configuration from %i tested parameter combinations is:" % len(error)
+	for i in range(len(params)):
+	  print "\t{:<30}:\t{:<6.2f}".format(params[i], parent_sample_points[0][i])	
 	print "------------------------------------------------"
+	
       
 if __name__ == "__main__":
     main()

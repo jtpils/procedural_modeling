@@ -35,7 +35,7 @@ apical_determinate = False         #flag of determinate or indeterminate growth 
 lateral_determinate = False        #flag of determinate or indeterminate growth for lateral bud
 bud_lifespan = 5                  #lifespan of a bud before it abort or transform into flower
 
-steps = 4 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
+steps = 2 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year). Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 10     #number of initial derivation to account for germination before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 30
