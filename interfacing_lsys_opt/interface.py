@@ -4,9 +4,7 @@ import numpy
 from pyquaternion import Quaternion
 import os
 import sys
-sys.path.append('../converters/')
-#from converters.lpy2mtg2pts import lsystem_run
-from lpy2mtg2pts import lsystem_run
+from converters.lpy2mtg2pts import lsystem_run
 import warnings
 warnings.filterwarnings("ignore")
 

@@ -15,13 +15,11 @@ signal.signal(signal.SIGALRM,handler)
 #
 
 warnings.filterwarnings("ignore")
-sys.path.append('../interfacing_lsys_opt/')
+from interfacing_lsys_opt import interface as interf
 
 import calc_growth_space as cgs
 import load_growth_space as lgs
-import lsystem_temp as lsys
 import read_xml as rxml
-import interface as interf
 
 import multiprocessing as mp
 from scipy.stats.distributions import norm
@@ -43,18 +41,15 @@ def suppress():
 
 def allow():
     sys.stdout = oldstdout
-    
-# Read from xml
-xml_filename='../../growth-space/example_xml/Tree1_Parameters.xml'
-tpts = lgs.xml_file_gs(xml_filename,1)
 
-def estimate_error_2(params):
+
+def estimate_error_2(params,tpts):
   # Estimate error from rasterised tings
   # Collect points
   suppress()
   ls_mtg = interf.generate_lsystem_tree_points(params)
   allow()
-  ls_pts = lgs.mtg_string_gs(ls_mtg)
+  ls_pts = lgs.mtg_string_gs(ls_mtg)/10.
   # Compute bounding boxes
   tbbox = cgs.compute_bbox(tpts)
   lsbbox = cgs.compute_bbox(ls_pts)
@@ -80,19 +75,22 @@ def estimate_error_2(params):
     y_id = numpy.abs(yp-ls_pts[j,1]).argmin()
     z_id = numpy.abs(zp-ls_pts[j,2]).argmin()
     ls_rast[x_id,y_id,z_id] = 1.0
+    
+  locs = numpy.logical_and(t_rast,ls_rast)
   
-  E = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
+  E = 1-numpy.sum(numpy.sum(numpy.sum(numpy.logical_and(t_rast,ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
+  #E = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
   
   comments = '# '
   
-  if (lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.2:
+  if numpy.abs(lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.5:
     E = E+1.0
-    comments = comments + "LS tree differs in height (tall)"
-
-  if (tbbox[2,1]-lsbbox[2,1])/tbbox[2,1]>0.2:
-    E = E+1.0
-    comments = comments + "LS tree differs in height (short)"
+    comments = comments + "LS tree differs in height | "
     
+  if (lsbbox[2,0]<0):
+    E = E+1.0
+    comments = comments + "LS tree intersects ground |"
+  
   return E,comments
 
 def create_sample_points(npts,means,stds,ranges):
@@ -117,7 +115,7 @@ def create_sample_points(npts,means,stds,ranges):
 	sample_points = numpy.asarray(sample_points)
 	return sample_points
 
-def map_error(points,fname):
+def map_error(points,tpoints,fname):
 	p=[];e=[];
 	for i in range(len(points)):
 	  stat_str = "Testing point %i/%i" % (i,len(points))
@@ -126,7 +124,7 @@ def map_error(points,fname):
 	  try:
 	    signal.alarm(20)
     	    #print "\tPoint: ", points[i,:]
-	    err,comments = estimate_error_2(points[i,:])
+	    err,comments = estimate_error_2(points[i,:],tpoints)
 	    e.append(err)
 	    p.append(points[i,:])
 	    #print "\tError: ", err 
@@ -139,7 +137,7 @@ def map_error(points,fname):
 	  except TimeoutError as ex:
 	    #print "Point timed out"
 	    continue
-	return p,e    
+	return p,e      
     
 def select_from_population(population, population_error, num_best, num_lucky):
     sort_indices = numpy.argsort(population_error);
@@ -203,112 +201,10 @@ def check_population(population,ranges):
 	population[i][locs_high] = ranges[locs_high,0]
       clean_population.append(population[i])
     return clean_population
-  
-def write_optimums(fname,opt_params,params):
-  f = open(fname,"w")
-  for i in range(len(params)):
-    ostr = '{:<6.2f}\t# {}\n'.format(opt_params[i],params[i])
-    f.write(ostr)
-  return
-	
+
 
 def main():
-# Points are in order: Ages, No 1st order, No 2nd order, Roll, pitch
-    # Number of params in model
-    params = ['Age', 'Trunk pitch angle', 'Trunk roll angle', 'Trunk height',\
-      'No. 1st order branches', 'No. 2nd order branches', 'Branch pitch angle',\
-	'Branch roll angle', 'Diameter growth rate', 'Annual no. new nodes',\
-	  'Average internode length']
-
-    default_ranges = [\
-        [5,20], # age = params[0
-        [-5,5],[-5,5],[2,6],[2,4],[2,4],\
-        [20,40],[60,200],[0.1,1.0],[10,20],[0.1,2]]
-    
-    nparams = len(default_ranges);
-    ranges = default_ranges;
-    
-    means = [20,0,0,6,2,2,30,30,0.05,30,0.03]
-    stds = [7,0.5,0.5,2,1,1,1,15,15,0.025,10,0.01];
-
-    print "------------------------------------------------"
-    print "Running main function of opt.py..."
-    print "\tTarget values set from file   : %s" % xml_filename
-    cname, species, location, th = rxml.rxml_treeparams(xml_filename)
-    print "\tTree common name : %s" % cname
-    print "\tTree species     : %s" % species
-    print "\tTree height      : %d m" % th    
-    print "Setting the following ranges:"
-    for i in range(len(params)):
-      print "\t{:<30}:\t{:>6.2f} - {:<6.2f}".format(params[i], ranges[i][0], ranges[i][1])
-    print "------------------------------------------------"
-
-    ranges = numpy.asarray(ranges)
-
-    run=1; save_obj=1;
-    
-    npoints = int(raw_input("Select number of sample points per variable for initial population: "));
-    ef_name = 'func.dat'
-    
-    if run==1:
-	# Create initial population
-        initial_sample_points = create_sample_points(npoints,means,stds,ranges)        
-        print "Testing initial %i sample points" % len(initial_sample_points)	
-	print "Outputting results to file: %s" % ef_name
-	res = []; err=[];
-	t0 = time.time()
-	try:
-	  rpts,error=map_error(initial_sample_points,ef_name);
-	except:
-	  pass
-	# Load all historic data from file
-	t1 = time.time()
-	print "Initial %i points took %d seconds" % (npoints*nparams,(t1-t0))
-	print "------------------------------------------------"
-	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
-	error = results[:,-1]
-	results = results[:,0:11]
-	total_pop_size = len(error);
-	# Params for selecting generations
-	num_generations = 1#int(raw_input("Select number of generations: "))
-	numbest = 75; numrandom=25;
-	# Params for mutations
-	amp=0.2; mut_chance=1.0;
-	for i in range(num_generations):
-	  t2 = time.time()
-	  print "Performing generation number: %i" % (i+1)
-	  results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
-	  error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
-	  print "\tSelecting %i best performing and %i random individuals from population of %i" % (numbest, numrandom, total_pop_size)
-	  parent_sample_points, parent_errors = select_from_population(results,error,numbest,numrandom)
-  	  print "\tMinimum error in parent population is %f" % min(parent_errors)
-	  print "\tMaximum error in parent population is %f" % max(parent_errors)
-	  print len(parent_sample_points)
-	  child_sample_points = population_breeding(parent_sample_points,2);
-	  print len(child_sample_points)
-	  mutated_sample_points = mutate_population(child_sample_points,amp,mut_chance)
-	  print len(mutated_sample_points)
-	  clean_sample_points = check_population(mutated_sample_points,ranges)
-	  print "\tTesting %i sample points from new population" % len(clean_sample_points)
-	  #try:
-	  rpts,error = map_error(numpy.asarray(clean_sample_points),ef_name)
-	  #except:
-	  #  continue
-	  t3 = time.time();
-	  print "\tTesting generation %i points took %d seconds" % (i+1,(t3-t2))
-	
-	
-	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
-	error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
-	parent_sample_points, parent_errors = select_from_population(results,error,5,0)
-	write_optimums("opt_params.txt",parent_sample_points[0],params)
-	print "------------------------------------------------"
-	print "Optimisation complete in %d minutes" % ((t3-t0)/60);
-	print "Optimum parameter configuration from %i tested parameter combinations is:" % len(error)
-	for i in range(len(params)):
-	  print "\t{:<30}:\t{:<6.2f}".format(params[i], parent_sample_points[0][i])	
-	print "------------------------------------------------"
-	
+  return
       
 if __name__ == "__main__":
     main()

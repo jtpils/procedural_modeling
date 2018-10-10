@@ -45,14 +45,16 @@ def mtg_string_gs(mtg_str):
 			i=i+1
 	#print split_str[i-1]
 	# Columns are 1=y, 2=radius, 3=z, 4=z
-	pts_list = numpy.asarray(split_str[i+1:-1])
+	pts_list = numpy.asarray(split_str[i+1:-1])	
+	
 	pts = []
 	for j in range(len(pts_list)):
 		line = pts_list[j].split()
-		pts.append(numpy.asarray(line,dtype=float))
+		num_line = [float(x) for x in line]
+		#print line, num_line
+		pts.append(num_line)
 	pts = numpy.asarray(pts)
- 	pts = pts[:,[1,0,2]]
- 	del pts_list, split_str, mtg_str
+ 	pts = pts[:,[1,0,3]]
 	return pts
 
 def normalised_voxel_gs(fname,resolution):

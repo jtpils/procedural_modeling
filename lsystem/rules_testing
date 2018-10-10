@@ -19,20 +19,25 @@ import numpy
 #)tabebuia rosea:age=8, trunk_pitch_angle=0.0, trunk_height=3.265, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4037/8, annual_no_new_nodes=39.333, avg_internode_length=0.04753
 #)syzygium myrtifolium:age=20, trunk_pitch_angle=0.0, trunk_height=1.174, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.10/20, annual_no_new_nodes=12.0, avg_internode_length=0.02358
 #
-results = numpy.loadtxt("/home/daniel-wise/Dropbox/Work/codes/python/vs1/source/optimisation/func.dat",delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
+results = numpy.loadtxt("/home/daniel-wise/Dropbox/Work/codes/python/vs1/source/func.dat",delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
 error = results[:,-1]; results=results[:,0:11]
 sort_indices = numpy.argsort(error)
 sorted_results = results[sort_indices,:]
-
 params = sorted_results[0]
 
+
+#for i in range(5):
+#  for j in range(len(params)):
+#    print "%4.2f\t" % sorted_results[i][j],
+#  print 
+#
 
 age = int(params[0])
 trunk_pitch_angle = params[1] #pitch down wrt turtle's left, in degrees
 trunk_roll_angle = params[2]  #roll left wrt turtle's head, in degrees
 trunk_height = params[3]  #unit: m, trunk's actual length (regardless of orientation wrt ground) - whn the trunk reach this height, it will signal the tree to branch out for the first time
 no_first_ord_branches = int(params[4])  #number of first order branches
-no_second_ord_branches = int(params[5]) #ntouch fu  umber of second order branches (assume uniformity)
+no_second_ord_branches = int(params[5]) #number of second order branches (assume uniformity)
 branching_pitch_angle = params[6]
 branching_roll_angle = params[7]
 diameter_growth_rate = params[8]/age  #m/year? relative growth rate?
@@ -58,7 +63,7 @@ derivation_length = germination_offset + age*steps
 #print 'no_new_nodes_per_step=', no_new_nodes_per_step
 #print 'Derivation length:', derivation_length
 
-print params
+
 
 derivation length: derivation_length
 
