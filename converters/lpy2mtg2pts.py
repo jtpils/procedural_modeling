@@ -16,8 +16,6 @@ from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
-#sys.path.append('../optimisation/')
-
 from optimisation.load_growth_space import mtg_file_gs
 
 def lsystem_run(age=10,

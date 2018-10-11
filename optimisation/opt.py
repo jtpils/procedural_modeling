@@ -15,7 +15,8 @@ signal.signal(signal.SIGALRM,handler)
 #
 
 warnings.filterwarnings("ignore")
-from interfacing_lsys_opt import interface as interf
+#from interfacing_lsys_opt import interface as interf
+import interfacing_lsys_opt.interface as interf
 
 import calc_growth_space as cgs
 import load_growth_space as lgs
@@ -57,14 +58,14 @@ def estimate_error_2(params,tpts):
   xmin,xmax = min(tbbox[0,0],lsbbox[0,0])-1, max(tbbox[0,1],lsbbox[0,1])
   ymin,ymax = min(tbbox[1,0],lsbbox[1,0])-1, max(tbbox[1,1],lsbbox[1,1])
   zmin,zmax = min(tbbox[2,0],lsbbox[2,0]), max(tbbox[2,1],lsbbox[2,1])
-  
+
   xp = numpy.arange(xmin,xmax,0.5)
   yp = numpy.arange(ymin,ymax,0.5)
   zp = numpy.arange(zmin,zmax,0.5)
 
   t_rast  = numpy.zeros((len(xp),len(yp),len(zp)),dtype=float)
   ls_rast = numpy.zeros((len(xp),len(yp),len(zp)),dtype=float)
-  
+
   for i in range(len(tpts)):
     x_id = numpy.abs(xp-tpts[i,0]).argmin()
     y_id = numpy.abs(yp-tpts[i,1]).argmin()
@@ -75,22 +76,22 @@ def estimate_error_2(params,tpts):
     y_id = numpy.abs(yp-ls_pts[j,1]).argmin()
     z_id = numpy.abs(zp-ls_pts[j,2]).argmin()
     ls_rast[x_id,y_id,z_id] = 1.0
-    
+
   locs = numpy.logical_and(t_rast,ls_rast)
-  
+
   E = 1-numpy.sum(numpy.sum(numpy.sum(numpy.logical_and(t_rast,ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
   #E = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
-  
+
   comments = '# '
-  
+
   if numpy.abs(lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.5:
     E = E+1.0
     comments = comments + "LS tree differs in height | "
-    
+
   if (lsbbox[2,0]<0):
     E = E+1.0
     comments = comments + "LS tree intersects ground |"
-  
+
   return E,comments
 
 def create_sample_points(npts,means,stds,ranges):
@@ -111,7 +112,7 @@ def create_sample_points(npts,means,stds,ranges):
 	      add_flag=add_flag+1
 	  if add_flag==0:
 	    sample_points.append(temp_points[i,:])
-	
+
 	sample_points = numpy.asarray(sample_points)
 	return sample_points
 
@@ -127,7 +128,7 @@ def map_error(points,tpoints,fname):
 	    err,comments = estimate_error_2(points[i,:],tpoints)
 	    e.append(err)
 	    p.append(points[i,:])
-	    #print "\tError: ", err 
+	    #print "\tError: ", err
 	    signal.alarm(0)
 	    pstr = '%i\t%0.2f\t%0.2f\t%2.2f\t%i\t%i\t%2.2f\t%2.2f\t%0.2f\t%i\t%0.2f\t%f\t%s\n' % \
 	      (points[i,0], points[i,1], points[i,2], points[i,3], points[i,4], points[i,5], \
@@ -137,8 +138,8 @@ def map_error(points,tpoints,fname):
 	  except TimeoutError as ex:
 	    #print "Point timed out"
 	    continue
-	return p,e      
-    
+	return p,e
+
 def select_from_population(population, population_error, num_best, num_lucky):
     sort_indices = numpy.argsort(population_error);
     sorted_population = population[sort_indices,:]
@@ -153,13 +154,13 @@ def select_from_population(population, population_error, num_best, num_lucky):
       next_sample_points.append(sorted_population[ind,:]);
       chosen_errors.append(sorted_error[ind])
     return next_sample_points, chosen_errors
-  
+
 def create_children(parent1,parent2,inheritance):
     child1 = parent1; child2 = parent2;
     child1[inheritance] = parent2[inheritance];
     child2[inheritance] = parent1[inheritance];
     return child1, child2
-  
+
 def population_breeding(population,numchildren):
     next_population = []
     for i in range(int(numpy.floor(len(population)/2))):
@@ -170,7 +171,7 @@ def population_breeding(population,numchildren):
 	next_population.append(child1)
 	next_population.append(child2)
     return next_population
-  
+
 def mutate_child(child,amp):
     mutation_flag = numpy.random.choice([-1,1], size=(len(child)), p=[0.5,0.5])
     for i in range(len(child)):
@@ -182,14 +183,14 @@ def mutate_child(child,amp):
 	else:
 	    child[i]=child[i]*(1+amp*random.random()*mutation_flag[i])
     return child
-  
+
 def mutate_population(population,amp,chance):
     mutated_population=[]
     for i in range(len(population)):
       if random.random()<chance:
 	mutated_population.append(mutate_child(population[i],amp))
     return mutated_population
-  
+
 def check_population(population,ranges):
     clean_population=[]
     for i in range(len(population)):
@@ -205,8 +206,6 @@ def check_population(population,ranges):
 
 def main():
   return
-      
+
 if __name__ == "__main__":
     main()
-    
-    

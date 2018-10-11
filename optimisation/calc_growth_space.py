@@ -5,7 +5,7 @@ def compute_bbox(pts):
     xmin,xmax = numpy.min(pts[:,0]),numpy.max(pts[:,0])
     ymin,ymax = numpy.min(pts[:,1]),numpy.max(pts[:,1])
     zmin,zmax = numpy.min(pts[:,2]),numpy.max(pts[:,2])
-    bbox = numpy.asarray([[xmin,xmax],[ymin,xmax],[zmin,zmax]])  
+    bbox = numpy.asarray([[xmin,xmax],[ymin,xmax],[zmin,zmax]])
     return bbox
 
 def fit_ellipse(x,y):
