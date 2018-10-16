@@ -22,9 +22,6 @@ import calc_growth_space as cgs
 import load_growth_space as lgs
 import read_xml as rxml
 
-import multiprocessing as mp
-from scipy.stats.distributions import norm
-import scipy.optimize as optimize
 import scipy.stats
 import numpy
 import pyDOE
@@ -154,11 +151,23 @@ def select_from_population(population, population_error, num_best, num_lucky):
       next_sample_points.append(sorted_population[ind,:]);
       chosen_errors.append(sorted_error[ind])
     return next_sample_points, chosen_errors
+  
+def extend_population(population,weights):
+    extended_population = []
+    num_samples = len(population); num_levels = len(weights)-1
+    for i in range(num_samples):
+     w_index = i//(num_samples/num_levels)
+     for j in range(weights[w_index]):
+       extended_population.append(population[i])
+    random.shuffle(extended_population)
+    return extended_population
 
 def create_children(parent1,parent2,inheritance):
     child1 = parent1; child2 = parent2;
-    child1[inheritance] = parent2[inheritance];
-    child2[inheritance] = parent1[inheritance];
+    for i in range(len(parent1)):
+      if inheritance[i]==1:
+	child1[i]=parent2[i]
+	child2[i]=parent1[i]
     return child1, child2
 
 def population_breeding(population,numchildren):
@@ -168,11 +177,14 @@ def population_breeding(population,numchildren):
 	parent1 = population[i]; parent2 = population[len(population)-1-i]
 	inheritance = numpy.random.choice([0,1], size=(len(parent1)), p=[0.5,0.5])
 	child1, child2 = create_children(parent1,parent2,inheritance)
+	if numpy.array_equal(child1,child2):
+	    next_population.append(child1)
+	    continue
 	next_population.append(child1)
 	next_population.append(child2)
     return next_population
 
-def mutate_child(child,amp):
+def mutate_child(child,amp,chance):
     mutation_flag = numpy.random.choice([-1,1], size=(len(child)), p=[0.5,0.5])
     for i in range(len(child)):
 	if i==0 or i==4 or i==5:
@@ -181,17 +193,22 @@ def mutate_child(child,amp):
 	  else:
 	    child[i]=child[i]+mutation_flag[i]
 	else:
-	    child[i]=child[i]*(1+amp*random.random()*mutation_flag[i])
+	    child[i]=child[i]*(1.0+amp*random.random()*mutation_flag[i])
     return child
 
 def mutate_population(population,amp,chance):
     mutated_population=[]
     for i in range(len(population)):
-      if random.random()<chance:
-	mutated_population.append(mutate_child(population[i],amp))
+      mutated_population.append(mutate_child(population[i],amp,chance))
     return mutated_population
 
 def check_population(population,ranges):
+    # Remove duplicates
+    distinct = []
+    for i in population:
+      if not any(numpy.array_equal(i,j) for j in distinct):
+	  distinct.append(i)
+    population = distinct;
     clean_population=[]
     for i in range(len(population)):
       locs_low = population[i]<ranges[:,0]
@@ -200,7 +217,7 @@ def check_population(population,ranges):
 	population[i][locs_low] = ranges[locs_low,0]
       if numpy.any(locs_high):
 	population[i][locs_high] = ranges[locs_high,0]
-      clean_population.append(population[i])
+      clean_population.append(population[i])      
     return clean_population
 
 

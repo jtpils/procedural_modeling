@@ -27,8 +27,10 @@ def suppress():
 def allow():
     sys.stdout = oldstdout
 
-def write_optimums(fname,opt_params,params):
+def write_optimums(fname,opt_params,params,err):
   f = open(fname,"w")
+  hstr = '# Optimum parameter configuration: E=%f\n' % err
+  f.write(hstr)
   for i in range(len(params)):
     ostr = '{:<6.2f}\t# {}\n'.format(opt_params[i],params[i])
     f.write(ostr)
@@ -75,46 +77,54 @@ def main():
     ef_name = 'func.dat'
 
     if run==1:
-	# Create initial population
-        initial_sample_points = opt.create_sample_points(npoints,means,stds,ranges)
-        print "Testing initial %i sample points" % len(initial_sample_points)
-	print "Outputting results to file: %s" % ef_name
-	res = []; err=[];
-	t0 = time.time()
-	#try:
-	rpts,error=opt.map_error(initial_sample_points,tpts,ef_name);
-	#except:
-	#  pass
-	# Load all historic data from file
-	t1 = time.time()
-	print "Initial %i points took %d seconds" % (npoints*nparams,(t1-t0))
-	print "------------------------------------------------"
+      	t0 = time.time()
+	if npoints>0:
+	  # Create initial population
+	  initial_sample_points = opt.create_sample_points(npoints,means,stds,ranges)
+	  print "Testing initial %i sample points" % len(initial_sample_points)
+	  print "Outputting results to file: %s" % ef_name
+	  res = []; err=[];
+	  try:
+	    rpts,error=opt.map_error(initial_sample_points,tpts,ef_name);
+	  except:
+	    pass
+	  # Load all historic data from file
+	  t1 = time.time()
+	  print "Initial %i points took %d seconds" % (npoints*nparams,(t1-t0))
+	  print "------------------------------------------------"
+	else:
+	  print "Skipping initial sample points and loading from results file: %s" % ef_name
 	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
 	error = results[:,-1]
 	results = results[:,0:11]
 	total_pop_size = len(error);
 	# Params for selecting generations
-	num_generations = 20#int(raw_input("Select number of generations: "))
-	numbest = 75; numrandom=25;
+	num_generations = 50#int(raw_input("Select number of generations: "))
+	numbest = 90; numrandom=10;
 	# Params for mutations
-	amp=0.2; mut_chance=1.0;
+	amp=0.5; mut_chance=1.0;
+	weights = [5,4,3,2,1];
 	for i in range(num_generations):
 	  t2 = time.time()
-	  print "Performing generation number: %i" % (i+1)
+	  print "Performing generation number: %i/%i" % ((i+1),num_generations)
 	  results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
 	  error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
 	  print "\tSelecting %i best performing and %i random individuals from population of %i" % (numbest, numrandom, total_pop_size)
 	  parent_sample_points, parent_errors = opt.select_from_population(results,error,numbest,numrandom)
+	  write_optimums("opt_params.txt",parent_sample_points[0],params,parent_errors[0])
   	  print "\tMinimum error in parent population is %f" % min(parent_errors)
 	  print "\tMaximum error in parent population is %f" % max(parent_errors)
-	  child_sample_points = opt.population_breeding(parent_sample_points,2);
-	  mutated_sample_points = opt.mutate_population(child_sample_points,amp,mut_chance)
-	  clean_sample_points = opt.check_population(mutated_sample_points,ranges)
-	  print "\tTesting %i sample points from new population" % len(clean_sample_points)
-	  #try:
-	  rpts,error = opt.map_error(numpy.asarray(clean_sample_points),tpts,ef_name)
-	  #except:
-	  #  continue
+	  clean_parent_sample_points = opt.check_population(parent_sample_points,ranges)
+	  extended_points = opt.extend_population(clean_parent_sample_points,weights)
+	  child_sample_points = opt.population_breeding(extended_points,2)
+	  clean_child_sample_points = opt.check_population(child_sample_points,ranges)
+	  mutated_sample_points = opt.mutate_population(clean_child_sample_points,amp,mut_chance)
+	  clean_mutated_sample_points = opt.check_population(mutated_sample_points,ranges)
+	  print "\tTesting %i sample points from new population" % len(clean_mutated_sample_points)
+	  try:
+	    rpts,error = opt.map_error(numpy.asarray(clean_mutated_sample_points),tpts,ef_name)
+	  except:
+	    continue
 	  t3 = time.time();
 	  print "\tTesting generation %i points took %d seconds" % (i+1,(t3-t2))
 
@@ -122,7 +132,7 @@ def main():
 	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
 	error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
 	parent_sample_points, parent_errors = opt.select_from_population(results,error,5,0)
-	write_optimums("opt_params.txt",parent_sample_points[0],params)
+	write_optimums("opt_params.txt",parent_sample_points[0],params,parent_errors[0])
 	print "------------------------------------------------"
 	print "Optimisation complete in %d minutes" % ((t3-t0)/60);
 	print "Optimum parameter configuration from %i tested parameter combinations is:" % len(error)

@@ -1,4 +1,4 @@
-import read_xml as rxml
+import optimisation.read_xml as rxml
 import numpy
 
 def xml_file_gs(fname,combined):
@@ -45,8 +45,8 @@ def mtg_string_gs(mtg_str):
 			i=i+1
 	#print split_str[i-1]
 	# Columns are 1=y, 2=radius, 3=z, 4=z
-	pts_list = numpy.asarray(split_str[i+1:-1])	
-	
+	pts_list = numpy.asarray(split_str[i+1:-1])
+
 	pts = []
 	for j in range(len(pts_list)):
 		line = pts_list[j].split()
