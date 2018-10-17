@@ -11,7 +11,7 @@ import math
 
 #Average tree parameters for:
 #generic tree: age=10, trunk_pitch_angle=5.0, trunk_height=3.0, no_first_ord_branches=3, no_second_ord_branches=5, branching_pitch_angle=45.0, branching_roll_angle=30.0, diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03
-#)raintree: age=10, trunk_pitch_angle=2.0, trunk_height=2.205, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.619/20, annual_no_new_nodes=28.5, avg_internode_length=0.0589
+#)raintree: age=10, trunk_pitch_angle=2.0, trunk_height=2.205, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.619/10, annual_no_new_nodes=28.5, avg_internode_length=0.0589
 #)yellow flame: age=11, trunk_pitch_angle=2.0, trunk_height=2.8497, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4725/11, annual_no_new_nodes=44.148, avg_internode_length=0.03232
 #)khaya: age=10, trunk_pitch_angle=0.0, trunk_height=3.872, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.983/10, annual_no_new_nodes=117.231, avg_internode_length=0.02727
 #)sterculia: age=4, trunk_pitch_angle=0.0, trunk_height=4.0356, no_first_ord_branches=3, no_second_ord_branches=3, branching_pitch_angle=35.0, branching_roll_angle=120.0, diameter_growth_rate=0.3139/4, annual_no_new_nodes=47.684, avg_internode_length=0.09425
@@ -22,23 +22,25 @@ import math
 #)tabebuia rosea:age=8, trunk_pitch_angle=0.0, trunk_height=3.265, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4037/8, annual_no_new_nodes=39.333, avg_internode_length=0.04753
 #)syzygium myrtifolium:age=20, trunk_pitch_angle=0.0, trunk_height=1.174, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.10/20, annual_no_new_nodes=12.0, avg_internode_length=0.02358
 
-
-#age = 20
-#trunk_pitch_angle = 0.0           #pitch down wrt turtle's left, in degrees
+#---------------Parameters for Optimisation-----------------
+#age = 10
+#trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
-#trunk_height = 1.174              #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#trunk_height = 2.205              #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
 #no_first_ord_branches = 2         #number of first order branches
-#no_second_ord_branches = 3        #number of second order branches (assume uniformity)
-#branching_pitch_angle = 45.0
+#no_second_ord_branches = 2        #number of second order branches (assume uniformity)
+#branching_pitch_angle = 30.0
 #branching_roll_angle = 180.0
-#diameter_growth_rate = 0.10/age  #m/year? relative growth rate?
-#annual_no_new_nodes = 12.0    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
-#avg_internode_length = 0.02358    #unit: m
+#diameter_growth_rate = 0.619/age  #m/year? relative growth rate?
+#annual_no_new_nodes = 28.5    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
+#avg_internode_length = 0.0589    #unit: m
+#-----------------------------------------------------------
 apical_determinate = False         #flag of determinate or indeterminate growth for apical bud
 lateral_determinate = False        #flag of determinate or indeterminate growth for lateral bud
 rhythmic_growth = True            #flag of rhythmic or continuous growth
+#-----------------------------------------------------------
 
-steps = int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
+steps = 12 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 3     #number of initial derivation to account for germination (reality: 1-2 weeks) before visual growth of internode starts (i.e., before time t starts)
 phyllotaxis_angle = 0
 phyllotaxis_increment = 90
@@ -46,28 +48,35 @@ partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 #turtle_draw_zero_length_error_prevention = 0.0000000001
 #determinate_height = 30.0
-determinate_bud_lifespan = 5                  #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
+determinate_bud_lifespan = 2                  #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth_period = 1      #cycle of rhythmic growth every x yrs
-branch_length_ratio = 0.666    #ratio of child to parent branch length; from one experiment: 0.666
+branch_length_ratio = 0.8    #ratio of child to parent branch length; from one experiment: 0.666
 #eff_new_nodes = 0
 derivation_length = germination_offset + age*steps
 growthFactor = 1.0
 internode_length = avg_internode_length
+allowBranching = True
+growthFactorLowerLimit = 0.5
+maximumBranchOrder = 4
 
 def getGrowthFactor():
   t = (float)((getIterationNb()+1-germination_offset) % (steps*rhythmic_growth_period)) / (steps*rhythmic_growth_period)
-  growthFactor = 0.5*(math.sin(2*math.pi*t)+1)      #growth curve equation
+  growthFactor = 0.25*math.sin(2*math.pi*t) + 0.75      #growth curve equation
   return growthFactor
 
 def StartEach():
-  global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length
+  global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length, allowBranching
   print 'Derivation progress:', getIterationNb()+1, ' / ', derivation_length
   if rhythmic_growth is True and getIterationNb()+1 > germination_offset:
     growthFactor = getGrowthFactor()
-    print 'growthFactor=', growthFactor
+    #print 'growthFactor=', growthFactor
     partial_node_per_step = (float)((growthFactor*annual_no_new_nodes)%steps)/steps
     no_new_nodes_per_step = int((growthFactor*annual_no_new_nodes) // steps)  #integer
     internode_length = growthFactor * avg_internode_length
+    if growthFactor > growthFactorLowerLimit:
+      allowBranching = True
+    else:
+      allowBranching = False
 
 def EndEach(lstring):
   pass
@@ -147,26 +156,28 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius) > B(bud_ord
   #print 'diameter_growth_per_node=', diameter_growth_per_node
   #print 'near_bud_radius=', near_bud_radius
   #print 'cur_radius=', cur_radius
-  #closeToZero = 0.000000001
+  #negligibleTwigs = 0.1  #don't grow when the twigs are at length <10cm
   branchOut = 0
   #branching_segment_factor = 1.0
-  branching_height = trunk_height * numpy.power(branch_length_ratio, order)
+  branch_length = trunk_height * numpy.power(branch_length_ratio, order)
+
   for i in range(eff_new_nodes):
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, internode_length, cur_radius)
-    #if (i<eff_new_nodes or aggregate_partial_node_per_step > closeToZero):
-      #if i==eff_new_nodes:
-      #  branching_segment_factor = aggregate_partial_node_per_step
-    #if (cur_distanceFromBase is trunk_height or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+internode_length):
-    #if (numpy.isclose(cur_distanceFromBase, trunk_height, rtol=1e-8, atol=1e-3) or cur_distanceFromBase > trunk_height) and (cur_distanceFromBase < trunk_height+internode_length):
+
+    #-------------- branch out at certain height ------------------
+    next_branching_height = branch_length * math.ceil(cur_distanceFromBase/branch_length)
     if branchOut is 1:   #only allow branching out once per step
       branchOut = 2
-    #elif (cur_distanceFromBase + branching_segment_factor*internode_length > branching_height) and (cur_distanceFromBase <= branching_height):
-    elif (cur_distanceFromBase + internode_length > branching_height) and (cur_distanceFromBase <= branching_height):
+    elif order < maximumBranchOrder and allowBranching is True and (cur_distanceFromBase + internode_length > next_branching_height) and (cur_distanceFromBase <= next_branching_height):
       branchOut = 1     #signal node to form active axillary bud
       #print 'Branch out, cur_distanceFromBase=', cur_distanceFromBase, ' cur_distanceFromBase+internode_length=', cur_distanceFromBase+internode_length, ' branching_height=', branching_height
     else: #elif i==eff_new_nodes-1:
       branchOut = 2     #signal node to form leaf and dormant axillary bud
+    #--------------------------------------------------------------
+
+    #------------- branch out
+
     nproduce N(order, distanceFromGroundToBase+cur_distanceFromBase, branchOut)
     cur_radius = cur_radius - 0.5*diameter_growth_per_node
 
@@ -185,10 +196,10 @@ I(order, distanceFromGroundToBase, distanceFromBase, length, radius):        #di
   produce I(order, distanceFromGroundToBase, distanceFromBase, length, radius+0.5*growthFactor*diameter_growth_rate/steps)
 
 L(fallen, duration):      #leaf
-  if fallen is 1 or random.randint(1,10)<4 or duration>4.0*steps:    #node branching out, so shed the leaf; or randomly (50% likelihood) shed the leaf
+  if fallen is 1 or random.randint(1,10)<3 or duration>0.6*steps:    #node branching out, so shed the leaf; or randomly (50% likelihood) shed the leaf
     produce *
   else:
-    produce L(fallen, duration+growthFactor*2)
+    produce L(fallen, duration+growthFactor*1)
 
 W:      #flower
   pass
@@ -210,13 +221,13 @@ homomorphism:
 B(0,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(6)@O(0.02)
 
 #active first order axillary bud - blue
-B(1,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(5)@O(0.02)
+B(1,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(5)@O(0.01)
 
 #active second order axillary bud - green
-B(2,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(2)@O(0.02)
+B(2,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(2)@O(0.01)
 
 #active third or higher order axillary bud - yellow
-B(order,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(4)@O(0.02)
+B(order,1,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(4)@O(0.005)
 
 #dormant bud - white
 B(order,0,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(0)@O(0.005)
@@ -225,18 +236,18 @@ L(fallen, duration):
   #print 'Trace homomorphism'
   global phyllotaxis_angle
   phyllotaxis_angle = (phyllotaxis_angle + phyllotaxis_increment) % 360
-  oldage = 2.0*steps
+  oldage = 0.5*steps
   if duration < oldage:  #green leaf
-    produce SetColor(2)[/(phyllotaxis_angle)&(45)~l(0.2*(duration/oldage))]
+    produce SetColor(2)[/(phyllotaxis_angle)&(45)~l(0.1*(duration/oldage))]
     #produce SetColor(2)[/(phyllotaxis_angle)&(45)@b(0.1+0.05*duration/oldage,0)]
     #produce SetColor(2)[/(phyllotaxis_angle)&(45)~l(3.0)]  #for palm
   else:    #yellow old leaf, falling off soon
-    produce Setcolor(4)[/(phyllotaxis_angle)&(60)~l(0.2)]
-    #produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.15,0)]
+    #produce Setcolor(2)[/(phyllotaxis_angle)&(60)~l(0.1)]
+    produce Setcolor(4)[/(phyllotaxis_angle)&(60)@b(0.1,0)]
     #produce SetColor(2)[/(phyllotaxis_angle)&(120)~l(3.0)]  #for palm
 
 #flower - red
-W --> SetColor(3)@O(0.25)
+W --> SetColor(3)@O(0.02)
 
 #I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) --> SetColor(0)f(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
 I(order, distanceFromGroundToBase, distanceFromBase, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
@@ -250,7 +261,7 @@ N(order, distanceFromGround, branchingSignal):      #node
     no_branches = no_first_ord_branches #(int)(math.ceil(growthFactor*no_first_ord_branches))
   else:
     no_branches = (int)(math.ceil(growthFactor*no_second_ord_branches))
-  print 'growthFactor=', growthFactor, ' no_branches=', no_branches
+  #print 'growthFactor=', growthFactor, ' no_branches=', no_branches
   if lateral_determinate is True:
     timeLeft = determinate_bud_lifespan
   else:
@@ -270,7 +281,7 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, length, radius) < B(bud
       produce B(bud_order, 1, timeLeft-1, distanceFromGroundToBase_i, distanceFromBase_i)
     elif timeLeft == 0:
       if random.randint(1,10) < 8:  #todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
-        produce B(bud_order, -1, 0, distanceFromGround_i, distanceFromBase_i)
+        produce B(bud_order, -1, 0, distanceFromGroundToBase_i, distanceFromBase_i)
       else:
         #produce *
         produce I(order, distanceFromGroundToBase_i, distanceFromBase_i, 0.0, 0.0)
