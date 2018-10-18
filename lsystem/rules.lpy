@@ -28,9 +28,9 @@ import math
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
 #trunk_height = 2.205              #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
 #no_first_ord_branches = 2         #number of first order branches
-#no_second_ord_branches = 2        #number of second order branches (assume uniformity)
+#no_second_ord_branches = 3        #number of second order branches (assume uniformity)
 #branching_pitch_angle = 30.0
-#branching_roll_angle = 180.0
+#branching_roll_angle = 30.0
 #diameter_growth_rate = 0.619/age  #m/year? relative growth rate?
 #annual_no_new_nodes = 28.5    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
 #avg_internode_length = 0.0589    #unit: m
@@ -258,20 +258,23 @@ decomposition:
 N(order, distanceFromGround, branchingSignal):      #node
   no_branches = 1       #default
   if order is 0:
-    no_branches = no_first_ord_branches #(int)(math.ceil(growthFactor*no_first_ord_branches))
+    no_branches = no_first_ord_branches #(int)(math.ceil(growthFactor*no_first_ord_branches)) - note: number of branches is not affected by rhythmic growth factor; it's inherent from the leaf arrangement (alternate/opposite/whorled)
   else:
-    no_branches = (int)(math.ceil(growthFactor*no_second_ord_branches))
+    no_branches = no_second_ord_branches #(int)(math.ceil(growthFactor*no_second_ord_branches))
   #print 'growthFactor=', growthFactor, ' no_branches=', no_branches
+  branch_spacing_angle = 0
+  if no_branches > 1:
+    branch_spacing_angle = 360/no_branches
   if lateral_determinate is True:
     timeLeft = determinate_bud_lifespan
   else:
     timeLeft = -1
   if branchingSignal is 1:    #branchingSignal = 1 will signal axillary bud to branch out
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce L(1,0)[/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1,timeLeft,distanceFromGround,0.0)]
+      nproduce L(1,0)[/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(order+1,distanceFromGround,0.0,0.0,0.0)B(order+1,1,timeLeft,distanceFromGround,0.0)]
   elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and/or leaves
-      nproduce L(0,0)[/((i+1)*branching_roll_angle-90)&(branching_pitch_angle)B(order+1,0,timeLeft,distanceFromGround,0.0)]
+      nproduce L(0,0)[/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)B(order+1,0,timeLeft,distanceFromGround,0.0)]
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, length, radius) < B(bud_order, status, timeLeft, distanceFromGroundToBase, distanceFromBase):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
   #print 'Trace decomposition B'
