@@ -267,13 +267,13 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal):      #node
   else:
     timeLeft = -1
   budStatus = 0
-  leafStatus = 0
+  leafStatus = 1  #1=fallen
   if branchingSignal is 1:    #branchingSignal = 1 will signal leaf to grow and axillary bud to branch out
     budStatus = 1
-    leafStatus = 1
+    leafStatus = 0
   elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     budStatus = 0
-    leafStatus = 1
+    leafStatus = 0
   for i in range(no_branches):    #node transforms into buds and/or leaves
     nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(order+1,budStatus,timeLeft,distanceFromGround,0.0)]
 

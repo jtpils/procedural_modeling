@@ -192,7 +192,7 @@ def lsystem_run(age=10,
 
 
 if __name__ == "__main__":
-    print lsystem_run(age=10,
+    print lsystem_run(age=4,
                       trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=1.0,
                       no_first_ord_branches=2, no_second_ord_branches=2,
                       branching_pitch_angle=30.0, branching_roll_angle=180.0,
