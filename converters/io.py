@@ -594,7 +594,7 @@ def axialtree2mtg(tree, scale, scene, parameters = None):
             if geoms.has_key(axial_id):
                 for shape in geoms[axial_id]:
                     shape.id = mtg_id
-                mtg.property('geometry')[mtg_id]=geoms[axial_id]
+                mtg.property('geometry')[mtg_id] = geoms[axial_id]
 
                 shape = geoms[axial_id][0].geometry
                 if type(shape) is Cylinder or type(shape) is Frustum:
@@ -625,10 +625,10 @@ def axialtree2mtg(tree, scale, scene, parameters = None):
                     mtg.property('ZZ')[mtg_id] = 0
                     mtg.property('radius')[mtg_id] = 0
             else:
-                #print 'Be careful : no id ', axial_id
+                # print 'Be careful : no id ', axial_id
                 pass
 
-    # The string represented by the axial tree...
+        # The string represented by the axial tree...
 
     geoms = scene_id(scene)
     mtg = MTG()
@@ -652,7 +652,7 @@ def axialtree2mtg(tree, scale, scene, parameters = None):
     current_vertex = vid
     branching_stack = [vid]
 
-    pending_edge = '' # edge type for the next edge to be created
+    pending_edge = ''  # edge type for the next edge to be created
 
     max_scale = max(scale.itervalues())
     for aid, module in enumerate(tree):
@@ -1454,6 +1454,14 @@ class Writer(object):
 
         for vtx in traversal.iter_mtg2(self.g, current_vertex):
 
+            skipVtx = True
+            for pname in property_names:
+                if properties[pname].has_key(vtx):
+                    skipVtx = False
+                    break
+            if skipVtx is True:
+                continue    #skip this vtx for all empty values in the whole line
+
             if filter and not filter(self.g, vtx):
                 continue
 
@@ -1562,30 +1570,11 @@ class Writer(object):
             log(' -> Add vertex', line[:tab+1], '(%d)'%tab )
 
             for pname in property_names:
-                '''
-                if pname is 'geometry' and properties[pname].has_key(vtx):
-                    shape = properties[pname].get(vtx,'')[0]
-                    p = ''
-                    if type(shape.geometry) is Cylinder:
-                        p = shape.geometry.radius
-                    elif type(shape.geometry) is Translated:
-                        if type(shape.geometry.geometry) is Oriented:
-                            if type(shape.geometry.geometry.geometry) is Frustum:
-                                p = [shape.geometry.translation, shape.geometry.geometry.geometry.radius]
-                            else: #type(shape.geometry.geometry.geometry) is Scaled
-                                p = [shape.geometry.translation, shape.geometry.geometry.geometry.scale]
-                        else: #type(shape.geometry.geometry) is Frustum
-                            p = [shape.geometry.translation, shape.geometry.geometry.radius]
-                    elif type(shape.geometry) is Frustum:
-                        p = shape.geometry.radius
-                    line.append(str(p))
-                elif properties[pname].has_key(vtx):
-                '''
                 if properties[pname].has_key(vtx):
                     p = properties[pname].get(vtx,'')
                     line.append(str(p))
                 else:
-                    line.append('')
+                    line.append('0')
 
             head.append('\t'.join(line))
 

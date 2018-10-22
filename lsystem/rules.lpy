@@ -57,8 +57,8 @@ no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
 derivation_length = germination_offset + age*steps
 growthFactor = 1.0
 internode_length = avg_internode_length
-allowBranching = True
-growthFactorLowerLimit = 0.5
+growthFactorBranchingThreshold = 0.5
+growthFactorLeafingThreshold = 0.3
 
 
 def getGrowthFactor():
@@ -75,10 +75,6 @@ def StartEach():
     partial_node_per_step = (float)((growthFactor*annual_no_new_nodes)%steps)/steps
     no_new_nodes_per_step = int((growthFactor*annual_no_new_nodes) // steps)  #integer
     internode_length = growthFactor * avg_internode_length
-    if growthFactor > growthFactorLowerLimit:
-      allowBranching = True
-    else:
-      allowBranching = False
 
 def EndEach(lstring):
   pass
@@ -171,10 +167,10 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     next_branching_height = branch_length * math.ceil(cur_distanceFromBase/branch_length)
     if branchOut is 1:   #only allow branching out once per step
       branchOut = 2
-    elif order < maximumBranchOrder and allowBranching is True and (cur_distanceFromBase + internode_length > next_branching_height) and (cur_distanceFromBase <= next_branching_height):
+    elif order < maximumBranchOrder and (cur_distanceFromBase + internode_length > next_branching_height) and (cur_distanceFromBase <= next_branching_height):
       branchOut = 1     #signal node to form active axillary bud
       #print 'Branch out, cur_distanceFromBase=', cur_distanceFromBase, ' cur_distanceFromBase+internode_length=', cur_distanceFromBase+internode_length, ' branching_height=', branching_height
-    else: #elif i==eff_new_nodes-1:
+    else:
       branchOut = 2     #signal node to form leaf and dormant axillary bud
     #--------------------------------------------------------------
 
@@ -247,8 +243,8 @@ L(0, size, duration):
 W --> SetColor(3)@O(0.15)
 
 #I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, radius) --> SetColor(0)f(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
-I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
-I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, 0.0) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
+#I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
+#I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, 0.0) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) --> SetColor(1)F(length, radius)
 
 decomposition:
@@ -266,13 +262,13 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal):      #node
     timeLeft = determinate_bud_lifespan * steps
   else:
     timeLeft = -1
-  budStatus = 0
+  budStatus = 0  #0=dormant
   leafStatus = 1  #1=fallen
   if branchingSignal is 1:    #branchingSignal = 1 will signal leaf to grow and axillary bud to branch out
-    budStatus = 1
-    leafStatus = 0
-  elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
-    budStatus = 0
+    if growthFactor>growthFactorBranchingThreshold:
+      budStatus = 1
+  #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
+  if growthFactor>growthFactorLeafingThreshold:
     leafStatus = 0
   for i in range(no_branches):    #node transforms into buds and/or leaves
     nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(order+1,budStatus,timeLeft,distanceFromGround,0.0)]
