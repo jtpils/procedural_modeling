@@ -7,6 +7,6 @@
 *.pyc
 .vscode/
 .idea/
-*.txt
 log.*
 nohup.out
+*.dat
