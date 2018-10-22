@@ -24,6 +24,9 @@ def lsystem_run(age=10,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
+    flag_animate = False
+    flag_plot = False
+    flag_writeToFile = False
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     #input_file = os.path.join(current_path, 'parameters.lpy')
@@ -58,11 +61,15 @@ def lsystem_run(age=10,
     #lsys = lpy.Lsystem(input_file)
     lsys = lpy.Lsystem(input_file, parameter_dict)
     #lsys.useGroup(0)       #use rules for determinate growth pattern
-    #axialtree = lsys.animate()
-    axialtree = lsys.iterate()  #lstring output muted in rules.lpy's function EndEach
 
-    #lsys.plot(axialtree)
-    #Viewer.frameGL.saveImage(output_lpy, 'png')
+    if flag_animate is True:
+        axialtree = lsys.animate()
+    else:
+        axialtree = lsys.iterate()  #lstring output muted in rules.lpy's function EndEach
+
+    if flag_plot is True:
+        lsys.plot(axialtree)
+        Viewer.frameGL.saveImage(output_lpy, 'png')
 
     #print axialtree
     #for num, element in enumerate(axialtree):
@@ -99,7 +106,6 @@ def lsystem_run(age=10,
 #        else:
 #            print 'Unknown shape geometry'
 #    '''
-
 
     #mtg = lpy2mtg(axialtree, lsys, scene)
     #mtg_lines = lpy2mtg(mtg, axialtree, lsys)
@@ -164,27 +170,28 @@ def lsystem_run(age=10,
     #Viewer.frameGL.saveImage(output_mtg, 'png')
     '''
 
-
     #properties = [(p, 'REAL') for p in mtg.property_names() if p not in ['edge_type', 'index', 'label', '_axial_id', 'geometry']]
     properties = [(p, 'REAL') for p in mtg.property_names() if p in ['XX', 'YY', 'ZZ', 'radius']]
     #properties = [(p, 'REAL') for p in mtg.property_names()]
     #properties = [(p, 'REAL') for p in mtg_test.property_names() if p in ['geometry']]
     #print properties
-    #f = open(mtg_file, 'w')
-    #f.write(mtg_lines)
-    #f.write(write_mtg(g=mtg, properties=properties, class_at_scale=scale))
+
     mtg_string_output = write_mtg(mtg, properties)
-    #f.write(lstring_output)
-    #f.close()
+
+    if flag_writeToFile is True:
+        f = open(mtg_file, 'w')
+        f.write(mtg_string_output)
+        f.close()
 
     #pts = mtg_file_gs(mtg_file)
 
     return mtg_string_output
 
+
 if __name__ == "__main__":
     print lsystem_run(age=10,
-                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=1.0,
-                no_first_ord_branches=2, no_second_ord_branches=2,
-                branching_pitch_angle=30.0, branching_roll_angle=180.0,
-                diameter_growth_rate=0.04, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
+                      trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.205,
+                      no_first_ord_branches=2, no_second_ord_branches=3,
+                      branching_pitch_angle=30.0, branching_roll_angle=30.0,
+                      diameter_growth_rate=0.0619, annual_no_new_nodes=28.5, avg_internode_length=0.0589)
     raw_input()
