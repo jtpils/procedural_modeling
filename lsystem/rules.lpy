@@ -38,7 +38,7 @@ import math
 
 #------------Species-specific Variables---------------------
 determinate_growth = True        #flag of determinate or indeterminate growth for buds
-determinate_bud_lifespan = 5     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
+determinate_bud_lifespan = 3     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth = True           #flag of rhythmic or continuous growth
 rhythmic_growth_period = 1      #cycle of rhythmic growth every x yrs
 phyllotaxis_angle = 90    #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
@@ -48,6 +48,7 @@ leafMaxLength = 0.1  #unit: m
 leafOldAge = 0.5  #the leaf is old at age n years old
 leafDieAge = 0.7
 leafGrowthRate = 0.6  #the leaf length increases at x meter per year
+terminalBranching = False  #flag to allow bud to split into 2 or more to produce dichotomy/polytomy - only applicable to mostly ferns & mosses, not to gymnospermae & angiospermae
 #-----------------------------------------------------------
 
 steps = 12 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
@@ -129,7 +130,7 @@ B(order, status, timeLeft, distanceFromGroundToBase, distanceFromBase):      #bu
     #note: when order=0 (apical bud) and status < 0, the bud will blossom into a flower
                       #status is 0: bud is suppressed, 1: bud is growing new nodes (note: for status 1, only contextual rule I<B will be applied)
 
-I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) > B(bud_order, 1, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
+I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) B(bud_order, 1, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
   #print 'Trace production I'
   length_norm = 0.0
   if (length < internode_length):
@@ -158,7 +159,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   branchOut = 0
   #branching_segment_factor = 1.0
   branch_length = trunk_height * numpy.power(branch_length_ratio, order)
-
+  terminalBranchingFlag = False
   for i in range(eff_new_nodes):
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
@@ -168,7 +169,11 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     if branchOut is 1:   #only allow branching out once per step
       branchOut = 2
     elif order < maximumBranchOrder and (cur_distanceFromBase + internode_length > next_branching_height) and (cur_distanceFromBase <= next_branching_height):
-      branchOut = 1     #signal node to form active axillary bud
+      if terminalBranching is False:
+        branchOut = 1     #signal node to form active axillary bud
+      else:
+        branchOut = 2
+        terminalBranchingFlag = True
       #print 'Branch out, cur_distanceFromBase=', cur_distanceFromBase, ' cur_distanceFromBase+internode_length=', cur_distanceFromBase+internode_length, ' branching_height=', branching_height
     else:
       branchOut = 2     #signal node to form leaf and dormant axillary bud
@@ -184,7 +189,11 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   cur_distanceFromBase = distanceFromBase+internode_length*eff_new_nodes  #actual distance will be updated correctly on the next step
   #if bud_order is 0:  #check apical bud position
   #  print 'actual cur_distanceFromBase=', distanceFromBase+internode_length*(eff_new_nodes+aggregate_partial_node_per_step)
-  produce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
+  nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
+  if terminalBranching is True and terminalBranchingFlag is True:
+    produce B(bud_order, 4, timeLeft, distanceFromGroundToBase, cur_distanceFromBase)
+  else:
+    produce B(bud_order, 1, timeLeft, distanceFromGroundToBase, cur_distanceFromBase)
 
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) > B(bud_order, 0, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b):        #don't grow radius if bud is dormant
   produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius)
@@ -288,6 +297,18 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
     else: #timeLeft < 0
       #pass
       produce B(bud_order, status, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
+  elif status is 4:  #allow bud to split into 2 or more for terminal branching
+    no_branches = no_first_ord_branches
+    if bud_order > 0:
+      no_branches = no_second_ord_branches
+    branch_spacing_angle = 0
+    if no_branches > 1:
+      branch_spacing_angle = 360/no_branches
+    originalTimeLeft = -1
+    if determinate_growth is True:
+      originalTimeLeft = determinate_bud_lifespan * steps
+    for i in range(no_branches):
+      nproduce [/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i,distanceFromBase_i,0,0.0,0.0)B(bud_order+1,1,originalTimeLeft,distanceFromGroundToBase_i,distanceFromBase_i)]
   else:
     produce B(bud_order, status, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
 
