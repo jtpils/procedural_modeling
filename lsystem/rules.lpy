@@ -308,7 +308,7 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
     if determinate_growth is True:
       originalTimeLeft = determinate_bud_lifespan * steps
     for i in range(no_branches):
-      nproduce [/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i,distanceFromBase_i,0,0.0,0.0)B(bud_order+1,1,originalTimeLeft,distanceFromGroundToBase_i,distanceFromBase_i)]
+      nproduce [/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(bud_order+1,1,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0)]
   else:
     produce B(bud_order, status, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
 
