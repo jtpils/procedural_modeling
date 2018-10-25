@@ -38,7 +38,7 @@ import math
 
 #------------Species-specific Variables---------------------
 determinate_growth = True        #flag of determinate or indeterminate growth for buds
-determinate_bud_lifespan = 5     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
+determinate_bud_lifespan = 2     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth = True           #flag of rhythmic or continuous growth
 rhythmic_growth_period = 1       #cycle of rhythmic growth every x yrs
 phyllotaxis_angle = 90           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
@@ -51,6 +51,7 @@ leafGrowthRate = 0.6             #the leaf length increases at x meter per year
 terminalBranching = False         #flag to allow bud to split into 2 or more to produce dichotomy/polytomy - only applicable to mostly ferns & mosses, not to gymnospermae & angiospermae
 delayedBranching = True          #flag to delay branching (dormant axillary bud will be active after a period of time)
 branchingDelay = 1               #unit: year
+sympodialBranching = False        #true: sympodial, false: monopodial. Mechanism: when apical bud aborts/flowers, nearest lateral bud(s) transition from dormant to active for branching out. Note: sympodial branching is only applicable if determinate_growth is True
 #-----------------------------------------------------------
 
 #-----------Common Variables--------------------------------
@@ -65,6 +66,7 @@ growthFactorBranchingThreshold = 0.5
 growthFactorLeafingThreshold = 0.3
 wakeupBudPool = []
 idGenerator = 0    #store the latest bud ID. Note: 1 ID per node, hence multiple buds on 1 node will have the same ID
+clearPool = False
 #-----------------------------------------------------------
 
 
@@ -74,7 +76,7 @@ def getGrowthFactor():
   return growthFactor
 
 def StartEach():
-  global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length, allowBranching
+  global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length, allowBranching, wakeupBudPool
   print 'Derivation progress:', getIterationNb()+1, ' / ', derivation_length
   if rhythmic_growth is True and getIterationNb()+1 > germination_offset:
     growthFactor = getGrowthFactor()
@@ -83,7 +85,9 @@ def StartEach():
     no_new_nodes_per_step = int((growthFactor*annual_no_new_nodes) // steps)  #integer
     internode_length = growthFactor * avg_internode_length
   if len(wakeupBudPool) > 0:
-    print 'wakeupBudPool=', wakeupBudPool
+    print 'wakeupBudPool = ', wakeupBudPool
+  if clearPool is True:
+    wakeupBudPool = []
 
 def EndEach(lstring):
   #pass
@@ -130,7 +134,7 @@ S:      #shoot
     idGenerator = id
     produce B(id, -1, 0, 2, 0, timeLeft, 0.0, 0.0)
 
-B(id, successorId, order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase):       #bud, timeLeft>0 for active bud with determinate life, timeLeft=0 for active bud to abort, timeLeft<0 for forever active bud
+B(id, successorId, order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase):      #bud, timeLeft>0 for active bud with determinate life, timeLeft=0 for active bud to abort, timeLeft<0 for forever active bud. ID starts from 1 (-1 means nil)
   if status is 2:     #apical bud grows a node & internode
     produce /(trunk_roll_angle-90)&(trunk_pitch_angle)I(order,distanceFromGroundToBase,distanceFromBase,0,0.0,0.0)B(id,successorId,order,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase)
   elif status is 3:   #dormant bud comes alive as soon as the rhythmic growth factor is strong
@@ -148,7 +152,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   length_norm = 0.0
   if (length < internode_length):
     length_norm = length / internode_length   #float
-  #print 'length_norm = ', length_norm
+  #print 'length_norm = ',
+  #print length_norm
 
   aggregate_partial_node_per_step = partial_node_per_step + length_norm
   eff_new_nodes = no_new_nodes_per_step
@@ -172,6 +177,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #branching_segment_factor = 1.0
   branch_length = trunk_height * numpy.power(branch_length_ratio, order)
   terminalBranchingFlag = False
+  global idGenerator
   for i in range(eff_new_nodes):
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
@@ -287,28 +293,41 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId):
   else:
     timeLeft = -1
   growthDelay = 0
+  if delayedBranching is True:
+    growthDelay = branchingDelay * steps
   budStatus = 0  #0=dormant
-  leafStatus = 1  #1=fallen
   if branchingSignal is 1:    #branchingSignal = 1 will signal leaf to grow and axillary bud to branch out
     if growthFactor>growthFactorBranchingThreshold and delayedBranching is False:
       budStatus = 1
-    if delayedBranching is True:
-      growthDelay = branchingDelay * steps
-      #print 'Growth delay!', growthDelay, 'steps, budStatus=', budStatus
+    #print 'Growth delay!', growthDelay, 'steps, budStatus=', budStatus
   #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
+  leafStatus = 1  #1=fallen
   if growthFactor>growthFactorLeafingThreshold:
     leafStatus = 0
+  global idGenerator
   id = idGenerator + 1
+  idGenerator = id
   for i in range(no_branches):    #node transforms into buds and/or leaves
-    nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(id, successorId, order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0)]
+    nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(id,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0)]
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius) < B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
   #print 'Trace decomposition B'
   #print 'Bud order=', bud_order, ' status=', status, 'distance-from-base=', distanceFromGroundToBase_i+distanceFromBase_i
+  global wakeupBudPool
   if status is 1:
     if timeLeft > 0:
       produce B(id, successorId, bud_order, 1, growthDelay, timeLeft-1, distanceFromGroundToBase_i, distanceFromBase_i)
     elif timeLeft == 0:
+      if sympodialBranching is True:
+        #signal nearest axillary bud(s) to branch out
+        putBudIntoPool = True
+        for b in wakeupBudPool:
+          if b == successorId:  #successor bud is already in pool
+            putBudIntoPool = False
+            break
+        if putBudIntoPool is True:
+          wakeupBudPool.append(successorId)
+          clearPool = False
       if random.randint(1,10) < 8:  #todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
         produce B(id, successorId, bud_order, -1, growthDelay, 0, distanceFromGroundToBase_i, distanceFromBase_i)
       else:
@@ -322,8 +341,16 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
       produce B(id, successorId, bud_order, status, growthDelay-1, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
     elif growthDelay == 1:   #it's time for dormant bud to wake up
       produce B(id, successorId, bud_order, 3, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
-    else:
-      produce B(id, successorId, bud_order, status, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
+    else:  #growthDelay <= 0
+      if sympodialBranching is True:
+        #check if this bud is in the wakeupBudPool, then change the status of the bud to wake up from dormancy
+        for b in wakeupBudPool:
+          if b == id:
+            clearPool = True
+            produce B(id, successorId, bud_order, 3, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
+        produce B(id, successorId, bud_order, status, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
+      else: #remain dormant
+        produce B(id, successorId, bud_order, status, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
   elif status is 4:  #allow bud to split into 2 or more for terminal branching
     if growthDelay > 0:
       produce B(id, successorId, bud_order, status, growthDelay-1, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
@@ -340,7 +367,7 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
       if determinate_growth is True:
         originalTimeLeft = determinate_bud_lifespan * steps
       for i in range(no_branches):
-        nproduce [/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id, successorId, bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0)]
+        nproduce [/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id,successorId,bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0)]
   else:
     produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
 
