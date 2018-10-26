@@ -1,8 +1,6 @@
 #Note: to copy file 'io.py' in this folder to the equivalent location of 'C:\Python27\Lib\site-packages\OpenAlea.Mtg-1.2.0-py2.7.egg\openalea\mtg' (overwrite existing io.py to modify mtg writing)
 
 import os
-import sys
-import time
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 #import numpy
@@ -16,7 +14,6 @@ from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
-from optimisation.load_growth_space import mtg_file_gs
 
 def lsystem_run(age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
@@ -137,10 +134,9 @@ def lsystem_run(age=10,
     #f = open(test_mtg_file)
     #txt = f.read()
     #mtg_test = read_mtg(txt)
+    
     '''
     dressing_data = DressingData(DiameterUnit=1)
-
-
     pf1 = PlantFrame(mtg,
                     TopDiameter='TopDia',
                     DressingData = dressing_data)
