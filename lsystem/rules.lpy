@@ -84,8 +84,8 @@ def StartEach():
     no_new_nodes_per_step = int((growthFactor*annual_no_new_nodes) // steps)  #integer
     internode_length = growthFactor * avg_internode_length
     wakeupBudPool = list(set(wakeupBudPool)-set(clearBudPool))
-    if len(wakeupBudPool) > 0:
-      print 'wakeupBudPool = ', wakeupBudPool
+    #if len(wakeupBudPool) > 0:
+    #  print 'wakeupBudPool = ', wakeupBudPool
 
 def EndEach(lstring):
   pass
@@ -146,7 +146,7 @@ B(id, successorId, order, status, growthDelay, timeLeft, distanceFromGroundToBas
                       #status is 0: bud is suppressed, 1: bud is growing new nodes (note: for status 1, only contextual rule I<B will be applied)
 
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) B(id, successorId, bud_order, 1, growthDelay, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
-  print 'Initial successorId = ', successorId,
+  #print 'Initial successorId = ', successorId,
   #print 'Trace production I'
   length_norm = 0.0
   if (length < internode_length):
@@ -211,7 +211,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #  print 'actual cur_distanceFromBase=', distanceFromBase+internode_length*(eff_new_nodes+aggregate_partial_node_per_step)
   nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
 
-  print ', later successorId = ', successorId
+  #print ', later successorId = ', successorId
   if terminalBranching is True and terminalBranchingFlag is True:
     if delayedBranching is True:
       growthDelay = branchingDelay * steps
@@ -326,7 +326,7 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
       if sympodialBranching is True:
         #signal nearest axillary bud(s) to branch out
         wakeupBudPool.append(successorId)
-        print 'Bud ', id, ' delegate to bud ', successorId
+        #print 'Bud ', id, ' delegate to bud ', successorId
       if random.randint(1,10) < 8:  #todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
         produce B(id, successorId, bud_order, -1, growthDelay, 0, distanceFromGroundToBase_i, distanceFromBase_i)
       else:
@@ -351,7 +351,7 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
         for b in wakeupBudPool:
           if b == id:
             #print 'Debug 2.3.1.', b,
-            print 'Bud ', id, ' is waking up'
+            #print 'Bud ', id, ' is waking up'
             if delayedBranching is True:
               growthDelay = branchingDelay * steps
             if b not in clearBudPool:
