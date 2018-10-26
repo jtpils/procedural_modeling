@@ -55,7 +55,7 @@ sympodialBranching = True        #true: sympodial, false: monopodial. Mechanism:
 #-----------------------------------------------------------
 
 #-----------Common Variables--------------------------------
-steps = 12 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
+steps = 3 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 3     #number of initial derivation to account for germination (reality: 1-2 weeks) before visual growth of internode starts (i.e., before time t starts)
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
