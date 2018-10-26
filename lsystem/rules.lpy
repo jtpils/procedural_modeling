@@ -26,9 +26,9 @@ import math
 #age = 10
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
-#trunk_height = 2.205              #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-#no_first_ord_branches = 2         #number of first order branches
-#no_second_ord_branches = 3        #number of second order branches (assume uniformity)
+#trunk_height = 1.0              #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#no_first_ord_branches = 1         #number of first order branches
+#no_second_ord_branches = 2        #number of second order branches (assume uniformity)
 #branching_pitch_angle = 30.0
 #branching_roll_angle = 30.0
 #diameter_growth_rate = 0.619/age  #m/year? relative growth rate?
@@ -48,10 +48,10 @@ leafMaxLength = 0.1              #unit: m
 leafOldAge = 0.5                 #the leaf is old at age n years old
 leafDieAge = 0.7
 leafGrowthRate = 0.6             #the leaf length increases at x meter per year
-terminalBranching = False         #flag to allow bud to split into 2 or more to produce dichotomy/polytomy - only applicable to mostly ferns & mosses, not to gymnospermae & angiospermae
-delayedBranching = True          #flag to delay branching (dormant axillary bud will be active after a period of time)
+terminalBranching = False         #flag to allow bud to split into 2 or more to produce dichotomy/polytomy - only applicable to mostly ferns & mosses, not to gymnospermae & a
+delayedBranching = True         #flag to delay branching (dormant axillary bud will be active after a period of time)
 branchingDelay = 1               #unit: year
-sympodialBranching = False        #true: sympodial, false: monopodial. Mechanism: when apical bud aborts/flowers, nearest lateral bud(s) transition from dormant to active for branching out. Note: sympodial branching is only applicable if determinate_growth is True
+sympodialBranching = True        #true: sympodial, false: monopodial. Mechanism: when apical bud aborts/flowers, nearest lateral bud(s) transition from dormant to active for branching out. Note: sympodial branching is only applicable if determinate_growth is True
 #-----------------------------------------------------------
 
 #-----------Common Variables--------------------------------
@@ -65,10 +65,9 @@ internode_length = avg_internode_length
 growthFactorBranchingThreshold = 0.5
 growthFactorLeafingThreshold = 0.3
 wakeupBudPool = []
+clearBudPool = []
 idGenerator = 0    #store the latest bud ID. Note: 1 ID per node, hence multiple buds on 1 node will have the same ID
-clearPool = False
 #-----------------------------------------------------------
-
 
 def getGrowthFactor():
   t = (float)((getIterationNb()+1-germination_offset) % (steps*rhythmic_growth_period)) / (steps*rhythmic_growth_period)
@@ -84,14 +83,13 @@ def StartEach():
     partial_node_per_step = (float)((growthFactor*annual_no_new_nodes)%steps)/steps
     no_new_nodes_per_step = int((growthFactor*annual_no_new_nodes) // steps)  #integer
     internode_length = growthFactor * avg_internode_length
-  if len(wakeupBudPool) > 0:
-    print 'wakeupBudPool = ', wakeupBudPool
-  if clearPool is True:
-    wakeupBudPool = []
+    wakeupBudPool = list(set(wakeupBudPool)-set(clearBudPool))
+    if len(wakeupBudPool) > 0:
+      print 'wakeupBudPool = ', wakeupBudPool
 
 def EndEach(lstring):
-  #pass
-  print 'Current lstring:', lstring
+  pass
+  #print 'Current lstring:', lstring
 
 
 module O    #seed
@@ -148,6 +146,7 @@ B(id, successorId, order, status, growthDelay, timeLeft, distanceFromGroundToBas
                       #status is 0: bud is suppressed, 1: bud is growing new nodes (note: for status 1, only contextual rule I<B will be applied)
 
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) B(id, successorId, bud_order, 1, growthDelay, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b):        #distanceFromBase measures the distance from the bud B to its parent branching node from which the bud B starts off
+  print 'Initial successorId = ', successorId,
   #print 'Trace production I'
   length_norm = 0.0
   if (length < internode_length):
@@ -197,8 +196,10 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
       branchOut = 2     #signal node to form leaf and dormant axillary bud
     #--------------------------------------------------------------
 
-    nproduce N(order, distanceFromGroundToBase+cur_distanceFromBase, phyllotaxisPosition, branchOut, successorId)
-    successorId = idGenerator + 1 + i
+    ownId = idGenerator + 1
+    idGenerator = ownId
+    nproduce N(order, distanceFromGroundToBase+cur_distanceFromBase, phyllotaxisPosition, branchOut, successorId, ownId)
+    successorId = ownId
     phyllotaxisPosition = (phyllotaxisPosition + phyllotaxis_angle) % 360
     cur_radius = cur_radius - 0.5*diameter_growth_per_node
 
@@ -209,6 +210,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #if bud_order is 0:  #check apical bud position
   #  print 'actual cur_distanceFromBase=', distanceFromBase+internode_length*(eff_new_nodes+aggregate_partial_node_per_step)
   nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
+
+  print ', later successorId = ', successorId
   if terminalBranching is True and terminalBranchingFlag is True:
     if delayedBranching is True:
       growthDelay = branchingDelay * steps
@@ -244,6 +247,7 @@ U:      #fruit
 G:      #growth unit
   pass
 
+
 homomorphism:
 
 #active apical bud - pink
@@ -252,14 +256,15 @@ B(id,successorId,0,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromB
 #active first order axillary bud - blue
 B(id,successorId,1,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(5)@O(0.01)
 
-#active second order axillary bud - green
-B(id,successorId,2,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(2)@O(0.01)
+#active second or higher order axillary bud - green
+B(id,successorId,order,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(2)@O(0.01)
 
-#active third or higher order axillary bud - yellow
-B(id,successorId,order,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(4)@O(0.005)
+#dormant axillary bud waking up in next step - yellow
+B(id,successorId,order,3,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(4)@O(0.02)
 
 #dormant bud - white
 B(id,successorId,order,0,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase) --> SetColor(0)@O(0.005)
+
 
 #non-fallen leaf
 L(0, size, duration):
@@ -278,7 +283,8 @@ W --> SetColor(3)@O(0.15)
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) --> SetColor(1)F(length, radius)
 
 decomposition:
-N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId):      #node
+N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, ownId):      #node
+  #print 'Debug N',
   no_branches = 1       #default
   if order is 0:
     no_branches = no_first_ord_branches #(int)(math.ceil(growthFactor*no_first_ord_branches)) - note: number of branches is not affected by rhythmic growth factor; it's inherent from the leaf arrangement (alternate/opposite/whorled)
@@ -293,26 +299,25 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId):
   else:
     timeLeft = -1
   growthDelay = 0
-  if delayedBranching is True:
-    growthDelay = branchingDelay * steps
   budStatus = 0  #0=dormant
   if branchingSignal is 1:    #branchingSignal = 1 will signal leaf to grow and axillary bud to branch out
     if growthFactor>growthFactorBranchingThreshold and delayedBranching is False:
       budStatus = 1
+    if delayedBranching is True:
+      growthDelay = branchingDelay * steps
     #print 'Growth delay!', growthDelay, 'steps, budStatus=', budStatus
   #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
   leafStatus = 1  #1=fallen
   if growthFactor>growthFactorLeafingThreshold:
     leafStatus = 0
-  global idGenerator
-  id = idGenerator + 1
-  idGenerator = id
   for i in range(no_branches):    #node transforms into buds and/or leaves
-    nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(id,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0)]
+    #print 'Debug N', i,
+    nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0)]
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius) < B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
   #print 'Trace decomposition B'
   #print 'Bud order=', bud_order, ' status=', status, 'distance-from-base=', distanceFromGroundToBase_i+distanceFromBase_i
+  #print 'Debug 1',
   global wakeupBudPool
   if status is 1:
     if timeLeft > 0:
@@ -320,14 +325,8 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
     elif timeLeft == 0:
       if sympodialBranching is True:
         #signal nearest axillary bud(s) to branch out
-        putBudIntoPool = True
-        for b in wakeupBudPool:
-          if b == successorId:  #successor bud is already in pool
-            putBudIntoPool = False
-            break
-        if putBudIntoPool is True:
-          wakeupBudPool.append(successorId)
-          clearPool = False
+        wakeupBudPool.append(successorId)
+        print 'Bud ', id, ' delegate to bud ', successorId
       if random.randint(1,10) < 8:  #todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
         produce B(id, successorId, bud_order, -1, growthDelay, 0, distanceFromGroundToBase_i, distanceFromBase_i)
       else:
@@ -337,52 +336,60 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
       #pass
       produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
   elif status is 0:
+    #print 'Debug 2 - growthDelay=', growthDelay
     if growthDelay > 1:
+      #print 'Debug 2.1',
       produce B(id, successorId, bud_order, status, growthDelay-1, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
     elif growthDelay == 1:   #it's time for dormant bud to wake up
+      #print 'Debug 2.2',
       produce B(id, successorId, bud_order, 3, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
     else:  #growthDelay <= 0
+      #print 'Debug 2.3',
       if sympodialBranching is True:
         #check if this bud is in the wakeupBudPool, then change the status of the bud to wake up from dormancy
+        #print 'Debug 2.30',
         for b in wakeupBudPool:
           if b == id:
-            clearPool = True
-            produce B(id, successorId, bud_order, 3, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
+            #print 'Debug 2.3.1.', b,
+            print 'Bud ', id, ' is waking up'
+            if delayedBranching is True:
+              growthDelay = branchingDelay * steps
+            if b not in clearBudPool:
+              clearBudPool.append(b)
+            produce B(id, successorId, bud_order, 3, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
+        #print 'Debug 2.3.2',
         produce B(id, successorId, bud_order, status, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
       else: #remain dormant
+        #print 'Debug 2.3.3',
         produce B(id, successorId, bud_order, status, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
   elif status is 4:  #allow bud to split into 2 or more for terminal branching
+    #print 'Debug 3',
     if growthDelay > 0:
+      #print 'Debug 3.1',
       produce B(id, successorId, bud_order, status, growthDelay-1, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
     elif growthFactor <= growthFactorBranchingThreshold:  #do nothing
+      #print 'Debug 3.2',
       produce B(id, successorId, bud_order, status, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
     else:  #if growthFactor > growthFactorBranchingThreshold:
+      #print 'Debug 3.3',
       no_branches = no_first_ord_branches
       if bud_order > 0:
+        #print 'Debug 3.3.1',
         no_branches = no_second_ord_branches
       branch_spacing_angle = 0
       if no_branches > 1:
+        #print 'Debug 3.3.2',
         branch_spacing_angle = 360/no_branches
       originalTimeLeft = -1
       if determinate_growth is True:
+        #print 'Debug 3.3.3',
         originalTimeLeft = determinate_bud_lifespan * steps
       for i in range(no_branches):
+        #print 'Debug 3.3.4.', i,
         nproduce [/(branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id,successorId,bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0)]
   else:
+    #print 'Debug 4'
     produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i)
 
-  #obsolete: the following section use determinate_height to signal bud to abort/flower hence stopping elongation
-  #if distanceFromGroundToBase+distanceFromBase > determinate_height: #check for the right condition to terminate apical bud's growth by abortion
-  #  if random.randint(1,10) < 8:  #todo: to convert this to time-wise signal for spring season (time for bud to blossom into flower)
-  #    produce B(bud_order,-1)
-  #  else:
-  #    #produce *
-  #    produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, 0.0)
-
-#group: 1
-#production:
-#homomorphism:
-#decomposition:
-#endgroup  #following rules will be assined to default 0 group unless specified
 
 endlsystem
