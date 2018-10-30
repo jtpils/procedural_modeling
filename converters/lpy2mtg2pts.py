@@ -134,7 +134,7 @@ def lsystem_run(age=10,
     #f = open(test_mtg_file)
     #txt = f.read()
     #mtg_test = read_mtg(txt)
-    
+
     '''
     dressing_data = DressingData(DiameterUnit=1)
     pf1 = PlantFrame(mtg,
@@ -185,9 +185,9 @@ def lsystem_run(age=10,
 
 
 if __name__ == "__main__":
-    print lsystem_run(age=10,
-                      trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.205,
-                      no_first_ord_branches=2, no_second_ord_branches=3,
-                      branching_pitch_angle=30.0, branching_roll_angle=30.0,
-                      diameter_growth_rate=0.0619, annual_no_new_nodes=28.5, avg_internode_length=0.0589)
+    print lsystem_run(age=14,
+                      trunk_pitch_angle=1.25, trunk_roll_angle=0.88, trunk_height=3.11,
+                      no_first_ord_branches=4, no_second_ord_branches=2,
+                      branching_pitch_angle=35.58, branching_roll_angle=174.82,
+                      diameter_growth_rate=0.14, annual_no_new_nodes=19.0, avg_internode_length=0.16)
     raw_input()
