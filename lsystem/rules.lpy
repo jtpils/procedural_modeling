@@ -1,6 +1,19 @@
 import random
 import numpy
 import math
+from enum import Enum
+
+class BranchingProcess(Enum):
+   Continuous = 1
+   Rhythmic = 2
+   Diffuse = 3
+   Acrotonic = 4
+   Mesotonic = 5
+   Basitonic = 6
+   Epitonic = 7
+   Amphitonic = 8
+   Hypotonic = 9
+   Unspecified = -1
 
 #Order of execution: StartEach() - production - decomposition - EndEach() - homomorphism/interpretation
 
@@ -41,7 +54,8 @@ determinate_growth = True        #flag of determinate or indeterminate growth fo
 determinate_bud_lifespan = 2     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth = True           #flag of rhythmic or continuous growth
 rhythmic_growth_period = 1       #cycle of rhythmic growth every x yrs
-rhythmic_branching = 1           #branching pattern: 0=continuous branching, 1=rhythmic branching, 2=diffuse branching
+growth_unit_shape = BranchingProcess.Acrotonic   #choices: BranchingProcess.Acrotonic, BranchingProcess.Mesotonic, BranchingProcess.Basitonic
+rhythmic_branching = BranchingProcess.Rhythmic   #choices: BranchingProcess.Continuous, BranchingProcess.Rhythmic, BranchingProcess.Diffuse
 rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,1,0,0,0,0,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
 branching_diffusion = 0.1        #skewness of branching pattern (number x in range [0,1] refers to threshold to generate axillary buds if random number <x)
 phyllotaxis_angle = 45           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
@@ -78,7 +92,25 @@ random.seed(123456)    #for controlled randomness to generate same results for s
 
 def getGrowthFactor():
   t = (float)((getIterationNb()+1-germination_offset) % (steps*rhythmic_growth_period)) / (steps*rhythmic_growth_period)
-  growthFactor = 0.25*math.sin(2*math.pi*t) + 0.75      #growth curve equation - always bind the curve value range within [0,1]
+  lower_bound = 0.0
+  upper_bound = 1.0
+  if growth_unit_shape == BranchingProcess.Basitonic:
+     upper_bound = 0.3333
+     if t > upper_bound:
+        return 0.0
+  elif growth_unit_shape == BranchingProcess.Mesotonic:
+     lower_bound = 0.3333
+     upper_bound = 0.6666
+     if t <= lower_bound or t > upper_bound:
+        return 0.0
+  elif growth_unit_shape == BranchingProcess.Acrotonic:
+     lower_bound = 0.6666
+     if t < lower_bound:
+        return 0.0
+
+  if growth_unit_shape != BranchingProcess.Unspecified:
+     t = (t-lower_bound)/(upper_bound-lower_bound)
+  growthFactor = math.sin(math.pi*t)      #growth curve equation - always bind the curve value range within [0,1]
   return growthFactor
 
 def StartEach():
@@ -183,7 +215,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #negligibleTwigs = 0.1  #don't grow when the twigs are at length <10cm
   branchOut = 0
   #branching_segment_factor = 1.0
-  if rhythmic_branching == 0:  #continuous branching
+  if rhythmic_branching == BranchingProcess.Continuous:
     branch_length = trunk_height * numpy.power(branch_length_ratio, order)
   terminalBranchingFlag = False
   global idGenerator
@@ -192,7 +224,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
 
-    if rhythmic_branching == 0:  #continuous branching
+    if rhythmic_branching == BranchingProcess.Continuous:
       #-------------- branch out at certain height w.r.t. branch_length_ratio, starting from trunk height ------------------
       next_branching_height = branch_length * math.ceil(cur_distanceFromBase/branch_length)
       if branchOut is 1:   #only allow branching out once per step
@@ -207,7 +239,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
       else:
         branchOut = 2     #signal node to form leaf and dormant axillary bud
       #--------------------------------------------------------------
-    else:
+    else:   #rhythmic_branching == BranchingProcess.Rhythmic or #BranchingProcess.Diffuse
       #-------------- branch pattern starts only from trunk height ------------------
       global trunk_branched
       if trunk_branched is False:
@@ -225,11 +257,11 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
             terminalBranchingFlag = True
       else: #trunk_branched is True:
         branchOut = 1  #always branch out unless prohibited by delayed branching, rhythmic growth, determinate growth, sympodial branching
-        if rhythmic_branching == 1:  #rhythmic branching
+        if rhythmic_branching == BranchingProcess.Rhythmic:
           generateBudFlag = rhythmic_branching_pattern[nextNodePhase]
           #print 'nextNodePhase=', nextNodePhase, 'generateBudFlag=', generateBudFlag
           nextNodePhase = (nextNodePhase+1) % len(rhythmic_branching_pattern)
-        else: #if rhythmic_branching == 2:  #diffuse branching
+        else: #if rhythmic_branching == BranchingProcess.Diffuse
           random_range = 10
           if random.randint(0,random_range) < random_range*branching_diffusion:
             generateBudFlag = 1
