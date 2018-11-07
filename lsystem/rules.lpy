@@ -36,29 +36,31 @@ class BranchingProcess(Enum):
 #)syzygium myrtifolium:age=20, trunk_pitch_angle=0.0, trunk_height=1.174, no_first_ord_branches=2, no_second_ord_branches=2, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.10/20, annual_no_new_nodes=12.0, avg_internode_length=0.02358
 
 #---------------Parameters for Optimisation-----------------
-#age = 25
+#age = 22
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
-#trunk_height = 2.205             #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#trunk_height = 2             #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
 #no_first_ord_branches = 2         #number of first order branches
-#no_second_ord_branches = 2        #number of second order branches (assume uniformity)
+#no_second_ord_branches = 1        #number of second order branches (assume uniformity)
 #branching_pitch_angle = 30.0
 #branching_roll_angle = 180.0
-#diameter_growth_rate = 0.619/age  #m/year? relative growth rate?
-#annual_no_new_nodes = 28.5    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
-#avg_internode_length = 0.0589    #unit: m
+#diameter_growth_rate = 0.3/age  #m/year? relative growth rate?
+#annual_no_new_nodes = 10    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
+#avg_internode_length = 0.1    #unit: m
 #-----------------------------------------------------------
 
 #------------Species-specific Variables---------------------
 determinate_growth = False        #flag of determinate or indeterminate growth for buds
-determinate_bud_lifespan = 2     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
+determinate_bud_lifespan = 3     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth = True           #flag of rhythmic or continuous growth
 rhythmic_growth_period = 1       #cycle of rhythmic growth every x yrs
-growth_unit_shape = BranchingProcess.Acrotonic   #choices: BranchingProcess.Acrotonic, BranchingProcess.Mesotonic, BranchingProcess.Basitonic
+growth_unit_shape = BranchingProcess.Mesotonic   #choices: BranchingProcess.Acrotonic, BranchingProcess.Mesotonic, BranchingProcess.Basitonic
+if rhythmic_growth is False:
+  growth_unit_shape = BranchingProcess.Unspecified #growth unit only happens for rhythmic growth
 rhythmic_branching = BranchingProcess.Rhythmic   #choices: BranchingProcess.Continuous, BranchingProcess.Rhythmic, BranchingProcess.Diffuse
-rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
+rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,1,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
 branching_diffusion = 0.1        #skewness of branching pattern (number x in range [0,1] refers to threshold to generate axillary buds if random number <x)
-phyllotaxis_angle = 45           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
+phyllotaxis_angle = 0           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
 branch_length_ratio = 0.8        #ratio of child to parent branch length; from one experiment: 0.666
 maximumBranchOrder = 10
 leafMaxLength = 0.1              #unit: m
@@ -66,14 +68,20 @@ leafOldAge = 0.5                 #the leaf is old at age n years old
 leafDieAge = 0.9
 leafGrowthRate = 0.6             #the leaf length increases at x meter per year
 terminalBranching = False         #flag to allow bud to split into 2 or more to produce dichotomy/polytomy - only applicable to mostly ferns & mosses, not to gymnospermae & a
-delayedBranching = True         #flag to delay branching (dormant axillary bud will be active after a period of time)
-branchingDelay = 5               #unit: year
+delayedBranching = True        #flag to delay branching (dormant axillary bud will be active after a period of time)
+branchingDelay = 1               #unit: year
 sympodialBranching = False        #true: sympodial, false: monopodial. Mechanism: when apical bud aborts/flowers, nearest lateral bud(s) transition from dormant to active for branching out. Note: sympodial branching is only applicable if determinate_growth is True
 gravitropism = 0.4               #factor between 0 & 1 to affect every internode's bending; 0=not affected, 1=highly affected
 #-----------------------------------------------------------
 
+
+def growthFunction(t):
+  #note: make sure the integral area over 1 cycle (from t=0 to t=1) is 1
+  return 0.5*math.sin(math.pi*t)
+
+
 #-----------Common Variables--------------------------------
-steps = 3 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
+steps = 6 #int(annual_no_new_nodes)       #timestep: 'steps' steps/year, capped at annual_no_new_nodes. Branching signal relay will delay branching out if steps < annual_no_new_nodes
 germination_offset = 3     #number of initial derivation to account for germination (reality: 1-2 weeks) before visual growth of internode starts (i.e., before time t starts)
 partial_node_per_step = (float)(annual_no_new_nodes%steps)/steps
 no_new_nodes_per_step = int(annual_no_new_nodes // steps)  #integer
@@ -87,32 +95,65 @@ clearBudPool = []
 idGenerator = 0    #store the latest bud ID. Note: 1 ID per node, hence multiple buds on 1 node will have the same ID
 trunk_branched = False
 random.seed(123456)    #for controlled randomness to generate same results for same parameter configuration
+growth_unit_length = annual_no_new_nodes * avg_internode_length  #int(math.ceil(annual_no_new_nodes * avg_internode_length))
+if rhythmic_growth is True:
+  temp_growth_unit_length = 0
+  period = rhythmic_growth_period * steps
+  t = 1.0/period
+  increment = rhythmic_growth_period*annual_no_new_nodes*avg_internode_length
+  print 'increment=', increment
+  for i in range(period):
+    temp_growth_unit_length += t*growthFunction(i*t)*increment
+    #print 'temp=', temp_growth_unit_length
+  growth_unit_length = temp_growth_unit_length #int(math.ceil(temp_growth_unit_length))
+  print 'growth_unit_length=', growth_unit_length
 #-----------------------------------------------------------
 
 
-def getGrowthFactor():
-  t = (float)((getIterationNb()+1-germination_offset) % (steps*rhythmic_growth_period)) / (steps*rhythmic_growth_period)
-  lower_bound = 0.0
-  upper_bound = 1.0
-  if growth_unit_shape == BranchingProcess.Basitonic:
-     upper_bound = 0.6
-     if t > upper_bound:
-        return 0.0
-  elif growth_unit_shape == BranchingProcess.Mesotonic:
-     lower_bound = 0.3
-     upper_bound = 0.9
-     if t <= lower_bound or t > upper_bound:
-        return 0.0
-  elif growth_unit_shape == BranchingProcess.Acrotonic:
-     lower_bound = 0.4
-     if t < lower_bound:
-        return 0.0
+def getGrowthUnitTime():
+  return (float)((getIterationNb()+1-germination_offset) % (steps*rhythmic_growth_period)) / (steps*rhythmic_growth_period)
 
-  if growth_unit_shape != BranchingProcess.Unspecified:
-     t = (t-lower_bound)/(upper_bound-lower_bound)
-  #growthFactor = math.sin(math.pi*t)      #growth curve equation - always bind the curve value range within [0,1]
-  #return growthFactor
-  return 1.0
+
+def allowNewBudGeneration():
+  t = getGrowthUnitTime()
+  lowCut = 0.35
+  highCut = 0.7
+  if growth_unit_shape is BranchingProcess.Basitonic:
+    if t > lowCut:
+      return False
+  elif growth_unit_shape is BranchingProcess.Mesotonic:
+    if t < lowCut or t > highCut:
+      return False
+  elif growth_unit_shape is BranchingProcess.Acrotonic:
+    if t < highCut:
+      return False
+
+  return True
+
+def getGrowthFactor():
+  t = getGrowthUnitTime()
+
+  #lower_bound = 0.0
+  #upper_bound = 1.0
+  #if growth_unit_shape == BranchingProcess.Basitonic:
+  #   upper_bound = 0.4
+  #   if t > upper_bound:
+  #      return 0.0
+  #elif growth_unit_shape == BranchingProcess.Mesotonic:
+  #   lower_bound = 0.3
+  #   upper_bound = 0.7
+  #   if t <= lower_bound or t > upper_bound:
+  #      return 0.0
+  #elif growth_unit_shape == BranchingProcess.Acrotonic:
+  #   lower_bound = 0.6
+  #   if t < lower_bound:
+  #      return 0.0
+  #if growth_unit_shape != BranchingProcess.Unspecified:
+  #   t = (t-lower_bound)/(upper_bound-lower_bound)
+  #return 1.0
+
+  growthFactor = growthFunction(t)      #growth curve equation - always bind the curve value range within [0,1]
+  return growthFactor
 
 def StartEach():
   global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length, allowBranching, wakeupBudPool
@@ -216,6 +257,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   branchOut = 0
   #branching_segment_factor = 1.0
   if rhythmic_branching == BranchingProcess.Continuous:
+    branch_length = internode_length
+  elif rhythmic_branching == BranchingProcess.Unspecified:
     branch_length = trunk_height * numpy.power(branch_length_ratio, order)
   terminalBranchingFlag = False
   global idGenerator
@@ -224,11 +267,13 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
 
-    if rhythmic_branching == BranchingProcess.Continuous:
+    if rhythmic_branching == BranchingProcess.Continuous or rhythmic_branching == BranchingProcess.Unspecified:
       #-------------- branch out at certain height w.r.t. branch_length_ratio, starting from trunk height ------------------
       next_branching_height = branch_length * math.ceil(cur_distanceFromBase/branch_length)
       if branchOut is 1:   #only allow branching out once per step
         branchOut = 2
+        if allowNewBudGeneration() is False:  #for acrotonic/mesotonic/basitonic branching, don't produce buds at all at certain part
+          generateBudFlag = 0
       elif order < maximumBranchOrder and (cur_distanceFromBase + internode_length > next_branching_height) and (cur_distanceFromBase <= next_branching_height):
         if terminalBranching is False:
           branchOut = 1     #signal node to form active axillary bud
@@ -238,6 +283,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
         #print 'Branch out, cur_distanceFromBase=', cur_distanceFromBase, ' cur_distanceFromBase+internode_length=', cur_distanceFromBase+internode_length, ' branching_height=', branching_height
       else:
         branchOut = 2     #signal node to form leaf and dormant axillary bud
+        if allowNewBudGeneration() is False:  #for acrotonic/mesotonic/basitonic branching, don't produce buds at all at certain part
+          generateBudFlag = 0
       #--------------------------------------------------------------
     else:   #rhythmic_branching == BranchingProcess.Rhythmic or #BranchingProcess.Diffuse
       #-------------- branch pattern starts only from trunk height ------------------
@@ -257,7 +304,9 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
             terminalBranchingFlag = True
       else: #trunk_branched is True:
         branchOut = 1  #always branch out unless prohibited by delayed branching, rhythmic growth, determinate growth, sympodial branching
-        if rhythmic_branching == BranchingProcess.Rhythmic:
+        if allowNewBudGeneration() is False:  #for acrotonic/mesotonic/basitonic branching, don't produce buds at all at certain part
+          generateBudFlag = 0
+        elif rhythmic_branching == BranchingProcess.Rhythmic:
           generateBudFlag = rhythmic_branching_pattern[nextNodePhase]
           #print 'nextNodePhase=', nextNodePhase, 'generateBudFlag=', generateBudFlag
           nextNodePhase = (nextNodePhase+1) % len(rhythmic_branching_pattern)
@@ -327,7 +376,7 @@ G:      #growth unit
 homomorphism:
 
 #active apical bud - pink
-B(id,successorId,0,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase) --> SetColor(6)@O(0.02)
+B(id,successorId,0,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase) --> SetColor(6)@O(0.02)@L('Apical Bud',10)
 
 #active first order axillary bud - blue
 B(id,successorId,1,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase) --> SetColor(5)@O(0.01)
@@ -356,7 +405,13 @@ W --> SetColor(3)@O(0.15)
 #I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, radius) --> SetColor(0)f(turtle_draw_zero_length_error_prevention, radius)   #necessary drawing for correct mtg generation (mtg skipped zero length drawing, causing skipped index problem)
 #I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
 #I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, 0.0) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
-I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) --> SetColor(1)F(length, radius)
+I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius):
+  nproduce SetColor(1)F(length, radius)
+  #Todo: need a more accurate way to mark the growth unit (GU)!
+  if order is 0 and distanceFromBase>growth_unit_length and (distanceFromBase/growth_unit_length) > (distanceFromBase//growth_unit_length) and (distanceFromBase/growth_unit_length) - (distanceFromBase//growth_unit_length) < 0.01:
+    #print 'distanceFromBase=', distanceFromBase, ', growth_unit_length=', growth_unit_length
+    produce SetColor(6)@L('GU',10)
+  #print 'growth_unit_length=', growth_unit_length, ', distanceFromBase=', distanceFromBase
 
 decomposition:
 N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, ownId, generateBudFlag):      #node
