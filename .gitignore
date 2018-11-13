@@ -9,5 +9,5 @@
 .idea/
 log.*
 nohup.out
-*.dat
+*.dat*
 *.tmp
