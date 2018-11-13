@@ -75,21 +75,30 @@ def estimate_error_2(params,tpts):
     ls_rast[x_id,y_id,z_id] = 1.0
 
   locs = numpy.logical_and(t_rast,ls_rast)
-
-  E = 1-numpy.sum(numpy.sum(numpy.sum(numpy.logical_and(t_rast,ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
-  #E = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
-
+# EF1
+  E1 = 1-numpy.sum(numpy.sum(numpy.sum(numpy.logical_and(t_rast,ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
+# EF2
+  E2 = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
   comments = '# '
-
-  if numpy.abs(lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.5:
-    E = E+1.0
-    comments = comments + "LS tree differs in height | "
+  
+  E3 = 0.0
+  
+  if (numpy.abs((lsbbox[0,1]-lsbbox[0,0])-(tbbox[0,1]-tbbox[0,0]))/(tbbox[0,1]-tbbox[0,0])>0.5) \
+    or (numpy.abs((lsbbox[1,1]-lsbbox[1,0])-(tbbox[1,1]-tbbox[1,0]))/(tbbox[1,1]-tbbox[1,0])>0.5):
+    E3 = E3 + 1.0
+    comments = comments + "LS/GS width difference | "
+    
+  if numpy.abs(lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.25:
+    E3 = E3 + 1.0
+    comments = comments + "LS/GS height difference | "
 
   if (lsbbox[2,0]<0):
-    E = E+1.0
+    E3 = E3 + 1.0
     comments = comments + "LS tree intersects ground |"
+    
+  E = E1 + 0.1*E2 + E3
 
-  return E,comments
+  return E, comments
 
 def create_sample_points(npts,means,stds,ranges):
 	# Number of parameters

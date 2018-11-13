@@ -5,6 +5,9 @@ import time
 import numpy
 import pyDOE
 import sys
+import os
+
+sys.argv[1] 
 
 #import optimisation.calc_growth_space as cgs
 import optimisation.load_growth_space as lgs
@@ -54,7 +57,8 @@ def main():
     stds = [7,0.5,0.5,2,1,1,1,15,15,0.025,10,0.01];
 
     # Read from xml
-    xml_filename='../growth-space/example_xml/Tree1_Parameters.xml'
+    #xml_filename='../growth-space/example_xml/Tree1_Parameters.xml'
+    xml_filename=sys.argv[1];
     tpts = lgs.xml_file_gs(xml_filename,1)
 
     print "------------------------------------------------"
@@ -72,9 +76,23 @@ def main():
     ranges = numpy.asarray(ranges)
 
     run=1; save_obj=1;
-
+    
+    ef_id = 0
+    ef_base = 'func.dat.'
+    while 1:
+      if os.path.isfile(ef_base+str(ef_id)):
+	ef_id = ef_id + 1
+      else:
+	ef_name = ef_base + str(ef_id)
+	break
+    opt_base = "opt_params.dat."
+    opt_name = opt_base + str(ef_id)
+    print "Error file will be output to\t\t: %s" % ef_name
+    print "Optimum parameters will be output to\t: %s" % opt_name
+    print "------------------------------------------------"
     npoints = int(raw_input("Select number of sample points per variable for initial population: "));
-    ef_name = 'func.dat'
+
+   
 
     if run==1:
       	t0 = time.time()
@@ -99,7 +117,7 @@ def main():
 	results = results[:,0:11]
 	total_pop_size = len(error);
 	# Params for selecting generations
-	num_generations = 50#int(raw_input("Select number of generations: "))
+	num_generations = 1000#int(raw_input("Select number of generations: "))
 	numbest = 90; numrandom=10;
 	# Params for mutations
 	amp=0.5; mut_chance=1.0;
@@ -111,7 +129,7 @@ def main():
 	  error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
 	  print "\tSelecting %i best performing and %i random individuals from population of %i" % (numbest, numrandom, total_pop_size)
 	  parent_sample_points, parent_errors = opt.select_from_population(results,error,numbest,numrandom)
-	  write_optimums("opt_params.txt",parent_sample_points[0],params,parent_errors[0])
+	  write_optimums(opt_name,parent_sample_points[0],params,parent_errors[0])
   	  print "\tMinimum error in parent population is %f" % min(parent_errors)
 	  print "\tMaximum error in parent population is %f" % max(parent_errors)
 	  clean_parent_sample_points = opt.check_population(parent_sample_points,ranges)
@@ -132,7 +150,7 @@ def main():
 	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10,11))
 	error = results[:,-1]; results = results[:,0:11]; total_pop_size = len(error);
 	parent_sample_points, parent_errors = opt.select_from_population(results,error,5,0)
-	write_optimums("opt_params.txt",parent_sample_points[0],params,parent_errors[0])
+	write_optimums(opt_name,parent_sample_points[0],params,parent_errors[0])
 	print "------------------------------------------------"
 	print "Optimisation complete in %d minutes" % ((t3-t0)/60);
 	print "Optimum parameter configuration from %i tested parameter combinations is:" % len(error)
