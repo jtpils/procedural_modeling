@@ -4,12 +4,12 @@ import numpy
 from pyquaternion import Quaternion
 import os
 import sys
-#from enum import Enum
+from enum import Enum
 from converters.lpy2mtg2pts import lsystem_run
 import warnings
 warnings.filterwarnings("ignore")
 
-'''
+
 class Species(Enum):
     Undefined = 0
     AA = 1  #Archontophoenix alexandrae (palm)
@@ -22,7 +22,7 @@ class Species(Enum):
     TR = 8  #Tabebuia rosea
     SMy = 9  #Syzygium myrtifolium
     SP = 10  #Sterculia parviflora
-'''
+
 
 def estimate_age(species, size):
     'Estimate tree age based on scanned size of tree of certain species'
@@ -31,24 +31,24 @@ def estimate_age(species, size):
     return age
 
 
-def generate_lsystem_tree_points(params):
+def generate_lsystem_tree_points(species_id, params):
     'Wrapper function to map params array to individual variables'
     'Note: all parameters are optional with default values'
 
-    return ngenerate_lsystem_tree_points(   species=int(params[0]),
-                                            age=int(params[1]),
-                                            trunk_pitch_angle=params[2],
-                                            trunk_roll_angle=params[3],
-                                            trunk_height=params[4],
-                                            no_first_ord_branches=int(params[5]),
-                                            branching_pitch_angle=params[6],
-                                            branching_roll_angle=params[7],
-                                            diameter_growth_rate=params[8],
-                                            annual_no_new_nodes=params[9],
-                                            avg_internode_length=params[10] )
+    return ngenerate_lsystem_tree_points(   species=Species(species_id).name,
+                                            age=int(params[0]),
+                                            trunk_pitch_angle=params[1],
+                                            trunk_roll_angle=params[2],
+                                            trunk_height=params[3],
+                                            no_first_ord_branches=int(params[4]),
+                                            branching_pitch_angle=params[5],
+                                            branching_roll_angle=params[6],
+                                            diameter_growth_rate=params[7],
+                                            annual_no_new_nodes=params[8],
+                                            avg_internode_length=params[9] )
 
 
-def ngenerate_lsystem_tree_points(  species=0,
+def ngenerate_lsystem_tree_points(  species=Species.Undefined,
                                     age=1,
                                     trunk_pitch_angle=5.0,
                                     trunk_roll_angle=0.0,
@@ -79,7 +79,7 @@ def estimate_error(output_point_list, growth_space):
 
 
 def optimise():
-    species = 'Species.PP'
+    species = Species.Undefined
     age = estimate_age()
     cost = 0
     threshold = 100
@@ -101,18 +101,18 @@ def optimise():
 
 
 def main():
-    #output = generate_lsystem_tree_points(numpy.array([0, 10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
-    output = ngenerate_lsystem_tree_points( species=0,
-                                            age=10,
-                                            trunk_pitch_angle=5.0,
+    #output = generate_lsystem_tree_points(Species.Undefined, numpy.array([10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
+    output = ngenerate_lsystem_tree_points( species=Species.Undefined,
+                                            age=20,
+                                            trunk_pitch_angle=0.0,
                                             trunk_roll_angle=0.0,
-                                            trunk_height=1.0,
-                                            no_first_ord_branches=2,
+                                            trunk_height=3.0244,
+                                            no_first_ord_branches=3,
                                             branching_pitch_angle=45.0,
-                                            branching_roll_angle=180.0,
-                                            diameter_growth_rate=0.05,
-                                            annual_no_new_nodes=30.0,
-                                            avg_internode_length=0.03 )
+                                            branching_roll_angle=120.0,
+                                            diameter_growth_rate=0.01588,
+                                            annual_no_new_nodes=24.0,
+                                            avg_internode_length=0.02137 )
 
     print output
 #    file = open('lsys_optimisation_output.vtk', 'w')

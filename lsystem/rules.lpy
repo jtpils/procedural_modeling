@@ -53,6 +53,7 @@ class BranchingProcess(Enum):
 
 #-----------------------------------------------------------
 #species = Species.HO
+print 'species=', species
 #---------------Parameters for Optimisation-----------------
 #age = 20
 #trunk_pitch_angle = 0.0           #pitch down wrt turtle's left, in degrees
@@ -298,6 +299,7 @@ trunk_branched_time_offset = 0
 random.seed(123456)    #for controlled randomness to generate same results for same parameter configuration
 growth_unit_length = annual_no_new_nodes * avg_internode_length  #int(math.ceil(annual_no_new_nodes * avg_internode_length))
 gu_markers = []    #store the distanceFromBase of internodes at GU boundaries
+show_markers = False  #to show 'GU' text markers
 if rhythmic_growth is True:
   temp_growth_unit_length = 0
   period = rhythmic_growth_period * steps
@@ -585,7 +587,11 @@ G:      #growth unit
 homomorphism:
 
 #active apical bud - pink
-B(id,successorId,0,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase) --> SetColor(6)@O(0.02)@L('   Apical Bud',10)
+B(id,successorId,0,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase):
+  if show_markers is True:
+    produce SetColor(6)@O(0.02)@L('   Apical Bud',10)
+  else:
+    produce SetColor(6)@O(0.02)
 
 #active first order axillary bud - blue
 B(id,successorId,1,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase) --> SetColor(5)@O(0.01)
@@ -615,21 +621,21 @@ W --> SetColor(3)@O(0.15)
 #I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, 0.0, radius) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
 #I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, 0.0) -->     #draw nothing, enable this line for visualising in L-Py, but disable this when generating mtg?
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius):
-  global gu_markers
-  #print 'distanceFromBase=', distanceFromBase, ', gu_marker=', gu_marker, ', growth_unit_length=', growth_unit_length
-  if order is 0:
-    if distanceFromBase-trunk_height > len(gu_markers)*growth_unit_length:
-      #print 'distanceFromBase=', distanceFromBase, ', gu_markers=', gu_markers, ', growth_unit_length=', growth_unit_length
-      gu_markers.append(distanceFromBase)
-      nproduce SetColor(5)@L('   GU',10)
-    else:
-      for g in gu_markers:
-        if g == distanceFromBase:
-          nproduce SetColor(5)@L('   GU',10)
-          break
-    produce F(length, radius)SetColor(1)
-  else:
-    produce SetColor(1)F(length, radius)
+  if show_markers is True:
+    global gu_markers
+    #print 'distanceFromBase=', distanceFromBase, ', gu_marker=', gu_marker, ', growth_unit_length=', growth_unit_length
+    if order is 0:
+      if distanceFromBase-trunk_height > len(gu_markers)*growth_unit_length:
+        #print 'distanceFromBase=', distanceFromBase, ', gu_markers=', gu_markers, ', growth_unit_length=', growth_unit_length
+        gu_markers.append(distanceFromBase)
+        nproduce SetColor(5)@L('   GU',10)
+      else:
+        for g in gu_markers:
+          if g == distanceFromBase:
+            nproduce SetColor(5)@L('   GU',10)
+            break
+      produce F(length, radius)SetColor(1)
+  produce SetColor(1)F(length, radius)
 
 decomposition:
 N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, ownId, generateBudFlag):      #node
