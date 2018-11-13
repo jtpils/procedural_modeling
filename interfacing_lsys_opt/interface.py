@@ -20,12 +20,12 @@ def generate_lsystem_tree_points(params):
     'Wrapper function to map params array to individual variables'
     'Note: all parameters are optional with default values'
 
-    return ngenerate_lsystem_tree_points(   age=int(params[0]),
-                                            trunk_pitch_angle=params[1],
-                                            trunk_roll_angle=params[2],
-                                            trunk_height=params[3],
-                                            no_first_ord_branches=int(params[4]),
-                                            no_second_ord_branches=int(params[5]),
+    return ngenerate_lsystem_tree_points(   species=int(params[0]),
+                                            age=int(params[1]),
+                                            trunk_pitch_angle=params[2],
+                                            trunk_roll_angle=params[3],
+                                            trunk_height=params[4],
+                                            no_first_ord_branches=int(params[5]),
                                             branching_pitch_angle=params[6],
                                             branching_roll_angle=params[7],
                                             diameter_growth_rate=params[8],
@@ -33,12 +33,12 @@ def generate_lsystem_tree_points(params):
                                             avg_internode_length=params[10] )
 
 
-def ngenerate_lsystem_tree_points(  age=1,
+def ngenerate_lsystem_tree_points(  species='Species.SS',
+                                    age=1,
                                     trunk_pitch_angle=5.0,
                                     trunk_roll_angle=0.0,
                                     trunk_height=3.0,
                                     no_first_ord_branches=3,
-                                    no_second_ord_branches=5,
                                     branching_pitch_angle=45.0,
                                     branching_roll_angle=30.0,
                                     diameter_growth_rate=0.1,
@@ -47,8 +47,8 @@ def ngenerate_lsystem_tree_points(  age=1,
 
     'Parse L-System string output into a list of points of cylinder base centers and their radii forming the trunk-branch skeleton representation of a tree'
 
-    output_point_list = lsystem_run(age, trunk_pitch_angle, trunk_roll_angle, trunk_height,
-                                    no_first_ord_branches, no_second_ord_branches,
+    output_point_list = lsystem_run(species, age, trunk_pitch_angle, trunk_roll_angle, trunk_height,
+                                    no_first_ord_branches,
                                     branching_pitch_angle, branching_roll_angle,
                                     diameter_growth_rate, annual_no_new_nodes, avg_internode_length)
     # return parse_lstring(lstring)
@@ -64,13 +64,13 @@ def estimate_error(output_point_list, growth_space):
 
 
 def optimise():
+    species = 'Species.PP'
     age = estimate_age()
     cost = 0
     threshold = 100
 
     #parameters (with their PDFs for species X) to optimise
     no_1st_ord_branches = 3 #valid range [2,4]
-    no_2nd_ord_branches = 2 #valid range [2,4]
     branching_angle_roll = 0.0 #valid range [0,360]
     branching_angle_pitch = 20.0 #valid range [10,90]
 
@@ -79,20 +79,20 @@ def optimise():
         pass
     else:  #
         #todo - decide on the values of parameters by sampling the PDF
-        output_point_list = generate_lsystem_tree(age, no_1st_ord_branches, no_2nd_ord_branches, branching_angle_roll, branching_angle_pitch)
+        output_point_list = generate_lsystem_tree(species, age, no_1st_ord_branches, branching_angle_roll, branching_angle_pitch)
         cost = estimate_error(output_point_list, growth_space)
     return growth_param_list
 '''
 
 
 def main():
-    #output = generate_lsystem_tree_points(numpy.array([10, 5.0, 0.0, 3.0, 3, 5, 45.0, 30.0, 0.1, 30.0, 0.03]))
-    output = ngenerate_lsystem_tree_points( age=10,
+    #output = generate_lsystem_tree_points(numpy.array(['Species.PP', 10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
+    output = ngenerate_lsystem_tree_points( species='Species.PP',
+                                            age=10,
                                             trunk_pitch_angle=5.0,
                                             trunk_roll_angle=0.0,
                                             trunk_height=2.0,
                                             no_first_ord_branches=2,
-                                            no_second_ord_branches=3,
                                             branching_pitch_angle=45.0,
                                             branching_roll_angle=30.0,
                                             diameter_growth_rate=0.1,

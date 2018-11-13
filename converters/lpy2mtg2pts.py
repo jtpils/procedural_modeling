@@ -15,7 +15,7 @@ from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
 
-def lsystem_run(age=10,
+def lsystem_run(species='Species.PP', age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
                 no_first_ord_branches=3, no_second_ord_branches=5,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
@@ -39,16 +39,16 @@ def lsystem_run(age=10,
     #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
     #test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
 
-    parameter_dict = {'age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
-                            'no_first_ord_branches':' ','no_second_ord_branches':' ',
+    parameter_dict = {'species':' ','age':' ','trunk_pitch_angle':' ','trunk_roll_angle':' ','trunk_height':' ',
+                            'no_first_ord_branches':' ',
                             'branching_pitch_angle':' ','branching_roll_angle':' ',
                             'diameter_growth_rate':' ','annual_no_new_nodes':' ','avg_internode_length':' '}
+    parameter_dict['species'] = species
     parameter_dict['age'] = age
     parameter_dict['trunk_pitch_angle'] = trunk_pitch_angle            #pitch down wrt turtle's left, in degrees
     parameter_dict['trunk_roll_angle'] = trunk_roll_angle             #roll left wrt turtle's head, in degrees
     parameter_dict['trunk_height'] = trunk_height            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
     parameter_dict['no_first_ord_branches'] = no_first_ord_branches   #number of first order branches
-    parameter_dict['no_second_ord_branches'] = no_second_ord_branches  #number of second order branches (assume uniformity)
     parameter_dict['branching_pitch_angle'] = branching_pitch_angle
     parameter_dict['branching_roll_angle'] = branching_roll_angle
     parameter_dict['diameter_growth_rate'] = diameter_growth_rate  #m/year? relative growth rate?
@@ -185,9 +185,9 @@ def lsystem_run(age=10,
 
 
 if __name__ == "__main__":
-    print lsystem_run(age=14,
+    print lsystem_run(species='Species.PP', age=14,
                       trunk_pitch_angle=1.25, trunk_roll_angle=0.88, trunk_height=3.11,
-                      no_first_ord_branches=4, no_second_ord_branches=2,
+                      no_first_ord_branches=4,
                       branching_pitch_angle=35.58, branching_roll_angle=174.82,
                       diameter_growth_rate=0.14, annual_no_new_nodes=19.0, avg_internode_length=0.16)
     raw_input()

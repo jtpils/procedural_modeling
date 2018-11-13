@@ -1,0 +1,11 @@
+Species.SS	# species
+10		# age
+2.0		# trunk_pitch_angle 
+0.0		# trunk_roll_angle        
+1.0  		# trunk_height
+1		# no_first_ord_branches  
+30.0		# branching_pitch_angle
+180.0		# branching_roll_angle
+0.03		# diameter_growth_rate
+30   		# annual_no_new_nodes
+0.0589 		# avg_internode_length
