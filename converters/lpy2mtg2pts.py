@@ -13,9 +13,24 @@ from openalea.mtg.io import *
 from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
+#from enum import enum
 
+'''
+class Species(Enum):
+    Undefined = 0
+    AA = 1  #Archontophoenix alexandrae (palm)
+    SS = 2  #Samanea saman (raintree)
+    PP = 3  #Peltophorum pterocarpum (yellow flame)
+    HO = 4  #Hopea odorata
+    SMa = 5  #Swietenia macrophylla (mahogany)
+    KS = 6  #Khaya senegalensis
+    SG = 7  #Syzygium grande
+    TR = 8  #Tabebuia rosea
+    SMy = 9  #Syzygium myrtifolium
+    SP = 10  #Sterculia parviflora
+'''
 
-def lsystem_run(species='Species.PP', age=10,
+def lsystem_run(species=0, age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
                 no_first_ord_branches=3, no_second_ord_branches=5,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
@@ -185,7 +200,7 @@ def lsystem_run(species='Species.PP', age=10,
 
 
 if __name__ == "__main__":
-    print lsystem_run(species='Species.PP', age=14,
+    print lsystem_run(species=0, age=14,
                       trunk_pitch_angle=1.25, trunk_roll_angle=0.88, trunk_height=3.11,
                       no_first_ord_branches=4,
                       branching_pitch_angle=35.58, branching_roll_angle=174.82,

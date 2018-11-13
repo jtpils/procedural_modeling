@@ -4,10 +4,25 @@ import numpy
 from pyquaternion import Quaternion
 import os
 import sys
+#from enum import Enum
 from converters.lpy2mtg2pts import lsystem_run
 import warnings
 warnings.filterwarnings("ignore")
 
+'''
+class Species(Enum):
+    Undefined = 0
+    AA = 1  #Archontophoenix alexandrae (palm)
+    SS = 2  #Samanea saman (raintree)
+    PP = 3  #Peltophorum pterocarpum (yellow flame)
+    HO = 4  #Hopea odorata
+    SMa = 5  #Swietenia macrophylla (mahogany)
+    KS = 6  #Khaya senegalensis
+    SG = 7  #Syzygium grande
+    TR = 8  #Tabebuia rosea
+    SMy = 9  #Syzygium myrtifolium
+    SP = 10  #Sterculia parviflora
+'''
 
 def estimate_age(species, size):
     'Estimate tree age based on scanned size of tree of certain species'
@@ -33,7 +48,7 @@ def generate_lsystem_tree_points(params):
                                             avg_internode_length=params[10] )
 
 
-def ngenerate_lsystem_tree_points(  species='Species.SS',
+def ngenerate_lsystem_tree_points(  species=0,
                                     age=1,
                                     trunk_pitch_angle=5.0,
                                     trunk_roll_angle=0.0,
@@ -86,16 +101,16 @@ def optimise():
 
 
 def main():
-    #output = generate_lsystem_tree_points(numpy.array(['Species.PP', 10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
-    output = ngenerate_lsystem_tree_points( species='Species.PP',
+    #output = generate_lsystem_tree_points(numpy.array([0, 10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
+    output = ngenerate_lsystem_tree_points( species=0,
                                             age=10,
                                             trunk_pitch_angle=5.0,
                                             trunk_roll_angle=0.0,
-                                            trunk_height=2.0,
+                                            trunk_height=1.0,
                                             no_first_ord_branches=2,
                                             branching_pitch_angle=45.0,
-                                            branching_roll_angle=30.0,
-                                            diameter_growth_rate=0.1,
+                                            branching_roll_angle=180.0,
+                                            diameter_growth_rate=0.05,
                                             annual_no_new_nodes=30.0,
                                             avg_internode_length=0.03 )
 
