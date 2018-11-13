@@ -32,7 +32,7 @@ class Species(Enum):
 
 def lsystem_run(species=0, age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
-                no_first_ord_branches=3, no_second_ord_branches=5,
+                no_first_ord_branches=3, 
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
