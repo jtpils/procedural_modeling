@@ -7,8 +7,6 @@ import pyDOE
 import sys
 import os
 
-sys.argv[1] 
-
 #import optimisation.calc_growth_space as cgs
 import optimisation.load_growth_space as lgs
 import optimisation.read_xml as rxml
@@ -76,7 +74,7 @@ def main():
     ranges = numpy.asarray(ranges)
 
     run=1; save_obj=1;
-    
+
     ef_id = 0
     ef_base = 'func.dat.'
     while 1:
@@ -92,7 +90,7 @@ def main():
     print "------------------------------------------------"
     npoints = int(raw_input("Select number of sample points per variable for initial population: "));
 
-   
+
 
     if run==1:
       	t0 = time.time()
