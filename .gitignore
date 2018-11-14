@@ -4,10 +4,11 @@
 *.vtk
 *.iml
 *.json
-*.pyc
+*/*.pyc
 .vscode/
 .idea/
 log.*
 nohup.out
 *.dat*
 *.tmp
+*.sh

@@ -62,17 +62,19 @@ def main():
     print "------------------------------------------------"
     print "Running main function of opt.py..."
     print "\tTarget values set from file   : %s" % xml_filename
-    cname, species, location, th = rxml.rxml_treeparams(xml_filename)
+    cname, species, location, h, th = rxml.rxml_treeparams(xml_filename)
     print "\tTree common name : %s" % cname
     print "\tTree species     : %s" % species
-    print "\tTree height      : %d m" % th
+    print "\tTree height      : %f m" % h
+    print "\tTrunk height     : %f m" % th
+    # Resetting trunk height range based on xml value
+    ranges[3][0] = 0.975*th; ranges[3][1]=1.025*th;
+    ###
     print "Setting the following ranges:"
     for i in range(len(params)):
       print "\t{:<30}:\t{:>6.2f} - {:<6.2f}".format(params[i], ranges[i][0], ranges[i][1])
     print "------------------------------------------------"
-
-    ranges = numpy.asarray(ranges)
-
+    
     run=1; save_obj=1;
 
     ef_id = 0

@@ -31,11 +31,18 @@ def rxml_treeparams(fname):
 		location = numpy.asarray(location.split(","),dtype=float)
 	for vals in root.findall('SIZE'):
 		height = float(vals.find('HEIGHT').text)
-	return cname, species, location, height
+	trunk_height = 0.0
+	for branch in root.findall('BRANCHING'):
+		max_order = float(branch.find('ORDER').text)
+		for seg in branch.findall('SEG'):
+		  segment = seg.find('S_CORD').text
+		  segment = numpy.asarray(segment.split(','),dtype=float)
+		  trunk_height = trunk_height + segment[2]
+	return cname, species, location, height, trunk_height
 
 def main():
 	xml_fname = '../../growth-space/example_xml/Tree1_Parameters.xml'
-	common_name, species, location, height = rxml_treeparams(xml_fname)
+	common_name, species, location, height, trunk_height = rxml_treeparams(xml_fname)
 	b_voxsz, b_coords, c_voxsz, c_coords = rxml_growthspace(xml_fname)
 
 
@@ -45,21 +52,20 @@ def main():
 	print "#   Location"
 	print "#   \tx:\t\t%f\n#\ty:\t\t%f\n#\tz:\t\t%f" % (location[0],location[1],location[2])
 	print "#   Tree height:\t%f" % height
+	print "#   Trunk height:\t%f" % trunk_height
 	print "#   Voxel sizes"
 	print "#   \tb:\t\t%f\n#\tc:\t\t%f" % (b_voxsz, c_voxsz)
 	print "#   Number of voxels"
 	print "#   \tb:\t\t%i\n#\tc:\t\t%i" % (len(b_coords),len(c_coords))
-	print "#   Bounding box:\tb"
+	print "#   Bounding box:\tbranch"
 	print "#   \tx:\t\t(%f) - (%f)" % (numpy.min(b_coords[:,0]),numpy.max(b_coords[:,0]))
 	print "#   \ty:\t\t(%f) - (%f)" % (numpy.min(b_coords[:,1]),numpy.max(b_coords[:,1]))
 	print "#   \tz:\t\t(%f) - (%f)" % (numpy.min(b_coords[:,2]),numpy.max(b_coords[:,2]))
-	print "#   Bounding box:\tc"
+	print "#   Bounding box:\tcrown"
 	print "#   \tx:\t\t(%f) - (%f)" % (numpy.min(c_coords[:,0]),numpy.max(c_coords[:,0]))
 	print "#   \ty:\t\t(%f) - (%f)" % (numpy.min(c_coords[:,1]),numpy.max(c_coords[:,1]))
 	print "#   \tz:\t\t(%f) - (%f)" % (numpy.min(c_coords[:,2]),numpy.max(c_coords[:,2]))
 	print "#-------------------------------------------------#"
-
-	print numpy.shape(numpy.vstack((b_coords,c_coords)))
 
 if __name__ == "__main__":
 	main()
