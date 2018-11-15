@@ -14,7 +14,6 @@ from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
-
 class Species(Enum):
     Undefined = 0
     AA = 1  #Archontophoenix alexandrae (palm)
@@ -35,9 +34,9 @@ def lsystem_run(species=Species.Undefined, age=10,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
-    flag_animate = True
+    flag_animate = False
     flag_plot = False
-    flag_writeToFile = True
+    flag_writeToFile = False
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     input_file = os.path.join(current_path, '../lsystem/rules.lpy')
@@ -90,9 +89,9 @@ def lsystem_run(species=Species.Undefined, age=10,
 
 
 if __name__ == "__main__":
-    print lsystem_run(species=Species.SS, age=30,
-                      trunk_pitch_angle=0.0, trunk_roll_angle=0.0, trunk_height=1.5,
-                      no_first_ord_branches=1,
-                      branching_pitch_angle=45.0, branching_roll_angle=120.0,
-                      diameter_growth_rate=0.01588, annual_no_new_nodes=24.0, avg_internode_length=0.02137)
+    lsystem_run(species=Species.SS, age=7,
+                trunk_pitch_angle=0.0, trunk_roll_angle=0.0, trunk_height=1.0,
+                no_first_ord_branches=1,
+                branching_pitch_angle=45.0, branching_roll_angle=120.0,
+                diameter_growth_rate=0.01588, annual_no_new_nodes=24.0, avg_internode_length=0.02137)
     raw_input()

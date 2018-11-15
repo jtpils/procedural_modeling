@@ -52,16 +52,16 @@ class BranchingProcess(Enum):
 #)syzygium myrtifolium:age=20, trunk_pitch_angle=0.0, trunk_height=1.174, no_first_ord_branches=2, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.10/20, annual_no_new_nodes=12.0, avg_internode_length=0.02358
 
 #-----------------------------------------------------------
-#species = Species.HO
+#species = Species.SS
 #---------------Parameters for Optimisation-----------------
-#age = 20
+#age = 7
 #trunk_pitch_angle = 0.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
-#trunk_height = 3.0244             #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-#no_first_ord_branches = 3         #number of first order branches, according to actual tree data
+#trunk_height = 1.0             #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#no_first_ord_branches = 1         #number of first order branches, according to actual tree data
 #branching_pitch_angle = 45.0
 #branching_roll_angle = 120.0
-#diameter_growth_rate = 0.3176/age  #m/year? relative growth rate?
+#diameter_growth_rate = 0.01588#0.3176/age  #m/year? relative growth rate?
 #annual_no_new_nodes = 24.0    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
 #avg_internode_length = 0.02137    #unit: m
 #-----------------------------------------------------------
@@ -546,7 +546,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #if bud_order is 0:  #check apical bud position
   #  print 'actual cur_distanceFromBase=', distanceFromBase+internode_length*(eff_new_nodes+aggregate_partial_node_per_step)
   nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
-
+  
   #print ', later successorId = ', successorId
   if terminalBranching is True and terminalBranchingFlag is True:
     if delayedBranching is True:

@@ -99,7 +99,7 @@ def main():
                                             annual_no_new_nodes=24.0,
                                             avg_internode_length=0.02137 )
 
-    print output
+    #print output
 #    file = open('lsys_optimisation_output.vtk', 'w')
 #   file.write("# vtk DataFile Version 3.0\nTree points\nASCII\nDATASET POLYDATA\n\nPOINTS "+str(len(output))+" integer ")
 #    for item in output:
