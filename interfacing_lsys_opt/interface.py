@@ -4,24 +4,9 @@ import numpy
 from pyquaternion import Quaternion
 import os
 import sys
-from enum import Enum
-from converters.lpy2mtg2pts import lsystem_run
+from converters.lpy2mtg2pts import lsystem_run, Species
 import warnings
 warnings.filterwarnings("ignore")
-
-
-class Species(Enum):
-    Undefined = 0
-    AA = 1  #Archontophoenix alexandrae (palm)
-    SS = 2  #Samanea saman (raintree)
-    PP = 3  #Peltophorum pterocarpum (yellow flame)
-    HO = 4  #Hopea odorata
-    SMa = 5  #Swietenia macrophylla (mahogany)
-    KS = 6  #Khaya senegalensis
-    SG = 7  #Syzygium grande
-    TR = 8  #Tabebuia rosea
-    SMy = 9  #Syzygium myrtifolium
-    SP = 10  #Sterculia parviflora
 
 
 def estimate_age(species, size):
