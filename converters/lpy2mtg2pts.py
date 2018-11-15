@@ -14,6 +14,7 @@ from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 from enum import Enum
+from datetime import datetime
 
 
 class Species(Enum):
@@ -36,9 +37,9 @@ def lsystem_run(species=Species.Undefined, age=10,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
-    flag_animate = False
+    flag_animate = True
     flag_plot = False
-    flag_writeToFile = False
+    flag_writeToFile = True
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     #input_file = os.path.join(current_path, 'parameters.lpy')
@@ -49,7 +50,7 @@ def lsystem_run(species=Species.Undefined, age=10,
     #output_mtg_topdia = os.path.join(current_path, 'mtg_TopDia_output.png')
     #output_mtg_diam = os.path.join(current_path, 'mtg_diam_output.png')
     #output_mtg = os.path.join(current_path, 'mtg_output.png')
-    mtg_file = os.path.join(current_path, 'lstring_output.mtg')
+    mtg_file = os.path.join(current_path, './mtg/'+str(datetime.now().strftime('%Y%m%d%H%M%S'))+'_lstring_'+str(species)+'-age'+str(age)+'-trunkpitch'+str(trunk_pitch_angle)+',roll'+str(trunk_roll_angle)+',height'+str(trunk_height)+'-1ordbranches'+str(no_first_ord_branches)+'-branchpitch'+str(branching_pitch_angle)+',roll'+str(branching_roll_angle)+'-diamgrowth'+str(diameter_growth_rate)+'-ann_nodes'+str(annual_no_new_nodes)+'-intlen'+str(avg_internode_length)+'.mtg')
     #mtg2d_file = os.path.join(current_path, 'mtg2d.png')
     #mtg3d_file = os.path.join(current_path, 'mtg3d.png')
     #test_mtg_file = os.path.join(current_path, 'myMtg.mtg')
@@ -200,8 +201,8 @@ def lsystem_run(species=Species.Undefined, age=10,
 
 
 if __name__ == "__main__":
-    print lsystem_run(species=Species.HO, age=20,
-                      trunk_pitch_angle=0.0, trunk_roll_angle=0.0, trunk_height=2.50,
+    print lsystem_run(species=Species.SS, age=20,
+                      trunk_pitch_angle=0.0, trunk_roll_angle=0.0, trunk_height=1.5,
                       no_first_ord_branches=3,
                       branching_pitch_angle=45.0, branching_roll_angle=120.0,
                       diameter_growth_rate=0.01588, annual_no_new_nodes=24.0, avg_internode_length=0.02137)

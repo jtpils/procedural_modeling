@@ -53,7 +53,6 @@ class BranchingProcess(Enum):
 
 #-----------------------------------------------------------
 #species = Species.HO
-print 'species=', species
 #---------------Parameters for Optimisation-----------------
 #age = 20
 #trunk_pitch_angle = 0.0           #pitch down wrt turtle's left, in degrees
@@ -382,7 +381,8 @@ def StartEach():
 
 def EndEach(lstring):
   pass
-  #print 'Current lstring:', lstring
+  #if getIterationNb()+1 == derivation_length:
+  #  print 'L-string:', lstring
 
 
 module O    #seed
