@@ -89,9 +89,9 @@ def lsystem_run(species=Species.Undefined, age=10,
 
 
 if __name__ == "__main__":
-    lsystem_run(species=Species.SS, age=7,
-                trunk_pitch_angle=0.0, trunk_roll_angle=0.0, trunk_height=1.0,
-                no_first_ord_branches=1,
-                branching_pitch_angle=45.0, branching_roll_angle=120.0,
-                diameter_growth_rate=0.01588, annual_no_new_nodes=24.0, avg_internode_length=0.02137)
+    lsystem_run(species=Species.PP, age=14,
+                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.8497,
+                no_first_ord_branches=2,
+                branching_pitch_angle=40.0, branching_roll_angle=180.0,
+                diameter_growth_rate=0.04725/14, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
     raw_input()

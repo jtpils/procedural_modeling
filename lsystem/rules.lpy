@@ -41,29 +41,29 @@ class BranchingProcess(Enum):
 #Average tree parameters for:
 #generic tree: age=10, trunk_pitch_angle=5.0, trunk_height=3.0, no_first_ord_branches=3, branching_pitch_angle=45.0, branching_roll_angle=30.0, diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03
 #)raintree SS: age=20, trunk_pitch_angle=2.0, trunk_height=2.205, no_first_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.619/20, annual_no_new_nodes=28.5, avg_internode_length=0.0589
-#)yellow flame PP: age=12, trunk_pitch_angle=2.0, trunk_height=2.8497, no_first_ord_branches=2, branching_pitch_angle=40.0, branching_roll_angle=180.0, diameter_growth_rate=0.4725/12, annual_no_new_nodes=44.148, avg_internode_length=0.03232
+#)yellow flame PP: age=20, trunk_pitch_angle=2.0, trunk_height=2.8497, no_first_ord_branches=2, branching_pitch_angle=40.0, branching_roll_angle=180.0, diameter_growth_rate=0.4725/20, annual_no_new_nodes=44.148, avg_internode_length=0.03232
 #)khaya KS: age=10, trunk_pitch_angle=0.0, trunk_height=3.872, no_first_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.983/10, annual_no_new_nodes=117.231, avg_internode_length=0.02727
-#)sterculia SP: age=4, trunk_pitch_angle=0.0, trunk_height=4.0356, no_first_ord_branches=3, branching_pitch_angle=35.0, branching_roll_angle=120.0, diameter_growth_rate=0.3139/4, annual_no_new_nodes=47.684, avg_internode_length=0.09425
+#)sterculia SP: age=7, trunk_pitch_angle=0.0, trunk_height=4.0356, no_first_ord_branches=3, branching_pitch_angle=35.0, branching_roll_angle=120.0, diameter_growth_rate=0.3139/7, annual_no_new_nodes=47.684, avg_internode_length=0.09425
 #)palm AA:age=15, trunk_pitch_angle=5.0, trunk_height=10.0, no_first_ord_branches=10, branching_pitch_angle=10.0, branching_roll_angle=30.0, diameter_growth_rate=0.30/15, annual_no_new_nodes=7.0, avg_internode_length=0.10
-#)hopea HO:age=30, trunk_pitch_angle=0.0, trunk_height=3.0244, no_first_ord_branches=3, branching_pitch_angle=45.0, branching_roll_angle=120.0, diameter_growth_rate=0.3176/30, annual_no_new_nodes=24.0, avg_internode_length=0.02137
-#)mahogany SMa:age=12, trunk_pitch_angle=2.0, trunk_height=3.111, no_first_ord_branches=1, branching_pitch_angle=20.0, branching_roll_angle=45.0, diameter_growth_rate=0.476/12, annual_no_new_nodes=26.182, avg_internode_length=0.02584
+#)hopea HO:age=20, trunk_pitch_angle=0.0, trunk_height=3.0244, no_first_ord_branches=3, branching_pitch_angle=55.0, branching_roll_angle=120.0, diameter_growth_rate=0.3176/20, annual_no_new_nodes=24.0, avg_internode_length=0.02137
+#)mahogany SMa:age=15, trunk_pitch_angle=2.0, trunk_height=3.111, no_first_ord_branches=1, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.476/15, annual_no_new_nodes=26.182, avg_internode_length=0.02584
 #)syzygium grande SG:age=14, trunk_pitch_angle=1.0, trunk_height=4.0438, no_first_ord_branches=3, branching_pitch_angle=50.0, branching_roll_angle=120.0, diameter_growth_rate=0.499/14, annual_no_new_nodes=11.448, avg_internode_length=0.07248
 #)tabebuia rosea TR:age=8, trunk_pitch_angle=0.0, trunk_height=3.265, no_first_ord_branches=2, branching_pitch_angle=30.0, branching_roll_angle=180.0, diameter_growth_rate=0.4037/8, annual_no_new_nodes=39.333, avg_internode_length=0.04753
 #)syzygium myrtifolium SMy:age=20, trunk_pitch_angle=0.0, trunk_height=1.174, no_first_ord_branches=2, branching_pitch_angle=45.0, branching_roll_angle=180.0, diameter_growth_rate=0.10/20, annual_no_new_nodes=12.0, avg_internode_length=0.02358
 
 #-----------------------------------------------------------
-#species = Species.PP
+#species = Species.AA
 #---------------Parameters for Optimisation-----------------
-#age = 12
-#trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
+#age = 15
+#trunk_pitch_angle = 5.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
-#trunk_height = 2.8497            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
-#no_first_ord_branches = 2         #number of first order branches, according to actual tree data
-#branching_pitch_angle = 40.0
-#branching_roll_angle = 180.0
-#diameter_growth_rate = 0.4725/age  #m/year? relative growth rate?
-#annual_no_new_nodes = 44.148    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
-#avg_internode_length = 0.03232    #unit: m
+#trunk_height = 0.0            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
+#no_first_ord_branches = 10         #number of first order branches, according to actual tree data
+#branching_pitch_angle = 10.0
+#branching_roll_angle = 30.0
+#diameter_growth_rate = 0.30/age  #m/year? relative growth rate?
+#annual_no_new_nodes = 7.0    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
+#avg_internode_length = 0.1    #unit: m
 #-----------------------------------------------------------
 
 #------------Species-specific Variables with Default Values---------------------
@@ -93,7 +93,7 @@ gravitropism = 0.4               #factor between 0 & 1 to affect every internode
 #-----------------------------------------------------------
 # Adjustments for species
 if species == Species.AA:
-  no_first_ord_branches = 0  #actually non-zero leaves but zero axillary bud. TO REVISE!
+  #no_first_ord_branches = 0  #actually non-zero leaves but zero axillary bud. TO REVISE!
   no_second_ord_branches = 0
   determinate_growth = False
   #determinate_bud_lifespan = 20
@@ -103,9 +103,9 @@ if species == Species.AA:
   rhythmic_branching = BranchingProcess.Unspecified
   rhythmic_branching_pattern = [1]
   phyllotaxis_angle = 45.0
-  leafMaxLength = 4
-  leafOldAge = 0.4
-  leafDieAge = 0.5
+  leafMaxLength = 8
+  leafOldAge = 1.0
+  leafDieAge = 0.9
   leafGrowthRate = 2
   terminalBranching = False
   delayedBranching = False
@@ -137,7 +137,7 @@ elif species == Species.PP:
   rhythmic_growth_period = 2
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
   phyllotaxis_angle = 60.0
   leafMaxLength = 0.4
   leafOldAge = 2.0
