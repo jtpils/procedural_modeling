@@ -15,7 +15,7 @@ from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
 
 class Species(Enum):
-    Undefined = 0
+    Unspecified = 0
     AA = 1  #Archontophoenix alexandrae (palm)
     SS = 2  #Samanea saman (raintree)
     PP = 3  #Peltophorum pterocarpum (yellow flame)
@@ -28,7 +28,7 @@ class Species(Enum):
     SP = 10  #Sterculia parviflora
 
 
-def lsystem_run(species=Species.Undefined, age=10,
+def lsystem_run(species=Species.Unspecified, age=10,
                 trunk_pitch_angle=5.0, trunk_roll_angle=0.0, trunk_height=3.0,
                 no_first_ord_branches=3,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,

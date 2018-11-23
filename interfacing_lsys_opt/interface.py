@@ -33,7 +33,7 @@ def generate_lsystem_tree_points(species_id, params):
                                             avg_internode_length=params[9] )
 
 
-def ngenerate_lsystem_tree_points(  species=Species.Undefined,
+def ngenerate_lsystem_tree_points(  species=Species.Unspecified,
                                     age=1,
                                     trunk_pitch_angle=5.0,
                                     trunk_roll_angle=0.0,
@@ -64,7 +64,7 @@ def estimate_error(output_point_list, growth_space):
 
 
 def optimise():
-    species = Species.Undefined
+    species = Species.Unspecified
     age = estimate_age()
     cost = 0
     threshold = 100
@@ -86,8 +86,8 @@ def optimise():
 
 
 def main():
-    #output = generate_lsystem_tree_points(Species.Undefined, numpy.array([10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
-    output = ngenerate_lsystem_tree_points( species=Species.Undefined,
+    #output = generate_lsystem_tree_points(Species.Unspecified, numpy.array([10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
+    output = ngenerate_lsystem_tree_points( species=Species.Unspecified,
                                             age=20,
                                             trunk_pitch_angle=0.0,
                                             trunk_roll_angle=0.0,
