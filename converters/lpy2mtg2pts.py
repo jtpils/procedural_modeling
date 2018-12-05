@@ -34,9 +34,9 @@ def lsystem_run(species=Species.Unspecified, age=10,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
-    flag_animate = False
+    flag_animate = True
     flag_plot = False
-    flag_writeToFile = False
+    flag_writeToFile = True
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     input_file = os.path.join(current_path, '../lsystem/rules.lpy')

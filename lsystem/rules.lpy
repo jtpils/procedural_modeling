@@ -62,7 +62,7 @@ class ExternalStimulusPoint(IntEnum):
 #-----------------------------------------------------------
 #species = Species.PP
 #---------------Parameters for Optimisation-----------------
-#age = 12
+#age = 14
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
 #trunk_height = 2.8497            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
@@ -86,7 +86,7 @@ if rhythmic_growth is False:
 rhythmic_branching = BranchingProcess.Rhythmic   #choices: BranchingProcess.Continuous, BranchingProcess.Rhythmic, BranchingProcess.Diffuse, BranchingProcess.Unspecified
 rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
 branching_diffusion = 0.1        #skewness of branching pattern (number x in range [0,1] refers to threshold to generate axillary buds if random number <x)
-phyllotaxis_angle = 180           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
+phyllotaxis_angle = 60           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
 branch_length_ratio = 0.8        #ratio of child to parent branch length; from one experiment: 0.666
 maximumBranchOrder = 10
 leafMaxLength = 0.2              #unit: m
@@ -142,12 +142,12 @@ elif species == Species.SS:
 elif species == Species.PP:
   no_second_ord_branches = 1
   determinate_growth = True
-  determinate_bud_lifespan = 3
+  determinate_bud_lifespan = 5
   rhythmic_growth = True
   rhythmic_growth_period = 2
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
   phyllotaxis_angle = 60.0
   leafMaxLength = 0.4
   leafOldAge = 2.0
@@ -155,7 +155,7 @@ elif species == Species.PP:
   leafGrowthRate = 0.1
   terminalBranching = False
   delayedBranching = True
-  branchingDelay = 3
+  branchingDelay = 1
   sympodialBranching = True
 elif species == Species.HO:
   no_second_ord_branches = 1
@@ -406,7 +406,7 @@ module L    #leaf
 module W    #flower
 module U    #fruit
 
-Axiom: O
+Axiom: @Tp(0,0,1) @Ts(0.0) O
 
 derivation length: derivation_length
 
