@@ -62,13 +62,13 @@ class ExternalStimulusPoint(IntEnum):
 #-----------------------------------------------------------
 #species = Species.PP
 #---------------Parameters for Optimisation-----------------
-#age = 14
+#age = 20
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
 #trunk_roll_angle = 0.0            #roll left wrt turtle's head, in degrees
 #trunk_height = 2.8497            #unit: m, trunk's actual length (regardless of orientation wrt ground) - when the trunk reach this height, it will signal the tree to branch out for the first time
 #no_first_ord_branches = 2         #number of first order branches, according to actual tree data
 #branching_pitch_angle = 40.0
-#branching_roll_angle = 180.0
+#Branching_roll_angle = 180.0
 #diameter_growth_rate = 0.4725/age  #m/year? relative growth rate?
 #annual_no_new_nodes = 44.148    #number of new buds per year - note that the data were obtained monthly over an unknown period of time (unknown growth phase in the growth season), so we assume this value is peak growth value and annual_no_new_nodes = 12mth x monthly_no_new_nodes, and hence in case of rhythmic growth on monthly basis, monthly_no_new_nodes = annual_no_new_nodes / 12 and growth curve (0-100% growth) will reduce monthly_no_new_nodes by a proportionate factor
 #avg_internode_length = 0.03232    #unit: m
@@ -406,7 +406,7 @@ module L    #leaf
 module W    #flower
 module U    #fruit
 
-Axiom: @Tp(0,0,1) @Ts(0.0) O
+Axiom: @Tp(0,0,1) @Ts(0.001) O
 
 derivation length: derivation_length
 
