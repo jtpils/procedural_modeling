@@ -89,7 +89,7 @@ def lsystem_run(species=Species.Unspecified, age=10,
 
 
 if __name__ == "__main__":
-    lsystem_run(species=Species.PP, age=14,
+    lsystem_run(species=Species.PP, age=5,
                 trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.8497,
                 no_first_ord_branches=2,
                 branching_pitch_angle=40.0, branching_roll_angle=180.0,
