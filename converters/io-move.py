@@ -1460,6 +1460,7 @@ class Writer(object):
                     skipVtx = False
                     break
             if skipVtx is True:
+                current_vertex = vtx    #mark as explored
                 continue    #skip this vtx for all empty values in the whole line
 
             if filter and not filter(self.g, vtx):
