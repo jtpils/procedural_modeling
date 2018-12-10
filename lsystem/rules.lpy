@@ -64,7 +64,7 @@ class ExternalStimulusPoint(Enum):
 
 #predefineParamValues = True         #set True to use average param values for specific species
 #-----------------------------------------------------------
-#species = Species.PP
+#species = Species.HO
 #---------------Parameters for Optimisation-----------------
 #age = 20
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
@@ -705,12 +705,12 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, 
     #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and leaves
       #print 'Debug N', i,
-      nproduce [@Tp(1,1,-1) @Ts(0.0005) /(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0)]
+      nproduce [@Tp(1,1,1)@Ts(0.0005)/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0)]
   else:
     for i in range(no_branches):    #node transforms into leaves (no bud)
       #print 'Debug N', i,
-      nproduce [@Tp(1,1,0) @Ts(0.0005) /(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)]
-  produce
+      nproduce [@Tp(1,1,1)@Ts(0.0005)/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)]
+  #produce
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius) < B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase, nextNodePhase):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
   #print 'Trace decomposition B'
@@ -736,18 +736,18 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
   elif status is 0:
     #print 'Debug 2 - growthDelay=', growthDelay
     if determinate_growth is True and sympodialBranching is True:
-        #check if this bud is in the wakeupBudPool, then change the status of the bud to wake up from dormancy
-        #print 'Debug 2.30',
-        for b in wakeupBudPool:
-          if b == id:
-            #print 'Debug 2.3.1.', b,
-            #print 'Bud ', id, ' is waking up'
-            #if delayedBranching is True:
-            #  growthDelay = branchingDelay * steps
-            if b not in clearBudPool:
-              clearBudPool.append(b)
-            produce B(id, successorId, bud_order, 3, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase)
-
+    #check if this bud is in the wakeupBudPool, then change the status of the bud to wake up from dormancy regardless of growthDelay
+    #print 'Debug 2.30',
+      for b in wakeupBudPool:
+        if b == id:
+          #print 'Debug 2.3.1.', b,
+          #print 'Bud ', id, ' is waking up'
+          #if delayedBranching is True:
+          #  growthDelay = branchingDelay * steps
+          if b not in clearBudPool:
+            clearBudPool.append(b)
+          produce B(id, successorId, bud_order, 3, 0, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase)
+          #auto return
     if growthDelay > 1:
       #print 'Debug 2.1',
       produce B(id, successorId, bud_order, status, growthDelay-1, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase)
@@ -781,11 +781,11 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
         originalTimeLeft = determinate_bud_lifespan * steps
       for i in range(no_branches):
         #print 'Debug 3.3.4.', i,
-        nproduce [[@Tp(1,1,-1) @Ts(0.0005) /(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id,successorId,bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0)]
-      produce
-  else:
+        nproduce [[@Tp(1,1,1) @Ts(0.0005) /(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id,successorId,bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0)]
+      #produce
+  #else:
     #print 'Debug 4'
-    produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase)
+    #produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase)
 
 
 endlsystem
