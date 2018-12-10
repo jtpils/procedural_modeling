@@ -34,6 +34,7 @@ def lsystem_run(species=Species.Unspecified, age=10,
                 branching_pitch_angle=45.0, branching_roll_angle=30.0,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
+    flag_printString = True
     flag_animate = True
     flag_plot = False
     flag_writeToFile = True
@@ -68,6 +69,10 @@ def lsystem_run(species=Species.Unspecified, age=10,
     else:
         axialtree = lsys.iterate()  #lstring output muted in rules.lpy's function EndEach
 
+    if flag_printString is True:
+        print 'L-string output:'
+        print axialtree 
+
     if flag_plot is True:
         lsys.plot(axialtree)
         Viewer.frameGL.saveImage(output_lpy, 'png')
@@ -89,10 +94,10 @@ def lsystem_run(species=Species.Unspecified, age=10,
 
 
 if __name__ == "__main__":
-    lsystem_run(species=Species.SG, age=5,
-                trunk_pitch_angle=2.0, trunk_roll_angle=0.0, trunk_height=2.8497,
+    lsystem_run(species=Species.PP, age=15,
+                trunk_pitch_angle=5.0, trunk_roll_angle=10.0, trunk_height=10.0,
                 no_first_ord_branches=2,
-                branching_pitch_angle=40.0, branching_roll_angle=180.0,
-                diameter_growth_rate=0.4725/14, annual_no_new_nodes=44.148, avg_internode_length=0.03232)
+                branching_pitch_angle=10.0, branching_roll_angle=30.0,
+                diameter_growth_rate=0.3/15, annual_no_new_nodes=7.0, avg_internode_length=0.1)
     print 'Program finished'
     raw_input()
