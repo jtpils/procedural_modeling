@@ -31,14 +31,6 @@ class BranchingProcess(Enum):
    Amphitonic = 8
    Hypotonic = 9
 
-class ExternalStimulusField(Enum):
-   Unspecified = 0
-   Gravity = 1
-   Sunlight = 2
-
-class ExternalStimulusPoint(Enum):
-   Unspecified = 0
-   Light = 1
 
 #Order of execution: StartEach() - production - decomposition - EndEach() - homomorphism/interpretation
 
@@ -64,7 +56,7 @@ class ExternalStimulusPoint(Enum):
 
 #predefineParamValues = True         #set True to use predefined param values for specific species
 #-----------------------------------------------------------
-#species = Species.PP
+#species = Species.SS
 #---------------Parameters for Optimisation-----------------
 #age = 20
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
@@ -102,9 +94,9 @@ delayedBranching = False        #flag to delay branching (dormant axillary bud w
 branchingDelay = 1               #unit: year
 sympodialBranching = False        #true: sympodial, false: monopodial. Mechanism: when apical bud aborts/flowers, nearest lateral bud(s) transition from dormant to active for branching out. Note: sympodial branching is only applicable if determinate_growth is True
 soleProximalBud = True          #true: only 1 apical/proximal bud allowed at a time; false: multiple apical/proximal buds
-shoot_gravitropism = 0.4               #sensitivity/weight factor between -1 & 1 to affect every new internode's growth bending; -1=negatively highly affected, 0=not affected, 1=highly affected
-phototropism = 0.4               #sensitivity/weight factor between -1 & 1 to affect every new internode's growth bending; -1=negatively highly affected, 0=not affected, 1=highly affected
-plagiotropism_angle = 90.0        #equilibrium angle of younger internodes from stimuli's effective direction
+proximal_tropism = (0,0,-1,0.0)  #(tx,ty,tz,elasticity): tropism net force vector [tx,ty,tz] that affects proximal internode's growth bending along the force direction (elasticity=[0,1]). Elasticity further away from 0 indicates stronger reaction/bending to external stimuli. Tropism example: gravitropism [0,0,-1], phototropism. Proximal tropism is for current proximal bud growing new internodes. Tropism [0,0,1,x] equiv to orthotropic, tropism [0,0,-1,0,01]? equiv to plagiotropic
+distal_tropism = (0,0,-1,-0.001) #distal tropism is for non-proximal bud growing new internodes
+leaf_tropism = (0,0,-1,0.1)    #leaf tropism applies to leaves
 #-----------------------------------------------------------
 # Adjustments for species
 if species == Species.AA:
@@ -129,6 +121,9 @@ if species == Species.AA:
   #branchingDelay = 1
   sympodialBranching = False
   soleProximalBud = True
+  proximal_tropism = (1,0,2,0.04)
+  distal_tropism = (0,0,-1,0.1)  #not applicable
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.SS:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.205; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.619/age; annual_no_new_nodes=28.5; avg_internode_length=0.0589
@@ -150,9 +145,12 @@ elif species == Species.SS:
   branchingDelay = 3
   sympodialBranching = False
   soleProximalBud = False
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,-1,0.002)   #plagiotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.PP:
   if predefineParamValues is True:
-     age=5; trunk_pitch_angle=2.0; trunk_height=2.8497; no_first_ord_branches=2; branching_pitch_angle=40.0; branching_roll_angle=180.0; diameter_growth_rate=0.4725/age; annual_no_new_nodes=44.148; avg_internode_length=0.03232
+     age=20; trunk_pitch_angle=2.0; trunk_height=2.8497; no_first_ord_branches=2; branching_pitch_angle=40.0; branching_roll_angle=180.0; diameter_growth_rate=0.4725/age; annual_no_new_nodes=44.148; avg_internode_length=0.03232
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 5
@@ -171,6 +169,9 @@ elif species == Species.PP:
   branchingDelay = 1
   sympodialBranching = True
   soleProximalBud = False
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,-1,0.0008)   #plagiotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.HO:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=3.0244; no_first_ord_branches=3; branching_pitch_angle=55.0; branching_roll_angle=120.0; diameter_growth_rate=0.3176/age; annual_no_new_nodes=24.0; avg_internode_length=0.02137
@@ -178,10 +179,10 @@ elif species == Species.HO:
   determinate_growth = True
   determinate_bud_lifespan = 20
   rhythmic_growth = True
-  rhythmic_growth_period = 1
+  rhythmic_growth_period = 3
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
   phyllotaxis_angle = 90.0
   leafMaxLength = 0.1
   leafOldAge = 0.8
@@ -192,6 +193,9 @@ elif species == Species.HO:
   branchingDelay = 2
   sympodialBranching = False
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,-1,0.0008)   #plagiotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.SMa:
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=2.0; trunk_height=3.111; no_first_ord_branches=1; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.476/age; annual_no_new_nodes=26.182; avg_internode_length=0.02584
@@ -202,7 +206,7 @@ elif species == Species.SMa:
   rhythmic_growth_period = 5
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1]
   phyllotaxis_angle = 45.0
   leafMaxLength = 0.12
   leafOldAge = 0.7
@@ -213,6 +217,9 @@ elif species == Species.SMa:
   branchingDelay = 1
   sympodialBranching = False
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,1,0.008)   #orthotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.KS:
   if predefineParamValues is True:
      age=10; trunk_pitch_angle=0.0; trunk_height=3.872; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.983/age; annual_no_new_nodes=117.231; avg_internode_length=0.02727
@@ -234,6 +241,9 @@ elif species == Species.KS:
   branchingDelay = 1
   sympodialBranching = False
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,1,0.003)   #orthotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.SG:
   if predefineParamValues is True:
      age=14; trunk_pitch_angle=1.0; trunk_height=4.0438; no_first_ord_branches=3; branching_pitch_angle=50.0; branching_roll_angle=120.0; diameter_growth_rate=0.499/age; annual_no_new_nodes=11.448; avg_internode_length=0.07248
@@ -244,7 +254,7 @@ elif species == Species.SG:
   #rhythmic_growth_period = 5
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,1,0,0,0,1,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1]
   phyllotaxis_angle = 180.0
   leafMaxLength = 0.15
   leafOldAge = 2.0
@@ -255,17 +265,20 @@ elif species == Species.SG:
   branchingDelay = 2
   sympodialBranching = True
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,1,0.003)   #orthotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.TR:
   if predefineParamValues is True:
      age=8; trunk_pitch_angle=0.00; trunk_height=3.265; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.4037/age; annual_no_new_nodes=39.333; avg_internode_length=0.04753
   no_second_ord_branches = 6
   determinate_growth = True
-  determinate_bud_lifespan = 2
+  determinate_bud_lifespan = 3
   rhythmic_growth = False
   #rhythmic_growth_period = 5
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
   phyllotaxis_angle = 30.0
   leafMaxLength = 0.3
   leafOldAge = 1.7
@@ -276,6 +289,9 @@ elif species == Species.TR:
   branchingDelay = 1
   sympodialBranching = True
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,1,0.002)   #orthotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.SMy:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
@@ -297,6 +313,9 @@ elif species == Species.SMy:
   branchingDelay = 1
   sympodialBranching = True
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,1,0.002)   #orthotropic
+  leaf_tropism = (0,0,-1,0.2)
 elif species == Species.SP:
   if predefineParamValues is True:
      age=7; trunk_pitch_angle=0.0; trunk_height=4.0356; no_first_ord_branches=3; branching_pitch_angle=35.0; branching_roll_angle=120.0; diameter_growth_rate=0.3139/age; annual_no_new_nodes=47.684; avg_internode_length=0.09425
@@ -318,6 +337,9 @@ elif species == Species.SP:
   branchingDelay = 1
   sympodialBranching = False
   soleProximalBud = True
+  proximal_tropism = (0,0,1,0.04)  #orthotropic
+  distal_tropism = (0,0,-1,0.004)   #plagiotropic by apposition
+  leaf_tropism = (0,0,-1,0.2)
 
 
 def growthFunction(t):
@@ -346,7 +368,7 @@ trunk_branched_time_offset = 0
 random.seed(123456)    #for controlled randomness to generate same results for same parameter configuration
 growth_unit_length = annual_no_new_nodes * avg_internode_length  #int(math.ceil(annual_no_new_nodes * avg_internode_length))
 gu_markers = []    #store the distanceFromBase of internodes at GU boundaries
-show_markers = False  #to show 'GU' text markers
+show_markers = True  #to show 'GU' text markers
 if rhythmic_growth is True:
   temp_growth_unit_length = 0
   period = rhythmic_growth_period * steps
@@ -421,14 +443,16 @@ def StartEach():
     #no_new_nodes_per_step = int((growthFactor*annual_no_new_nodes) // steps)  #integer
 
     internode_length = growthFactor * avg_internode_length
+  if len(wakeupBudPool) > 0:
+    #print 'Before: wakeupBudPool = ', wakeupBudPool, ', clearBudPool = ', clearBudPool
     wakeupBudPool = list(set(wakeupBudPool)-set(clearBudPool))
     clearBudPool = []
-    if len(proximalBudCandidates) > 0:
-      print 'Before: proximalBudCandidates = ', proximalBudCandidates, ', promotedBuds = ', promotedBuds
+    #print 'After: wakeupBudPool = ', wakeupBudPool, ', clearBudPool = ', clearBudPool
+  if len(proximalBudCandidates) > 0:
+    #print 'Before: proximalBudCandidates = ', proximalBudCandidates, ', promotedBuds = ', promotedBuds
     proximalBudCandidates = list(set(proximalBudCandidates)-set(promotedBuds))
     promotedBuds = []
-    if len(proximalBudCandidates) > 0:
-      print 'After: proximalBudCandidates = ', proximalBudCandidates, ', promotedBuds = ', promotedBuds
+    #print 'After: proximalBudCandidates = ', proximalBudCandidates, ', promotedBuds = ', promotedBuds
 
 def EndEach(lstring):
   pass
@@ -475,7 +499,7 @@ S:      #shoot
     id = idGenerator + 1
     idGenerator = id
     numProximalBuds += 1
-    produce B(id, -1, 0, 2, 0, timeLeft, 0.0, 0.0, 0, 1)
+    produce B(id, -1, 0, 2, 0, timeLeft, 0.0, 0.0, 0, True)
 
 B(id, successorId, order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase, nextNodePhase, isProximal):      #bud, timeLeft>0 for active bud with determinate life, timeLeft=0 for active bud to abort, timeLeft<0 for forever active bud. ID starts from 1 (-1 means nil). isProximal (0=False, 1=True) indicates if this bud is currently growing the proximal/main/center axis of the tree or distal/lateral axis of the tree; in sympodial branching, there might be a case of a lateral bud growing a distal axis switches to growing as main axis after apical bud aborts (i.e., lateral bud will become the apical bud)
   if status is 2:     #apical bud grows a node & internode
@@ -523,6 +547,10 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   terminalBranchingFlag = False
   global idGenerator
   generateBudFlag = 1  #a node will definitely produce new bud(s) for continuous branching
+  if isProximal is True:
+    nproduce @Tp(proximal_tropism[0], proximal_tropism[1], proximal_tropism[2])@Ts(proximal_tropism[3])
+  else:
+    nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
   for i in range(eff_new_nodes):
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
@@ -609,7 +637,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     produce B(id, successorId, bud_order, 1, growthDelay, timeLeft, distanceFromGroundToBase, cur_distanceFromBase, nextNodePhase, isProximal)
 
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius) > B(id, successorId, bud_order, 0, growthDelay, timeLeft, distanceFromGroundToBase_b, distanceFromBase_b, nextNodePhase, isProximal):        #don't grow radius if bud is dormant
-  produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius)
+  pass
+  #produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius)
 
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius):        #distanceFromBase measures internode's tip distance to parent branching node
   produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius+0.5*growthFactor*diameter_growth_rate/steps)
@@ -639,22 +668,20 @@ G:      #growth unit
 
 homomorphism:
 
-#active apical/proximal bud - pink
-B(id,successorId,order,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase,1):
-  if show_markers is True:
-    produce SetColor(6)@O(0.02)@L('   Apical Bud',10)
-  else:
-    produce SetColor(6)@O(0.02)
 
-#active axillary bud - blue
-B(id,successorId,order,1,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase,0) --> SetColor(5)@O(0.01)
-
-#dormant axillary bud waking up in next step - yellow
-B(id,successorId,order,3,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase,0) --> SetColor(4)@O(0.02)
-
-#dormant bud - white
-B(id,successorId,order,0,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase,isProximal) --> SetColor(0)@O(0.005)
-
+B(id,successorId,order,status,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase,isProximal):
+  if status is 0:  #dormant bud - white
+    produce SetColor(0)@O(0.005)
+  elif status is 1:
+    if isProximal is True:  #active apical/proximal bud - pink
+      if show_markers is True:
+        produce SetColor(6)@O(0.02)@L('   Apical Bud '+str(id),10)
+      else:
+        produce SetColor(6)@O(0.02)
+    else:  #active axillary bud - blue
+      produce SetColor(5)@O(0.01)
+  elif status is 3: #dormant axillary bud waking up in next step - yellow
+    produce SetColor(4)@O(0.02)
 
 #non-fallen leaf
 L(0, size, duration):
@@ -720,11 +747,11 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, 
     #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and leaves
       #print 'Debug N', i,
-      nproduce [@Tp(1,1,1)@Ts(0.0005)/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,0)]
+      nproduce [@Tp(1,1,1)@Ts(0.0005)/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)@Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,False)]
   else:
     for i in range(no_branches):    #node transforms into leaves (no bud)
       #print 'Debug N', i,
-      nproduce [@Tp(1,1,1)@Ts(0.0005)/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)L(leafStatus,0,0)]
+      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)]
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius) < B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase, nextNodePhase, isProximal):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
   #print 'Trace decomposition B'
@@ -742,8 +769,9 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
           proximalBudCandidates.append(successorId)
           numProximalBuds -= 1
         #print 'Bud ', id, ' delegate to bud ', successorId
+      #print 'Trace just before bud aborts/flowers'
       if random.randint(1,10) < 8: #convert to flower and pass on the proximal axis role if any to successor; todo: to convert timeLeft to spring season signal (time for bud to blossom into flower)
-        produce B(id, successorId, bud_order, -1, 0, 0, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase, 0)
+        produce B(id, successorId, bud_order, -1, 0, 0, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase, False)
       else:
         produce *
         #produce I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, 0.0, 0.0)
@@ -752,8 +780,8 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
   elif status is 0:
     #print 'Debug 2 - growthDelay=', growthDelay
     if determinate_growth is True and sympodialBranching is True:
-    #check if this bud is in the wakeupBudPool, then change the status of the bud to wake up from dormancy regardless of growthDelay
-    #print 'Debug 2.30',
+      #check if this bud is in the wakeupBudPool, then change the status of the bud to wake up from dormancy regardless of growthDelay
+      #print 'Debug 2.30',
       for b in wakeupBudPool:
         if b == id:
           #print 'Debug 2.3.1.', b,
@@ -803,7 +831,7 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
         originalTimeLeft = determinate_bud_lifespan * steps
       for i in range(no_branches):
         #print 'Debug 3.3.4.', i,
-        nproduce [[@Tp(1,1,1) @Ts(0.0005) /(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id,successorId,bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,isProximal)]
+        nproduce [[/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])I(bud_order+1,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,0.0,0.0)B(id,successorId,bud_order+1,1,growthDelay,originalTimeLeft,distanceFromGroundToBase_i+distanceFromBase_i,0.0,0,isProximal)]
   #else:
     #print 'Debug 4'
     #produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase, isProximal)
