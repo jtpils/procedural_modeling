@@ -1454,14 +1454,6 @@ class Writer(object):
 
         for vtx in traversal.iter_mtg2(self.g, current_vertex):
 
-            skipVtx = True
-            for pname in property_names:
-                if properties[pname].has_key(vtx):
-                    skipVtx = False
-                    break
-            if skipVtx is True:
-                continue    #skip this vtx for all empty values in the whole line
-
             if filter and not filter(self.g, vtx):
                 continue
 
@@ -1569,14 +1561,17 @@ class Writer(object):
 
             log(' -> Add vertex', line[:tab+1], '(%d)'%tab )
 
+            skipVtx = True
             for pname in property_names:
                 if properties[pname].has_key(vtx):
                     p = properties[pname].get(vtx,'')
                     line.append(str(p))
+                    skipVtx = False
                 else:
                     line.append('0')
 
-            head.append('\t'.join(line))
+            if skipVtx is False:
+                head.append('\t'.join(line))
 
             current_vertex = vtx
 
