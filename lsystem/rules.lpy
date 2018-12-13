@@ -368,7 +368,7 @@ trunk_branched_time_offset = 0
 random.seed(123456)    #for controlled randomness to generate same results for same parameter configuration
 growth_unit_length = annual_no_new_nodes * avg_internode_length  #int(math.ceil(annual_no_new_nodes * avg_internode_length))
 gu_markers = []    #store the distanceFromBase of internodes at GU boundaries
-show_markers = True  #to show 'GU' text markers
+show_markers = False  #to show 'GU' text markers
 if rhythmic_growth is True:
   temp_growth_unit_length = 0
   period = rhythmic_growth_period * steps
