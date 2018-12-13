@@ -54,7 +54,7 @@ class BranchingProcess(Enum):
 #)syzygium myrtifolium SMy:age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
 
 
-#predefineParamValues = True         #set True to use predefined param values for specific species
+predefineParamValues = True         #set True to use predefined param values for specific species
 #-----------------------------------------------------------
 #species = Species.SS
 #---------------Parameters for Optimisation-----------------
@@ -230,8 +230,8 @@ elif species == Species.KS:
   rhythmic_growth_period = 1
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-  phyllotaxis_angle = 90.0
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  phyllotaxis_angle = 60.0
   leafMaxLength = 0.6
   leafOldAge = 0.8
   leafDieAge = 0.8
@@ -326,7 +326,7 @@ elif species == Species.SP:
   rhythmic_growth_period = 2
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
-  rhythmic_branching_pattern = [0,0,0,1,0,0,0,1,0,0,1]
+  rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
   phyllotaxis_angle = 60.0
   leafMaxLength = 0.25
   leafOldAge = 2.0
@@ -338,7 +338,7 @@ elif species == Species.SP:
   sympodialBranching = False
   soleProximalBud = True
   proximal_tropism = (0,0,1,0.04)  #orthotropic
-  distal_tropism = (0,0,-1,0.004)   #plagiotropic by apposition
+  distal_tropism = (0,0,-1,0.004)   #plagiotropic by apposition?
   leaf_tropism = (0,0,-1,0.2)
 
 
