@@ -54,7 +54,7 @@ class BranchingProcess(Enum):
 #)syzygium myrtifolium SMy:age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
 
 
-#predefineParamValues = True         #set True to use predefined param values for specific species
+#predefineParamValues = False         #set True to use predefined param values for specific species
 #-----------------------------------------------------------
 #species = Species.Unspecified
 #---------------Parameters for Optimisation-----------------
@@ -380,7 +380,9 @@ if rhythmic_growth is True:
     #print 't=',t,',growthFunc(',i*t,')=',growthFunction(i*t),'temp=', temp_growth_unit_length
   growth_unit_length = temp_growth_unit_length #int(math.ceil(temp_growth_unit_length))
   #print 'growth_unit_length=', growth_unit_length
-
+pruningOn = True        #True to allow pruning in the simulation (only applied at end of simulation)
+pruningStart = False    #flag to start pruning at the end of simulation
+pruningDiameter = 0.01    #unit: m, prune away branches smaller than x m
 #-----------------------------------------------------------
 
 
@@ -432,7 +434,7 @@ def getGrowthFactor():
   return growthFactor
 
 def StartEach():
-  global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length, wakeupBudPool, clearBudPool, proximalBudCandidates, promotedBuds
+  global growthFactor, partial_node_per_step, no_new_nodes_per_step, internode_length, wakeupBudPool, clearBudPool, proximalBudCandidates, promotedBuds, pruningStart
   print 'Derivation progress:', getIterationNb()+1, ' / ', derivation_length
   if rhythmic_growth is True and getIterationNb()+1 > germination_offset:
     growthFactor = getGrowthFactor()
@@ -453,6 +455,9 @@ def StartEach():
     proximalBudCandidates = list(set(proximalBudCandidates)-set(promotedBuds))
     promotedBuds = []
     #print 'After: proximalBudCandidates = ', proximalBudCandidates, ', promotedBuds = ', promotedBuds
+  if pruningOn is True and getIterationNb()+1 == derivation_length:  #last step, activate pruning if any
+    pruningStart = True
+    print 'Pruning activated:', pruningStart
 
 def EndEach(lstring):
   pass
@@ -668,7 +673,6 @@ G:      #growth unit
 
 homomorphism:
 
-
 B(id,successorId,order,status,growthDelay,timeLeft,distanceFromGroundToBase,distanceFromBase,nextNodePhase,isProximal):
   if status is 0:  #dormant bud - white
     produce SetColor(0)@O(0.005)
@@ -714,7 +718,19 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
       produce F(length, radius)SetColor(1)
   produce SetColor(1)F(length, radius)
 
+
 decomposition:
+
+I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius):
+  global pruningStart
+  if pruningStart is True:
+    print 'Checking pruning condition..'
+    if 2*radius <= pruningDiameter:
+      print 'Pruned'
+      produce %
+    else:
+      print 'nothing pruned'
+
 N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, ownId, generateBudFlag):      #node
   #print 'Debug N',
   #print 'generateBudFlag=', generateBudFlag
@@ -836,6 +852,5 @@ I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, le
   #else:
     #print 'Debug 4'
     #produce B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase_i, distanceFromBase_i, nextNodePhase, isProximal)
-
 
 endlsystem
