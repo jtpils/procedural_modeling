@@ -54,9 +54,9 @@ class BranchingProcess(Enum):
 #)syzygium myrtifolium SMy:age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
 
 
-#predefineParamValues = False         #set True to use predefined param values for specific species
+#predefineParamValues = True         #set True to use predefined param values for specific species
 #-----------------------------------------------------------
-#species = Species.Unspecified
+#species = Species.KS
 #---------------Parameters for Optimisation-----------------
 #age = 8
 #trunk_pitch_angle = 2.0           #pitch down wrt turtle's left, in degrees
@@ -97,6 +97,7 @@ soleProximalBud = True          #true: only 1 apical/proximal bud allowed at a t
 proximal_tropism = (1,0,0,0.06)  #(tx,ty,tz,elasticity): tropism net force vector [tx,ty,tz] that affects proximal internode's growth bending along the force direction (elasticity=[0,1]). Elasticity further away from 0 indicates stronger reaction/bending to external stimuli. Tropism example: gravitropism [0,0,-1], phototropism. Proximal tropism is for current proximal bud growing new internodes. Tropism [0,0,1,x] equiv to orthotropic, tropism [0,0,-1,0,01]? equiv to plagiotropic
 distal_tropism = (0,0,1,0.06) #distal tropism is for non-proximal bud growing new internodes
 leaf_tropism = (0,0,-1,0.1)    #leaf tropism applies to leaves
+pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 #-----------------------------------------------------------
 # Adjustments for species
 if species == Species.AA:
@@ -124,6 +125,7 @@ if species == Species.AA:
   proximal_tropism = (1,0,2,0.04)
   distal_tropism = (0,0,-1,0.1)  #not applicable
   leaf_tropism = (0,0,-1,0.2)
+  #pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.SS:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.205; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.619/age; annual_no_new_nodes=28.5; avg_internode_length=0.0589
@@ -148,6 +150,7 @@ elif species == Species.SS:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,-1,0.002)   #plagiotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.PP:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.8497; no_first_ord_branches=2; branching_pitch_angle=40.0; branching_roll_angle=180.0; diameter_growth_rate=0.4725/age; annual_no_new_nodes=44.148; avg_internode_length=0.03232
@@ -172,6 +175,7 @@ elif species == Species.PP:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,-1,0.0008)   #plagiotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.HO:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=3.0244; no_first_ord_branches=3; branching_pitch_angle=55.0; branching_roll_angle=120.0; diameter_growth_rate=0.3176/age; annual_no_new_nodes=24.0; avg_internode_length=0.02137
@@ -196,6 +200,7 @@ elif species == Species.HO:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,-1,0.0008)   #plagiotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.SMa:
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=2.0; trunk_height=3.111; no_first_ord_branches=1; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.476/age; annual_no_new_nodes=26.182; avg_internode_length=0.02584
@@ -220,6 +225,7 @@ elif species == Species.SMa:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,1,0.008)   #orthotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.KS:
   if predefineParamValues is True:
      age=10; trunk_pitch_angle=0.0; trunk_height=3.872; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.983/age; annual_no_new_nodes=117.231; avg_internode_length=0.02727
@@ -244,6 +250,7 @@ elif species == Species.KS:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,1,0.003)   #orthotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.2    #unit: m, prune away branches smaller than x m
 elif species == Species.SG:
   if predefineParamValues is True:
      age=14; trunk_pitch_angle=1.0; trunk_height=4.0438; no_first_ord_branches=3; branching_pitch_angle=50.0; branching_roll_angle=120.0; diameter_growth_rate=0.499/age; annual_no_new_nodes=11.448; avg_internode_length=0.07248
@@ -268,6 +275,7 @@ elif species == Species.SG:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,1,0.003)   #orthotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.TR:
   if predefineParamValues is True:
      age=8; trunk_pitch_angle=0.00; trunk_height=3.265; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.4037/age; annual_no_new_nodes=39.333; avg_internode_length=0.04753
@@ -292,6 +300,7 @@ elif species == Species.TR:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,1,0.002)   #orthotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.SMy:
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
@@ -316,6 +325,7 @@ elif species == Species.SMy:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,1,0.002)   #orthotropic
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species == Species.SP:
   if predefineParamValues is True:
      age=7; trunk_pitch_angle=0.0; trunk_height=4.0356; no_first_ord_branches=3; branching_pitch_angle=35.0; branching_roll_angle=120.0; diameter_growth_rate=0.3139/age; annual_no_new_nodes=47.684; avg_internode_length=0.09425
@@ -340,6 +350,7 @@ elif species == Species.SP:
   proximal_tropism = (0,0,1,0.04)  #orthotropic
   distal_tropism = (0,0,-1,0.004)   #plagiotropic by apposition
   leaf_tropism = (0,0,-1,0.2)
+  pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 
 
 def growthFunction(t):
@@ -382,7 +393,6 @@ if rhythmic_growth is True:
   #print 'growth_unit_length=', growth_unit_length
 pruningOn = True        #True to allow pruning in the simulation (only applied at end of simulation)
 pruningStart = False    #flag to start pruning at the end of simulation
-pruningDiameter = 0.01    #unit: m, prune away branches smaller than x m
 #-----------------------------------------------------------
 
 
@@ -457,7 +467,7 @@ def StartEach():
     #print 'After: proximalBudCandidates = ', proximalBudCandidates, ', promotedBuds = ', promotedBuds
   if pruningOn is True and getIterationNb()+1 == derivation_length:  #last step, activate pruning if any
     pruningStart = True
-    print 'Pruning activated:', pruningStart
+    #print 'Pruning activated:', pruningStart
 
 def EndEach(lstring):
   pass
@@ -724,12 +734,13 @@ decomposition:
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius):
   global pruningStart
   if pruningStart is True:
-    print 'Checking pruning condition..'
+    #print 'Checking pruning condition..'
     if 2*radius <= pruningDiameter:
-      print 'Pruned'
+      #print 'Pruned'
       produce %
-    else:
-      print 'nothing pruned'
+    #else:
+    #  print 'nothing pruned'
+  #pass
 
 N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, ownId, generateBudFlag):      #node
   #print 'Debug N',
