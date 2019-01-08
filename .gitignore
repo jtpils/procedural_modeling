@@ -12,3 +12,5 @@ nohup.out
 *.dat*
 *.tmp
 *.sh
+*.mtg
+*.zip

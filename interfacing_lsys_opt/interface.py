@@ -4,24 +4,9 @@ import numpy
 from pyquaternion import Quaternion
 import os
 import sys
-from enum import Enum
-from converters.lpy2mtg2pts import lsystem_run
+from converters.lpy2mtg2pts import lsystem_run, Species
 import warnings
 warnings.filterwarnings("ignore")
-
-
-class Species(Enum):
-    Undefined = 0
-    AA = 1  #Archontophoenix alexandrae (palm)
-    SS = 2  #Samanea saman (raintree)
-    PP = 3  #Peltophorum pterocarpum (yellow flame)
-    HO = 4  #Hopea odorata
-    SMa = 5  #Swietenia macrophylla (mahogany)
-    KS = 6  #Khaya senegalensis
-    SG = 7  #Syzygium grande
-    TR = 8  #Tabebuia rosea
-    SMy = 9  #Syzygium myrtifolium
-    SP = 10  #Sterculia parviflora
 
 
 def estimate_age(species, size):
@@ -48,7 +33,7 @@ def generate_lsystem_tree_points(species_id, params):
                                             avg_internode_length=params[9] )
 
 
-def ngenerate_lsystem_tree_points(  species=Species.Undefined,
+def ngenerate_lsystem_tree_points(  species=Species.Unspecified,
                                     age=1,
                                     trunk_pitch_angle=5.0,
                                     trunk_roll_angle=0.0,
@@ -79,7 +64,7 @@ def estimate_error(output_point_list, growth_space):
 
 
 def optimise():
-    species = Species.Undefined
+    species = Species.Unspecified
     age = estimate_age()
     cost = 0
     threshold = 100
@@ -101,20 +86,20 @@ def optimise():
 
 
 def main():
-    #output = generate_lsystem_tree_points(Species.Undefined, numpy.array([10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
-    output = ngenerate_lsystem_tree_points( species=Species.Undefined,
+    #output = generate_lsystem_tree_points(Species.Unspecified, numpy.array([10, 5.0, 0.0, 3.0, 3, 45.0, 30.0, 0.1, 30.0, 0.03]))
+    output = ngenerate_lsystem_tree_points( species=Species.SMa,
                                             age=20,
                                             trunk_pitch_angle=0.0,
                                             trunk_roll_angle=0.0,
                                             trunk_height=3.0244,
-                                            no_first_ord_branches=3,
+                                            no_first_ord_branches=1,
                                             branching_pitch_angle=45.0,
                                             branching_roll_angle=120.0,
                                             diameter_growth_rate=0.01588,
                                             annual_no_new_nodes=24.0,
                                             avg_internode_length=0.02137 )
 
-    print output
+    #print output
 #    file = open('lsys_optimisation_output.vtk', 'w')
 #   file.write("# vtk DataFile Version 3.0\nTree points\nASCII\nDATASET POLYDATA\n\nPOINTS "+str(len(output))+" integer ")
 #    for item in output:
