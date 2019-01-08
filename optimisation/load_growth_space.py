@@ -20,8 +20,8 @@ def mtg_file_gs(fname):
 			break
 		else:
 			i=i+1
-	# Columns are 1=y, 2=radius, 3=z, 4=z
-	pts = numpy.genfromtxt(mtg_file,skip_header=i+1,usecols=(4,1,3))
+	# Columns are 1=y, 2=x, 3=radius, 4=z
+	pts = numpy.genfromtxt(mtg_file,skip_header=i+1,usecols=(2,1,4))
 	return pts
 
 def mtg_string_gs(mtg_str):
@@ -66,3 +66,12 @@ def normalised_voxel_gs(fname,resolution):
     gs[:,1] = gs[:,1] - numpy.mean(gs[:,1])
     gs[:,2] = gs[:,2] - numpy.min(gs[:,2])
     return gs
+
+def main():
+	xml_fname = '../converters/raintree.mtg'
+	pts = mtg_file_gs(xml_fname)
+	print numpy.min(pts[:,0]), numpy.min(pts[:,1]), numpy.min(pts[:,2])
+	print numpy.max(pts[:,0]), numpy.max(pts[:,1]), numpy.max(pts[:,2])
+
+if __name__ == "__main__":
+	main()

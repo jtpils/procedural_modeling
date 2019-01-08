@@ -41,11 +41,11 @@ def allow():
     sys.stdout = oldstdout
 
 
-def estimate_error_2(params,tpts):
+def estimate_error_2(sp_id,params,tpts):
   # Estimate error from rasterised tings
   # Collect points
   suppress()
-  ls_mtg = interf.generate_lsystem_tree_points(params)
+  ls_mtg = interf.generate_lsystem_tree_points(sp_id,params)
   allow()
   ls_pts = lgs.mtg_string_gs(ls_mtg)/10.
   # Compute bounding boxes
@@ -80,22 +80,28 @@ def estimate_error_2(params,tpts):
 # EF2
   E2 = numpy.sum(numpy.sum(numpy.sum(numpy.abs(t_rast-ls_rast))))/numpy.sum(numpy.sum(numpy.sum(t_rast)))
   comments = '# '
-  
+
   E3 = 0.0
-  
+
   if (numpy.abs((lsbbox[0,1]-lsbbox[0,0])-(tbbox[0,1]-tbbox[0,0]))/(tbbox[0,1]-tbbox[0,0])>0.5) \
     or (numpy.abs((lsbbox[1,1]-lsbbox[1,0])-(tbbox[1,1]-tbbox[1,0]))/(tbbox[1,1]-tbbox[1,0])>0.5):
     E3 = E3 + 1.0
     comments = comments + "LS/GS width difference | "
-    
+
   if numpy.abs(lsbbox[2,1]-tbbox[2,1])/tbbox[2,1]>0.25:
     E3 = E3 + 1.0
-    comments = comments + "LS/GS height difference | "
+    app_str = "LS/GS height difference | "
+    comments = comments + app_str
 
   if (lsbbox[2,0]<0):
     E3 = E3 + 1.0
     comments = comments + "LS tree intersects ground |"
-    
+
+  app_str = "LS tree height=%f | GS tree height=%f" % (lsbbox[2,1], tbbox[2,1])
+  comments = comments + app_str
+
+
+
   E = E1 + 0.1*E2 + E3
 
   return E, comments
@@ -122,23 +128,23 @@ def create_sample_points(npts,means,stds,ranges):
 	sample_points = numpy.asarray(sample_points)
 	return sample_points
 
-def map_error(points,tpoints,fname):
+def map_error(species_id,points,tpoints,fname):
 	p=[];e=[];
 	for i in range(len(points)):
 	  stat_str = "Testing point %i/%i" % (i,len(points))
 	  sys.stdout.write('%s\r' % stat_str)
 	  sys.stdout.flush()
 	  try:
-	    signal.alarm(20)
+	    signal.alarm(300)
     	    #print "\tPoint: ", points[i,:]
-	    err,comments = estimate_error_2(points[i,:],tpoints)
+	    err,comments = estimate_error_2(species_id,points[i,:],tpoints)
 	    e.append(err)
 	    p.append(points[i,:])
 	    #print "\tError: ", err
 	    signal.alarm(0)
-	    pstr = '%i\t%0.2f\t%0.2f\t%2.2f\t%i\t%i\t%2.2f\t%2.2f\t%0.2f\t%i\t%0.2f\t%f\t%s\n' % \
+	    pstr = '%i\t%0.2f\t%0.2f\t%2.2f\t%i\t%2.2f\t%2.2f\t%0.2f\t%i\t%0.2f\t%f\t%s\n' % \
 	      (points[i,0], points[i,1], points[i,2], points[i,3], points[i,4], points[i,5], \
-		points[i,6], points[i,7], points[i,8], points[i,9], points[i,10], err, comments)
+		points[i,6], points[i,7], points[i,8], points[i,9], err, comments)
 	    with open(fname,'a+') as f:
 	      f.write(pstr)
 	  except TimeoutError as ex:
@@ -160,7 +166,7 @@ def select_from_population(population, population_error, num_best, num_lucky):
       next_sample_points.append(sorted_population[ind,:]);
       chosen_errors.append(sorted_error[ind])
     return next_sample_points, chosen_errors
-  
+
 def extend_population(population,weights):
     extended_population = []
     num_samples = len(population); num_levels = len(weights)-1
@@ -196,7 +202,7 @@ def population_breeding(population,numchildren):
 def mutate_child(child,amp,chance):
     mutation_flag = numpy.random.choice([-1,1], size=(len(child)), p=[0.5,0.5])
     for i in range(len(child)):
-	if i==0 or i==4 or i==5:
+	if i==0 or i==4:
 	  if child[i]<=1:
 	    child[i]=child[i]+numpy.abs(mutation_flag[i])
 	  else:
@@ -226,7 +232,7 @@ def check_population(population,ranges):
 	population[i][locs_low] = ranges[locs_low,0]
       if numpy.any(locs_high):
 	population[i][locs_high] = ranges[locs_high,0]
-      clean_population.append(population[i])      
+      clean_population.append(population[i])
     return clean_population
 
 

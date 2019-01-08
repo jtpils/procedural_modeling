@@ -32,6 +32,7 @@ def rxml_treeparams(fname):
 	for vals in root.findall('SIZE'):
 		height = float(vals.find('HEIGHT').text)
 	trunk_height = 0.0
+
 	for branch in root.findall('BRANCHING'):
 		max_order = float(branch.find('ORDER').text)
 		for seg in branch.findall('SEG'):
