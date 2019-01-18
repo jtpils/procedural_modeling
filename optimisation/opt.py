@@ -135,7 +135,7 @@ def map_error(species_id,points,tpoints,fname):
 	  sys.stdout.write('%s\r' % stat_str)
 	  sys.stdout.flush()
 	  try:
-	    signal.alarm(300)
+	    signal.alarm(60)
     	    #print "\tPoint: ", points[i,:]
 	    err,comments = estimate_error_2(species_id,points[i,:],tpoints)
 	    e.append(err)

@@ -1,4 +1,5 @@
 from os.path import isfile
+import xml.etree.ElementTree as ET
 import warnings
 import signal
 import time
@@ -44,9 +45,9 @@ def main():
 	  'Average internode length']
 
     default_ranges = [\
-        [15,30], # age = params[0
-        [-5,5],[-5,5],[2,6],[2,4],\
-        [10,80],[30,330],[0.02,0.6],[20,50],[0.01,0.15]]
+        [1,60], # age = params[0
+        [-5,5],[-5,5],[1,8],[0,5],\
+        [10,80],[30,330],[0.02,0.6],[1,500],[0.05,10]]
 
     sp_ids = ['Undefined', 'Archontophoenix alexandrae (palm)',\
         'Samanea saman (raintree)','Peltophorum pterocarpum (yellow flame)',\
@@ -58,18 +59,15 @@ def main():
 
     ranges = default_ranges;
 
-    means = [20,0,0,6,2,30,30,0.05,30,0.05]
-    stds = [7,0.5,0.5,2,1,15,15,0.025,10,0.02];
-
     # Read from xml
     #xml_filename='../growth-space/example_xml/Tree1_Parameters.xml'
     xml_filename=sys.argv[1];
-    tpts = lgs.xml_file_gs(xml_filename,1)
+
 
     print "------------------------------------------------"
     print "Running main function of opt.py..."
     print "\tTarget values set from file   : %s" % xml_filename
-    cname, species, location, h, th = rxml.rxml_treeparams(xml_filename)
+    cname, species, location, h, th, split = rxml.rxml_treeparams(xml_filename)
     print "\tTree common name : %s" % cname
     print "\tTree species     : %s" % species
     print "\tTree height      : %f m" % h
@@ -77,6 +75,11 @@ def main():
     # Resetting trunk height range based on xml value
     ranges[3][0] = 0.975*th; ranges[3][1]=1.025*th;
 
+    ranges_xml = ET.parse('species_ranges.xml')
+    for specs in ranges_xml.findall('species'):
+      if specs.get('name')==species:
+	specs.
+    tpts = lgs.xml_file_gs(xml_filename,split)
 
     ###
     print "Setting the following ranges:"

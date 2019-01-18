@@ -1,12 +1,13 @@
 import optimisation.read_xml as rxml
 import numpy
 
-def xml_file_gs(fname,combined):
-	b_voxsz, b_coords, c_voxsz, c_coords = rxml.rxml_growthspace(fname)
-	if combined==1:
+def xml_file_gs(fname,split):
+	if split==1:
+	  b_voxsz, b_coords, c_voxsz, c_coords = rxml.rxml_seg_growthspace(fname)
 	  gs = numpy.vstack((b_coords, c_coords))
-	else:
-	  gs = b_coords
+	if split==0:
+	  voxsz, coords = rxml.rxml_growthspace(fname)
+	  gs = coords
 	return gs
 
 def mtg_file_gs(fname):
