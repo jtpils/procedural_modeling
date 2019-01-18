@@ -43,6 +43,9 @@ def main():
       'No. 1st order branches', 'Branch pitch angle',\
 	'Branch roll angle', 'Diameter growth rate', 'Annual no. new nodes',\
 	  'Average internode length']
+    xml_params = ['age','trunk_pitch_angle','trunk_roll_angle','trunk_height','first_order_branches',\
+      'branch_pitch_angle','branch_roll_angle','diameter_growth_rate','annual_number_new_nodes',\
+	'average_internode_length']
 
     default_ranges = [\
         [1,60], # age = params[0
@@ -73,12 +76,21 @@ def main():
     print "\tTree height      : %f m" % h
     print "\tTrunk height     : %f m" % th
     # Resetting trunk height range based on xml value
-    ranges[3][0] = 0.975*th; ranges[3][1]=1.025*th;
 
+
+    # Set species specific ranges from data
     ranges_xml = ET.parse('species_ranges.xml')
     for specs in ranges_xml.findall('species'):
       if specs.get('name')==species:
-	specs.
+	for elem in specs:
+	  if elem.tag in xml_params:
+	    index = xml_params.index(elem.tag)
+	    ranges[index][0] = float(elem.find('min').text)
+	    ranges[index][1] = float(elem.find('max').text)
+
+    # Reset trunk height range from growth space
+    ranges[3][0] = 0.975*th; ranges[3][1]=1.025*th;
+	    
     tpts = lgs.xml_file_gs(xml_filename,split)
 
     ###
@@ -115,7 +127,7 @@ def main():
       	t0 = time.time()
 	if npoints>0:
 	  # Create initial population
-	  initial_sample_points = opt.create_sample_points(npoints,means,stds,ranges)
+	  initial_sample_points = opt.create_sample_points(npoints,ranges)
 	  print "Testing initial %i sample points" % len(initial_sample_points)
 	  print "Outputting results to file: %s" % ef_name
 	  res = []; err=[];

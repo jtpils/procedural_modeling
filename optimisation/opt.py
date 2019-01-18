@@ -106,9 +106,9 @@ def estimate_error_2(sp_id,params,tpts):
 
   return E, comments
 
-def create_sample_points(npts,means,stds,ranges):
+def create_sample_points(npts,ranges):
 	# Number of parameters
-	nparams = len(means);
+	nparams = len(ranges);
 	# Construct initial sample points
 	temp_points = pyDOE.lhs(nparams,samples=nparams*npts)
 	# Centre around means and stds
