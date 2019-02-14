@@ -55,8 +55,9 @@ def mtg_string_gs(mtg_str):
 		#print line, num_line
 		pts.append(num_line)
 	pts = numpy.asarray(pts)
+	rad = pts[1,2]
  	pts = pts[:,[1,0,3]]
-	return pts
+	return pts, rad
 
 def normalised_voxel_gs(fname,resolution):
 	# Function reads growth_space file, shifts x,y coordinates

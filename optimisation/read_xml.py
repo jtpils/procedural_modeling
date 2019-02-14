@@ -43,6 +43,8 @@ def rxml_treeparams(fname):
 		location = numpy.asarray(location.split(","),dtype=float)
 	for vals in root.findall('SIZE'):
 		height = float(vals.find('HEIGHT').text)
+		for girth in vals.findall('GIRTH'):
+		  tg = float(girth.find('G1').text)
 		for crown in vals.findall('CROWN'):
 		  c_height = float(crown.find('HEIGHT').text)
 	
@@ -53,7 +55,7 @@ def rxml_treeparams(fname):
 	  if len(gs.findall('B_VOXELS')) == 0:
 	    split=0
 	
-	return cname, species, location, height, trunk_height, split
+	return cname, species, location, height, trunk_height, tg, split
 
 def main():
 	#xml_fname = '../../growth-space/example_xml/Tree1_Parameters.xml'

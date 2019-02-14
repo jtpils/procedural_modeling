@@ -48,9 +48,9 @@ def main():
 	'average_internode_length']
 
     default_ranges = [\
-        [1,60], # age = params[0
+        [10,50], # age = params[0
         [-5,5],[-5,5],[1,8],[0,5],\
-        [10,80],[30,330],[0.02,0.6],[1,500],[0.05,10]]
+        [10,80],[30,330],[0.02,0.1],[1,500],[0.05,1.0]]
 
     sp_ids = ['Undefined', 'Archontophoenix alexandrae (palm)',\
         'Samanea saman (raintree)','Peltophorum pterocarpum (yellow flame)',\
@@ -70,11 +70,12 @@ def main():
     print "------------------------------------------------"
     print "Running main function of opt.py..."
     print "\tTarget values set from file   : %s" % xml_filename
-    cname, species, location, h, th, split = rxml.rxml_treeparams(xml_filename)
+    cname, species, location, h, th, tg, split = rxml.rxml_treeparams(xml_filename)
     print "\tTree common name : %s" % cname
     print "\tTree species     : %s" % species
     print "\tTree height      : %f m" % h
     print "\tTrunk height     : %f m" % th
+    print "\tTrunk girth      : %f m" % tg
     # Resetting trunk height range based on xml value
 
 
@@ -109,15 +110,20 @@ def main():
     run=1; save_obj=1;
 
     ef_id = 0
-    ef_base = 'func_spid' + str(species_id) + '.dat.'
-    while 1:
-      if os.path.isfile(ef_base+str(ef_id)):
-	ef_id = ef_id + 1
-      else:
-	ef_name = ef_base + str(ef_id)
-	break
-    opt_base = "opt_params_spid" + str(species_id) + ".dat."
-    opt_name = opt_base + str(ef_id)
+    ef_name = 'func_spid' + str(species_id) + '.dat'
+    
+    if os.path.isfile(ef_name):
+	read_flag = int(raw_input("Read data from existing file? (1=Yes, 0=No): "))
+	if read_flag==1:
+	  results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10))
+	  error = results[:,-1]
+	  results = results[:,0:10]
+	  total_pop_size = len(error);
+	else:
+	  os.remove(ef_name)
+    
+    opt_name = "opt_params_spid" + str(species_id) + ".dat"
+    
     print "Error file will be output to\t\t: %s" % ef_name
     print "Optimum parameters will be output to\t: %s" % opt_name
     print "------------------------------------------------"
@@ -131,10 +137,10 @@ def main():
 	  print "Testing initial %i sample points" % len(initial_sample_points)
 	  print "Outputting results to file: %s" % ef_name
 	  res = []; err=[];
-	  try:
-	    rpts,error=opt.map_error(species_id,initial_sample_points,tpts,ef_name);
-	  except:
-	    pass
+	  #try:
+	  rpts,error=opt.map_error(species_id,initial_sample_points,tpts,tg,ef_name);
+	  #except:
+	  #  pass
 	  # Load all historic data from file
 	  t1 = time.time()
 	  print "Initial %i points took %d seconds" % (npoints*nparams,(t1-t0))
@@ -169,7 +175,7 @@ def main():
 	  clean_mutated_sample_points = opt.check_population(mutated_sample_points,ranges)
 	  print "\tTesting %i sample points from new population" % len(clean_mutated_sample_points)
 	  try:
-	    rpts,error = opt.map_error(species_id,numpy.asarray(clean_mutated_sample_points),tpts,ef_name)
+	    rpts,error = opt.map_error(species_id,numpy.asarray(clean_mutated_sample_points),tpts,tg,ef_name)
 	  except:
 	    continue
 	  t3 = time.time();

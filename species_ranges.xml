@@ -183,12 +183,12 @@
       <max>3</max>
     </first_order_branches>
     <annual_number_new_nodes>
-      <min>0</min>
+      <min>15</min>
       <max>58</max>
     </annual_number_new_nodes>
     <average_internode_length>
-      <min>0.5</min>
-      <max>3.7</max>
+      <min>0.005</min>
+      <max>0.05</max>
     </average_internode_length>
   </species>
   
