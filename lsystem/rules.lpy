@@ -255,7 +255,7 @@ elif species.name is 'SG':
   growth_unit_shape = BranchingProcess.Unspecified
   rhythmic_branching = BranchingProcess.Rhythmic
   rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1]
-  phyllotaxis_angle = 180.0
+  phyllotaxis_angle = 90.0
   leafMaxLength = 0.15
   leafOldAge = 2.0
   leafDieAge = 2.2
@@ -394,13 +394,15 @@ def allowNewBudGeneration():
   lowCut = 0.3
   #midCut = 0.5
   highCut = 0.7
-  if growth_unit_shape is BranchingProcess.Basitonic:
+  #if growth_unit_shape is BranchingProcess.Basitonic:
+  #print 'DEBUG growth_unit_shape.name=', growth_unit_shape.name
+  if growth_unit_shape.name is 'Basitonic':
     if t > lowCut:
       return False
-  elif growth_unit_shape is BranchingProcess.Mesotonic:
+  elif growth_unit_shape.name is 'Mesotonic':
     if t < lowCut or t > highCut:
       return False
-  elif growth_unit_shape is BranchingProcess.Acrotonic:
+  elif growth_unit_shape.name is 'Acrotonic':
     if t < highCut:
       return False
   #print 't=', t, ' Trace allow new bud'
@@ -542,7 +544,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #negligibleTwigs = 0.1  #don't grow when the twigs are at length <10cm
   branchOut = 0
   #branching_segment_factor = 1.0
-  if rhythmic_branching == BranchingProcess.Unspecified:
+  if rhythmic_branching.name is 'Unspecified':
     branch_length = trunk_height * numpy.power(branch_length_ratio, order)
   terminalBranchingFlag = False
   global idGenerator
@@ -555,7 +557,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
 
-    if rhythmic_branching == BranchingProcess.Unspecified:
+    if rhythmic_branching.name is 'Unspecified':
       #-------------- branch out at certain height w.r.t. branch_length_ratio, starting from trunk height ------------------
       next_branching_height = branch_length * math.ceil(cur_distanceFromBase/branch_length)
       if branchOut is 1:   #only allow branching out once per step
@@ -595,13 +597,13 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
         branchOut = 1  #always branch out unless prohibited by delayed branching, rhythmic growth, determinate growth, sympodial branching
         if allowNewBudGeneration() is False:  #for acrotonic/mesotonic/basitonic branching, don't produce buds at all at certain part
           generateBudFlag = 0
-        elif rhythmic_branching == BranchingProcess.Continuous:
+        elif rhythmic_branching.name is 'Continuous':
           generateBudFlag = 1
-        elif rhythmic_branching == BranchingProcess.Rhythmic:
+        elif rhythmic_branching.name is 'Rhythmic':
           generateBudFlag = rhythmic_branching_pattern[nextNodePhase]
           #print 'nextNodePhase=', nextNodePhase, 'generateBudFlag=', generateBudFlag
           nextNodePhase = (nextNodePhase+1) % len(rhythmic_branching_pattern)
-        else: #if rhythmic_branching == BranchingProcess.Diffuse
+        else: #if rhythmic_branching.name is 'Diffuse'
           random_range = 10
           if random.randint(0,random_range) < random_range*branching_diffusion:
             generateBudFlag = 1
@@ -616,7 +618,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     if generateBudFlag is 1:
       idGenerator = ownId
       successorId = ownId
-    phyllotaxisPosition = (phyllotaxisPosition + phyllotaxis_angle) % 360
+      phyllotaxisPosition = (phyllotaxisPosition + phyllotaxis_angle) % 360
     cur_radius = cur_radius - 0.5*diameter_growth_per_node
 
   #if (aggregate_partial_node_per_step > closeToZero):
@@ -747,11 +749,11 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, 
     #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and leaves
       #print 'Debug N', i,
-      nproduce [@Tp(1,1,1)@Ts(0.0005)/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)@Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,False)]
-  else:
-    for i in range(no_branches):    #node transforms into leaves (no bud)
+      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)@Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,False)]
+  #else:
+    #for i in range(no_branches):    #node transforms into nothing (no bud, no leaf)
       #print 'Debug N', i,
-      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)]
+      #nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)]
 
 I(order, distanceFromGroundToBase_i, distanceFromBase_i, phyllotaxisPosition, length, radius) < B(id, successorId, bud_order, status, growthDelay, timeLeft, distanceFromGroundToBase, distanceFromBase, nextNodePhase, isProximal):      #update bud position after internodes grow in "production" phase; determinate growth pattern: stop elongation after a period of time/season
   #print 'Trace decomposition B'
