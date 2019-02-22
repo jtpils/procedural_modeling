@@ -1,6 +1,5 @@
 *.obj
 *.png
-*.xml
 *.vtk
 *.iml
 *.json
@@ -13,3 +12,4 @@ nohup.out
 *.tmp
 *.sh
 *.mtg
+*.zip
