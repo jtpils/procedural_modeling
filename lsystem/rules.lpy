@@ -72,7 +72,7 @@ class BranchingProcess(Enum):
 
 #------------Species-specific Variables with Default Values---------------------
 no_second_ord_branches = 1        #number of second order branches (consistent for each species, according to the leaf arrangement: alternate(1)/opposite(2)/whorled(>2))
-determinate_growth = True        #flag of determinate or indeterminate growth for buds
+determinate_growth = False        #flag of determinate or indeterminate growth for buds
 determinate_bud_lifespan = 2     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
 rhythmic_growth = False           #flag of rhythmic or continuous growth
 rhythmic_growth_period = 1       #cycle of rhythmic growth every x yrs
@@ -80,7 +80,7 @@ growth_unit_shape = BranchingProcess.Acrotonic   #choices: BranchingProcess.Acro
 if rhythmic_growth is False:
   growth_unit_shape = BranchingProcess.Unspecified #growth unit only happens for rhythmic growth
 rhythmic_branching = BranchingProcess.Rhythmic   #choices: BranchingProcess.Continuous, BranchingProcess.Rhythmic, BranchingProcess.Diffuse, BranchingProcess.Unspecified
-rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
+rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
 branching_diffusion = 0.1        #skewness of branching pattern (number x in range [0,1] refers to threshold to generate axillary buds if random number <x)
 phyllotaxis_angle = 60           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
 branch_length_ratio = 0.8        #ratio of child to parent branch length; from one experiment: 0.666
@@ -94,8 +94,8 @@ delayedBranching = False        #flag to delay branching (dormant axillary bud w
 branchingDelay = 1               #unit: year
 sympodialBranching = True       #true: sympodial, false: monopodial. Mechanism: when apical bud aborts/flowers, nearest lateral bud(s) transition from dormant to active for branching out. Note: sympodial branching is only applicable if determinate_growth is True
 soleProximalBud = True          #true: only 1 apical/proximal bud allowed at a time; false: multiple apical/proximal buds
-proximal_tropism = (1,0,0,0.06)  #(tx,ty,tz,elasticity): tropism net force vector [tx,ty,tz] that affects proximal internode's growth bending along the force direction (elasticity=[0,1]). Elasticity further away from 0 indicates stronger reaction/bending to external stimuli. Tropism example: gravitropism [0,0,-1], phototropism. Proximal tropism is for current proximal bud growing new internodes. Tropism [0,0,1,x] equiv to orthotropic, tropism [0,0,-1,0,01]? equiv to plagiotropic
-distal_tropism = (0,0,1,0.06) #distal tropism is for non-proximal bud growing new internodes
+proximal_tropism = (0,0,1,0.01)  #(tx,ty,tz,elasticity): tropism net force vector [tx,ty,tz] that affects proximal internode's growth bending along the force direction (elasticity=[0,1]). Elasticity further away from 0 indicates stronger reaction/bending to external stimuli. Tropism example: gravitropism [0,0,-1], phototropism. Proximal tropism is for current proximal bud growing new internodes. Tropism [0,0,1,x] equiv to orthotropic, tropism [0,0,-1,0,01]? equiv to plagiotropic
+distal_tropism = (0,0,1,0.01) #distal tropism is for non-proximal bud growing new internodes
 leaf_tropism = (0,0,-1,0.1)    #leaf tropism applies to leaves
 #-----------------------------------------------------------
 # Adjustments for species
@@ -537,7 +537,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #print 'eff_new_nodes = ', eff_new_nodes, ' aggregate_partial_node_per_step = ', aggregate_partial_node_per_step, ' total new nodes in this step=', eff_new_nodes+aggregate_partial_node_per_step
   diameter_growth_per_node = growthFactor*diameter_growth_rate/annual_no_new_nodes
   cur_radius = radius+0.5*growthFactor*diameter_growth_rate/steps
-  near_bud_radius = 0.5*growthFactor*diameter_growth_rate/steps*aggregate_partial_node_per_step
+  #near_bud_radius = 0.5*growthFactor*diameter_growth_rate/steps*aggregate_partial_node_per_step
   #print 'diameter_growth_per_node=', diameter_growth_per_node
   #print 'near_bud_radius=', near_bud_radius
   #print 'cur_radius=', cur_radius
@@ -620,6 +620,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
       successorId = ownId
       phyllotaxisPosition = (phyllotaxisPosition + phyllotaxis_angle) % 360
     cur_radius = cur_radius - 0.5*diameter_growth_per_node
+    #if order == 0:
+    #  print 'cur_radius=', cur_radius
 
   #if (aggregate_partial_node_per_step > closeToZero):
   #print 'DEBUG aggreate_partial_node_per_step =', aggregate_partial_node_per_step
@@ -627,7 +629,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   cur_distanceFromBase = distanceFromBase+internode_length*eff_new_nodes  #actual distance will be updated correctly on the next step
   #if bud_order is 0:  #check apical bud position
   #  print 'actual cur_distanceFromBase=', distanceFromBase+internode_length*(eff_new_nodes+aggregate_partial_node_per_step)
-  nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
+  #nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, near_bud_radius)
+  nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length*aggregate_partial_node_per_step, cur_radius+(1.0-aggregate_partial_node_per_step)*0.5*diameter_growth_per_node)
 
   #print ', later successorId = ', successorId
   if terminalBranching is True and terminalBranchingFlag is True:
