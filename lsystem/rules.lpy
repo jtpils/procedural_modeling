@@ -31,6 +31,15 @@ class BranchingProcess(Enum):
    Amphitonic = 8
    Hypotonic = 9
 
+class GrowthRate(Enum):
+   Linear = 1
+   Exponential = 2
+   PowerLaw = 3
+   Monomolecular = 4
+   ThreeParameterLogistic = 5
+   FourParameterLogistic = 6
+   Gompertz = 7
+
 
 #Order of execution: StartEach() - production - decomposition - EndEach() - homomorphism/interpretation
 
@@ -71,6 +80,7 @@ class BranchingProcess(Enum):
 #-----------------------------------------------------------
 
 #------------Species-specific Variables with Default Values---------------------
+growth_rate_eqn = GrowthRate.Linear #options: linear, exponential, power law, monomolecular, 3-param-logistic, 4-param-logistic, gombertz
 no_second_ord_branches = 1        #number of second order branches (consistent for each species, according to the leaf arrangement: alternate(1)/opposite(2)/whorled(>2))
 determinate_growth = False        #flag of determinate or indeterminate growth for buds
 determinate_bud_lifespan = 2     #lifespan of a bud before it abort or transform into flower; trees are either annual(lifespan=1yr), biennial(lifespan=2yrs), or perennial(lifespan>2yrs)
@@ -103,6 +113,7 @@ pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 if species.name is 'AA':
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=5.0; trunk_height=10.0; no_first_ord_branches=10; branching_pitch_angle=10.0; branching_roll_angle=30.0; diameter_growth_rate=0.30/age; annual_no_new_nodes=7.0; avg_internode_length=0.10
+  growth_rate_eqn = GrowthRate.Linear
   no_first_ord_branches = 8  #for leaf count only
   no_second_ord_branches = 0
   determinate_growth = False
@@ -129,6 +140,7 @@ if species.name is 'AA':
 elif species.name is 'SS':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.205; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.619/age; annual_no_new_nodes=28.5; avg_internode_length=0.0589
+  growth_rate_eqn = GrowthRate.Linear
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 10
@@ -154,6 +166,7 @@ elif species.name is 'SS':
 elif species.name is 'PP':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.8497; no_first_ord_branches=2; branching_pitch_angle=40.0; branching_roll_angle=180.0; diameter_growth_rate=0.4725/age; annual_no_new_nodes=44.148; avg_internode_length=0.03232
+  growth_rate_eqn = GrowthRate.Linear
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 5
@@ -179,6 +192,7 @@ elif species.name is 'PP':
 elif species.name is 'HO':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=3.0244; no_first_ord_branches=3; branching_pitch_angle=55.0; branching_roll_angle=120.0; diameter_growth_rate=0.3176/age; annual_no_new_nodes=24.0; avg_internode_length=0.02137
+  growth_rate_eqn = GrowthRate.Linear
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 20
@@ -204,6 +218,7 @@ elif species.name is 'HO':
 elif species.name is 'SMa':
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=2.0; trunk_height=3.111; no_first_ord_branches=1; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.476/age; annual_no_new_nodes=26.182; avg_internode_length=0.02584
+  growth_rate_eqn = GrowthRate.Linear
   no_second_ord_branches = 2
   determinate_growth = True
   determinate_bud_lifespan = 30
@@ -229,6 +244,7 @@ elif species.name is 'SMa':
 elif species.name is 'KS':
   if predefineParamValues is True:
      age=10; trunk_pitch_angle=0.0; trunk_height=3.872; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.983/age; annual_no_new_nodes=117.231; avg_internode_length=0.02727
+  growth_rate_eqn = GrowthRate.Linear
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 3
@@ -254,6 +270,7 @@ elif species.name is 'KS':
 elif species.name is 'SG':
   if predefineParamValues is True:
      age=14; trunk_pitch_angle=1.0; trunk_height=4.0438; no_first_ord_branches=3; branching_pitch_angle=50.0; branching_roll_angle=120.0; diameter_growth_rate=0.499/age; annual_no_new_nodes=11.448; avg_internode_length=0.07248
+  growth_rate_eqn = GrowthRate.PowerLaw
   no_second_ord_branches = 3
   determinate_growth = True
   determinate_bud_lifespan = 30
@@ -279,6 +296,7 @@ elif species.name is 'SG':
 elif species.name is 'TR':
   if predefineParamValues is True:
      age=8; trunk_pitch_angle=0.00; trunk_height=3.265; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.4037/age; annual_no_new_nodes=39.333; avg_internode_length=0.04753
+  growth_rate_eqn = GrowthRate.Exponential
   no_second_ord_branches = 6
   determinate_growth = True
   determinate_bud_lifespan = 3
@@ -304,6 +322,7 @@ elif species.name is 'TR':
 elif species.name is 'SMy':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
+  growth_rate_eqn = GrowthRate.Monomolecular
   no_second_ord_branches = 2
   determinate_growth = True
   determinate_bud_lifespan = 8
@@ -329,6 +348,7 @@ elif species.name is 'SMy':
 elif species.name is 'SP':
   if predefineParamValues is True:
     age=7; trunk_pitch_angle=0.0; trunk_height=4.0356; no_first_ord_branches=3; branching_pitch_angle=35.0; branching_roll_angle=120.0; diameter_growth_rate=0.3139/age; annual_no_new_nodes=47.684; avg_internode_length=0.09425
+  growth_rate_eqn = GrowthRate.Exponential
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 10
