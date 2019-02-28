@@ -40,7 +40,7 @@ class GrowthRate(Enum):
    FourParameterLogistic = 6
    Gompertz = 7
 
-rgr_vars = {'r':1, 'beta':1, 'L':1, 'K':1}
+rgr_vars = {'r':0.006268, 'beta':-1.73, 'L':1, 'K':1}
 
 
 #Order of execution: StartEach() - production - decomposition - EndEach() - homomorphism/interpretation
@@ -419,31 +419,30 @@ pruningStart = False    #flag to start pruning at the end of simulation
 
 #all RGR functions in switchGrowthRateEqn are based on per time unit of 1 step. Functions return the new diameter after 1 step.
 def linearRGR(d):
-  return exp(math.log(d)+366/steps*rgr_vars['r']/d)
-
+  return math.exp(math.log(d)+366.0/steps*rgr_vars['r']/d)
 
 def exponentialRGR(d):
-  return exp(math.log(d)+366/steps*rgr_vars['r'])
+  return math.exp(math.log(d)+366/steps*rgr_vars['r'])
 
 
 def powerlawRGR(d):
-  return exp(pow(1+rgr_vars['r'],366/steps)*(math.log(d)+rgr_vars['r']*pow(d,rgr_vars['beta']-1))
+  return math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(d)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
 
 
 def monomolecularRGR(d):
-  return exp(math.log(d)+rgr_vars['r']*366/steps*(rgr_vars['K']/d-1))
+  return math.exp(math.log(d)+rgr_vars['r']*366/steps*(rgr_vars['K']/d-1))
 
 
 def threeparamlogRGR(d):
-  return exp(math.log(d)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K'])
+  return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
 
 
 def fourparamlogRGR(d):
-  return exp(math.log(d)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/d)*(rgr_vars['K']-d)/(rgr_vars['K']-rgr_vars['L']))
+  return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/d)*(rgr_vars['K']-d)/(rgr_vars['K']-rgr_vars['L']))
 
 
 def gombertzRGR(d):
-  return exp(math.log(d)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/d))
+  return math.exp(math.log(d)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/d))
 
 
 switchGrowthRateEqn = { GrowthRate.Linear:linearRGR,
