@@ -419,30 +419,46 @@ pruningStart = False    #flag to start pruning at the end of simulation
 
 #all RGR functions in switchGrowthRateEqn are based on per time unit of 1 step. Functions return the new diameter after 1 step.
 def linearRGR(d):
-  return math.exp(math.log(d)+366.0/steps*rgr_vars['r']/d)
+  if d > 0:
+    return math.exp(math.log(d)+366.0/steps*rgr_vars['r']/d)
+  else:
+    return 366.0/steps*rgr_vars['r']
 
 def exponentialRGR(d):
-  return math.exp(math.log(d)+366/steps*rgr_vars['r'])
-
+  if d > 0:
+    return math.exp(math.log(d)+366.0/steps*rgr_vars['r'])
+  else:
+    return 0.001*exp(366.0/steps*rgr_vars['r'])
 
 def powerlawRGR(d):
-  return math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(d)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
-
+  if d > 0:
+    return math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(d)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
+  else:
+    return math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(0.001)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
 
 def monomolecularRGR(d):
-  return math.exp(math.log(d)+rgr_vars['r']*366/steps*(rgr_vars['K']/d-1))
-
+  if d > 0:
+    return math.exp(math.log(d)+rgr_vars['r']*366/steps*(rgr_vars['K']/d-1))
+  else:
+    return math.exp(math.log(0.001)+rgr_vars['r']*366/steps*(rgr_vars['K']/0.001-1))
 
 def threeparamlogRGR(d):
-  return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
-
+  if d > 0:
+    return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
+  else:
+    return math.exp(math.log(0.001)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
 
 def fourparamlogRGR(d):
-  return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/d)*(rgr_vars['K']-d)/(rgr_vars['K']-rgr_vars['L']))
-
+  if d > 0:
+    return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/d)*(rgr_vars['K']-d)/(rgr_vars['K']-rgr_vars['L']))
+  else:
+    return math.exp(math.log(0.001)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/0.001)*(rgr_vars['K']-0.001)/(rgr_vars['K']-rgr_vars['L']))
 
 def gombertzRGR(d):
-  return math.exp(math.log(d)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/d))
+  if d > 0:
+    return math.exp(math.log(d)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/d))
+  else:
+    return math.exp(math.log(0.001)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/0.001))
 
 
 switchGrowthRateEqn = { GrowthRate.Linear:linearRGR,
