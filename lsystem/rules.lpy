@@ -110,12 +110,19 @@ proximal_tropism = (0,0,1,0.01)  #(tx,ty,tz,elasticity): tropism net force vecto
 distal_tropism = (0,0,1,0.01) #distal tropism is for non-proximal bud growing new internodes
 leaf_tropism = (0,0,-1,0.1)    #leaf tropism applies to leaves
 pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
+rgr_r_range_min = 0.0  #determined by confidence interval of r for specific species
+rgr_r_range_max = 1.0  #determined by confidence interval of r for specific species
 #-----------------------------------------------------------
 # Adjustments for species
 if species.name is 'AA':
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=5.0; trunk_height=10.0; no_first_ord_branches=10; branching_pitch_angle=10.0; branching_roll_angle=30.0; diameter_growth_rate=0.30/age; annual_no_new_nodes=7.0; avg_internode_length=0.10
   growth_rate_eqn = GrowthRate.Linear
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_first_ord_branches = 8  #for leaf count only
   no_second_ord_branches = 0
   determinate_growth = False
@@ -143,6 +150,11 @@ elif species.name is 'SS':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.205; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.619/age; annual_no_new_nodes=28.5; avg_internode_length=0.0589
   growth_rate_eqn = GrowthRate.Linear
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 10
@@ -169,6 +181,11 @@ elif species.name is 'PP':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=2.0; trunk_height=2.8497; no_first_ord_branches=2; branching_pitch_angle=40.0; branching_roll_angle=180.0; diameter_growth_rate=0.4725/age; annual_no_new_nodes=44.148; avg_internode_length=0.03232
   growth_rate_eqn = GrowthRate.Linear
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 5
@@ -195,6 +212,11 @@ elif species.name is 'HO':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=3.0244; no_first_ord_branches=3; branching_pitch_angle=55.0; branching_roll_angle=120.0; diameter_growth_rate=0.3176/age; annual_no_new_nodes=24.0; avg_internode_length=0.02137
   growth_rate_eqn = GrowthRate.Linear
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 20
@@ -221,6 +243,11 @@ elif species.name is 'SMa':
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=2.0; trunk_height=3.111; no_first_ord_branches=1; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.476/age; annual_no_new_nodes=26.182; avg_internode_length=0.02584
   growth_rate_eqn = GrowthRate.Linear
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 2
   determinate_growth = True
   determinate_bud_lifespan = 30
@@ -247,6 +274,11 @@ elif species.name is 'KS':
   if predefineParamValues is True:
      age=10; trunk_pitch_angle=0.0; trunk_height=3.872; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.983/age; annual_no_new_nodes=117.231; avg_internode_length=0.02727
   growth_rate_eqn = GrowthRate.Linear
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 3
@@ -273,6 +305,11 @@ elif species.name is 'SG':
   if predefineParamValues is True:
      age=14; trunk_pitch_angle=1.0; trunk_height=4.0438; no_first_ord_branches=3; branching_pitch_angle=50.0; branching_roll_angle=120.0; diameter_growth_rate=0.499/age; annual_no_new_nodes=11.448; avg_internode_length=0.07248
   growth_rate_eqn = GrowthRate.PowerLaw
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 3
   determinate_growth = True
   determinate_bud_lifespan = 30
@@ -299,6 +336,11 @@ elif species.name is 'TR':
   if predefineParamValues is True:
      age=8; trunk_pitch_angle=0.00; trunk_height=3.265; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.4037/age; annual_no_new_nodes=39.333; avg_internode_length=0.04753
   growth_rate_eqn = GrowthRate.Exponential
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 6
   determinate_growth = True
   determinate_bud_lifespan = 3
@@ -325,6 +367,11 @@ elif species.name is 'SMy':
   if predefineParamValues is True:
      age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
   growth_rate_eqn = GrowthRate.Monomolecular
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 2
   determinate_growth = True
   determinate_bud_lifespan = 8
@@ -351,6 +398,11 @@ elif species.name is 'SP':
   if predefineParamValues is True:
     age=7; trunk_pitch_angle=0.0; trunk_height=4.0356; no_first_ord_branches=3; branching_pitch_angle=35.0; branching_roll_angle=120.0; diameter_growth_rate=0.3139/age; annual_no_new_nodes=47.684; avg_internode_length=0.09425
   growth_rate_eqn = GrowthRate.Exponential
+  #rgr_r_range_min = 0.000001
+  #rgr_r_range_max = 0.0001
+  #rgr_vars['beta'] = -0.001
+  #rgr_vars['K'] = 1
+  #rgr_vars['L'] = 1
   no_second_ord_branches = 1
   determinate_growth = True
   determinate_bud_lifespan = 10
@@ -374,6 +426,7 @@ elif species.name is 'SP':
   leaf_tropism = (0,0,-1,0.2)
   pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 
+rgr_vars['r'] = rgr_r_range_min + diameter_growth_rate*(rgr_r_range_max-rgr_r_range_min)
 
 def growthFunction(t):
   #note: ensure the integral area over 1 cycle (from t=0 to t=1) is 1 so effective annual growth is still annual_no_new_nodes * avg_internode_length. growth factor affects avg_internode_length rhythmically.
@@ -420,45 +473,45 @@ pruningStart = False    #flag to start pruning at the end of simulation
 #all RGR functions in switchGrowthRateEqn are based on per time unit of 1 step. Functions return the new diameter after 1 step.
 def linearRGR(d):
   if d > 0:
-    return math.exp(math.log(d)+366.0/steps*rgr_vars['r']/d)
+    return 0.01*math.exp(math.log(d)+366.0/steps*rgr_vars['r']/d)
   else:
-    return 366.0/steps*rgr_vars['r']
+    return 0.01*366.0/steps*rgr_vars['r']
 
 def exponentialRGR(d):
   if d > 0:
-    return math.exp(math.log(d)+366.0/steps*rgr_vars['r'])
+    return 0.01*math.exp(math.log(d)+366.0/steps*rgr_vars['r'])
   else:
-    return 0.001*exp(366.0/steps*rgr_vars['r'])
+    return 0.01*0.001*exp(366.0/steps*rgr_vars['r'])
 
 def powerlawRGR(d):
   if d > 0:
-    return math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(d)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
+    return 0.01*math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(d)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
   else:
-    return math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(0.001)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
+    return 0.01*math.exp(pow(1+rgr_vars['r'],366/steps)*(math.log(0.001)+rgr_vars['r']*pow(d,rgr_vars['beta']-1)))
 
 def monomolecularRGR(d):
   if d > 0:
-    return math.exp(math.log(d)+rgr_vars['r']*366/steps*(rgr_vars['K']/d-1))
+    return 0.01*math.exp(math.log(d)+rgr_vars['r']*366/steps*(rgr_vars['K']/d-1))
   else:
-    return math.exp(math.log(0.001)+rgr_vars['r']*366/steps*(rgr_vars['K']/0.001-1))
+    return 0.01*math.exp(math.log(0.001)+rgr_vars['r']*366/steps*(rgr_vars['K']/0.001-1))
 
 def threeparamlogRGR(d):
   if d > 0:
-    return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
+    return 0.01*math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
   else:
-    return math.exp(math.log(0.001)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
+    return 0.01*math.exp(math.log(0.001)+366/steps*rgr_vars['r']*(1-d/rgr_vars['K']))
 
 def fourparamlogRGR(d):
   if d > 0:
-    return math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/d)*(rgr_vars['K']-d)/(rgr_vars['K']-rgr_vars['L']))
+    return 0.01*math.exp(math.log(d)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/d)*(rgr_vars['K']-d)/(rgr_vars['K']-rgr_vars['L']))
   else:
-    return math.exp(math.log(0.001)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/0.001)*(rgr_vars['K']-0.001)/(rgr_vars['K']-rgr_vars['L']))
+    return 0.01*math.exp(math.log(0.001)+366/steps*rgr_vars['r']*(1-rgr_vars['L']/0.001)*(rgr_vars['K']-0.001)/(rgr_vars['K']-rgr_vars['L']))
 
 def gombertzRGR(d):
   if d > 0:
-    return math.exp(math.log(d)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/d))
+    return 0.01*math.exp(math.log(d)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/d))
   else:
-    return math.exp(math.log(0.001)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/0.001))
+    return 0.01*math.exp(math.log(0.001)+366/steps*rgr_vars['r']*math.log(rgr_vars['K']/0.001))
 
 
 switchGrowthRateEqn = { GrowthRate.Linear:linearRGR,
@@ -625,7 +678,8 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
 
   #print 'eff_new_nodes = ', eff_new_nodes, ' aggregate_partial_node_per_step = ', aggregate_partial_node_per_step, ' total new nodes in this step=', eff_new_nodes+aggregate_partial_node_per_step
   diameter_growth_per_node = growthFactor*diameter_growth_rate/annual_no_new_nodes
-  cur_radius = radius+0.5*growthFactor*diameter_growth_rate/steps
+  #cur_radius = radius+0.5*growthFactor*diameter_growth_rate/steps
+  cur_radius = radius + growthFactor*(switchGrowthRateEqn[growth_rate_eqn](radius)-radius)
   #near_bud_radius = 0.5*growthFactor*diameter_growth_rate/steps*aggregate_partial_node_per_step
   #print 'diameter_growth_per_node=', diameter_growth_per_node
   #print 'near_bud_radius=', near_bud_radius
@@ -735,7 +789,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   #produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius)
 
 I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius):        #distanceFromBase measures internode's tip distance to parent branching node
-  produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, growthFactor*switchGrowthRateEqn[growth_rate_eqn](radius))
+  produce I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length, radius+growthFactor*(switchGrowthRateEqn[growth_rate_eqn](radius)-radius))
 
 L(fallen, size, duration):      #leaf
   if fallen is 1 or random.randint(1,10)<2 or duration>leafDieAge*steps:    #node branching out, so shed the leaf; or randomly shed the leaf (wind, rain factors, etc); or when leaf has grown long enough (time to shed in autumn (duration since spring till autumn ~6-9mth, etc.)
