@@ -12,8 +12,15 @@ warnings.filterwarnings("ignore")
 def estimate_age(species, tree_height, tree_dbs):
     'Estimate tree age based on scanned size of tree of certain species'
     #todo - estimate based on species, lookup table for tree size/height/dimension vs age range
-    age = 4
-    return age
+    height_based_age = tree_height / (annual_no_new_nodes*internode_length)
+    #dbs_based_age = tree_dbs / ee
+    if dbs_based_age < height_based_age:
+        min_age = dbs_based_age
+        max_age = height_based_age
+    else:
+        min_age = height_based_age
+        max_age = dbs_based_age
+    return min_age, max_age
 
 
 def generate_lsystem_tree_points(species_id, params):

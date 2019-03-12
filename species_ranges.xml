@@ -1,452 +1,496 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <species_data>
 
-  <species name="Unspecified">
-    <age>
-      <min></min>
-      <max></max>
+  <species name="Unspecified" code="UN">
+    <age> <!-- unit: years -->
+      <min>0.0</min>
+      <max>100.0</max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0</min>
+      <max>100.0</max>
     </trunk_height>
-    <first_order_branches>
-      <min></min>
-      <max></max>
-    </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
-    </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
-    </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <no_first_ord_branches> <!-- unit: nil -->
+      <min>0</min>
+      <max>10</max>
+    </no_first_ord_branches>
+    <branching_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
+    </branching_pitch_angle>
+    <branching_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </branching_roll_angle>
+    <diameter_growth_rate_r> <!-- linear growth model: RGR = r/DBH -->
+      <min>0.000001</min>
+      <max>1.0</max>
+    </diameter_growth_rate_r>
+    <!--<diameter_growth_rate_beta>
+      <min>-100.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate_beta>
+    <diameter_growth_rate_K>
+      <min>0.000001</min>
+      <max>5.0</max>
+    </diameter_growth_rate_K>
+    <diameter_growth_rate_L>
+      <min>0.000001</min>
+      <max>5.0</max>
+    </diameter_growth_rate_L>-->
     <annual_number_new_nodes>
-      <min>1</min>
-      <max>400</max>
+      <min>1.0</min>
+      <max>400.0</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.001</min>
+      <max>0.30</max>
     </average_internode_length>
   </species>
 
-  <species name="Archontophoenix alexandrae">
-    <age>
+  <species name="Archontophoenix alexandrae" code="AA">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min>1.2</min>
-      <max>10.5</max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.00001</min>
+      <max>12.796293</max>
     </trunk_height>
     <first_order_branches>
       <min>0</min>
       <max>0</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>0.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>0.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.000001</min>
+      <max>1.0</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>3.0</min>
+      <max>15.0</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>0.2</max>
     </average_internode_length>
   </species>
 
-  <species name="Samanea saman">
-    <age>
+  <species name="Samanea saman" code="SS">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min>0.7</min>
-      <max>3.6</max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>4.4355962</max>
     </trunk_height>
     <first_order_branches>
       <min>1</min>
       <max>3</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.005732</min>
+      <max>0.012032</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min>0</min>
-      <max>92</max>
+      <min>3.4012081</min>
+      <max>93.424843</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min>0.003</min>
-      <max>0.0085</max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.1326338</max>
     </average_internode_length>
   </species>
 
-  <species name="Peltophorum pterocarpum">
-    <age>
+  <species name="Peltophorum pterocarpum" code="PP">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min>0.85</min>
-      <max>4.85</max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>5.9135990</max>
     </trunk_height>
     <first_order_branches>
       <min>1</min>
       <max>3</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.001175</min>
+      <max>0.008159</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min>0</min>
-      <max>130</max>
+      <min>2.4318128</min>
+      <max>79.875486</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min>0</min>
-      <max>8</max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.0982345</max>
     </average_internode_length>
   </species>
 
-  <species name="Hopea odorata">
-    <trunk_height>
-      <min>0.6</min>
-      <max>4.4</max>
+  <species name="Hopea odorata" code="HO">
+    <age> <!-- unit: years -->
+      <min></min>
+      <max></max>
+    </age>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
+    </trunk_pitch_angle>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </trunk_roll_angle>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>6.6626673</max>
+    </trunk_height>
+    <first_order_branches>
+      <min>1.3071909</min>
+      <max>3.1928090</max>
+    </first_order_branches>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
+    </branch_pitch_angle>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </branch_roll_angle>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.0036414</min>
+      <max>0.0062366</max>
+    </diameter_growth_rate_r>
+    <annual_number_new_nodes>
+      <min>6.8934183</min>
+      <max>56.037824</max>
+    </annual_number_new_nodes>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.0460965</max>
+    </average_internode_length>
+  </species>
+
+  <species name="Swietenia macrophylla" code="SMa">
+    <age> <!-- unit: years -->
+      <min></min>
+      <max></max>
+    </age>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
+    </trunk_pitch_angle>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </trunk_roll_angle>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.3189381</min>
+      <max>5.9023563</max>
     </trunk_height>
     <first_order_branches>
       <min>1</min>
       <max>3</max>
     </first_order_branches>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
+    </branch_pitch_angle>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </branch_roll_angle>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.0014222</min>
+      <max>0.0051814</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min>15</min>
-      <max>58</max>
+      <min>3.7953988</min>
+      <max>143.86487</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min>0.005</min>
-      <max>0.05</max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.0715557</max>
     </average_internode_length>
   </species>
 
-  <species name="Swietenia macrophylla">
-    <age>
+  <species name="Khaya senegalensis" code="KS">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>8.3004400</max>
     </trunk_height>
     <first_order_branches>
-      <min></min>
-      <max></max>
+      <min>1</min>
+      <max>3</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.002928</min>
+      <max>0.009608</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>23.500441</min>
+      <max>186.18499</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.0644022</max>
     </average_internode_length>
   </species>
 
-  <species name="Khaya senegalensis">
-    <age>
+  <species name="Syzygium grande" code="SG">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>9.1541620</max>
     </trunk_height>
     <first_order_branches>
-      <min></min>
-      <max></max>
+      <min>0.9508391</min>
+      <max>3.9291608</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Power law model: RGR (relative growth unit) = r*DBH^(beta-1) -->
+      <min>-3.7189</min>
+      <max>5.7775</max>
+    </diameter_growth_rate_r>
+    <diameter_growth_rate_beta>
+      <min>-3.3484</min>
+      <max>-0.112</max>
+    </diameter_growth_rate_beta>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>4.1264137</min>
+      <max>33.577939</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.1518353</max>
     </average_internode_length>
   </species>
 
-  <species name="Syzygium grande">
-    <age>
+  <species name="Tabebuia rosea" code="TR">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>6.9471702</max>
     </trunk_height>
     <first_order_branches>
-      <min></min>
-      <max></max>
+      <min>1</min>
+      <max>3</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Exponential model: RGR (relative growth unit) = r -->
+      <min>0.0002028</min>
+      <max>0.0007808</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>7.1005794</min>
+      <max>51.470951</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.1404652</max>
     </average_internode_length>
   </species>
 
-  <species name="Tabebuia rosea">
-    <age>
+  <species name="Syzygium myrtifolium" code="SMy">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.6563837</max>
     </trunk_height>
     <first_order_branches>
-      <min></min>
-      <max></max>
+      <min>1.048633</min>
+      <max>3.284701</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Monomolecular growth model: RGR = r*(K-DBH)/DBH -->
+      <min>-0.0027213</min>
+      <max>-0.0000957</max>
+    </diameter_growth_rate_r>
+    <diameter_growth_rate_K>
+      <min>7.3855739</min>
+      <max>17.017079</max>
+    </diameter_growth_rate_K>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>6.1762772</min>
+      <max>27.064645</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.0538436</max>
     </average_internode_length>
   </species>
 
-  <species name="Syzygium myrtifolium">
-    <age>
+  <species name="Sterculia parviflora" code="SP">
+    <age> <!-- unit: years -->
       <min></min>
       <max></max>
     </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>90.0</max>
     </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>8.6003591</max>
     </trunk_height>
     <first_order_branches>
-      <min></min>
-      <max></max>
+      <min>1.2</min>
+      <max>3</max>
     </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
+    <branch_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
     </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
+    <branch_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
     </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
+    <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
+      <min>0.0004287</min>
+      <max>0.0009187</max>
+    </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>7.7830298</min>
+      <max>127.65665</max>
     </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
-    </average_internode_length>
-  </species>
-
-  <species name="Sterculia parviflora">
-    <age>
-      <min></min>
-      <max></max>
-    </age>
-    <trunk_pitch_angle>
-      <min></min>
-      <max></max>
-    </trunk_pitch_angle>
-    <trunk_roll_angle>
-      <min></min>
-      <max></max>
-    </trunk_roll_angle>
-    <trunk_height>
-      <min></min>
-      <max></max>
-    </trunk_height>
-    <first_order_branches>
-      <min></min>
-      <max></max>
-    </first_order_branches>
-    <branch_pitch_angle>
-      <min></min>
-      <max></max>
-    </branch_pitch_angle>
-    <branch_roll_angle>
-      <min></min>
-      <max></max>
-    </branch_roll_angle>
-    <diameter_growth_rate>
-      <min></min>
-      <max></max>
-    </diameter_growth_rate>
-    <annual_number_new_nodes>
-      <min></min>
-      <max></max>
-    </annual_number_new_nodes>
-    <average_internode_length>
-      <min></min>
-      <max></max>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.0001</min>
+      <max>0.0436831</max>
     </average_internode_length>
   </species>
 
