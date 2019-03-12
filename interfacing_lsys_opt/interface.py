@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def estimate_age(species, size):
+def estimate_age(species, tree_height, tree_dbs):
     'Estimate tree age based on scanned size of tree of certain species'
     #todo - estimate based on species, lookup table for tree size/height/dimension vs age range
     age = 4

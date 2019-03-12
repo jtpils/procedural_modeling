@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <species_data>
 
-  <species name="Undefined">
+  <species name="Unspecified">
     <age>
       <min></min>
       <max></max>
@@ -35,8 +35,8 @@
       <max></max>
     </diameter_growth_rate>
     <annual_number_new_nodes>
-      <min></min>
-      <max></max>
+      <min>1</min>
+      <max>400</max>
     </annual_number_new_nodes>
     <average_internode_length>
       <min></min>
