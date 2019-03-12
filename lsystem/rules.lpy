@@ -148,7 +148,7 @@ if species.name is 'AA':
   #pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species.name is 'SS':
   if predefineParamValues is True:
-     age=20; trunk_pitch_angle=2.0; trunk_height=2.205; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.008882; annual_no_new_nodes=17.8257; avg_internode_length=0.0589
+     age=33; trunk_pitch_angle=2.0; trunk_height=2.205; no_first_ord_branches=2; branching_pitch_angle=30.0; branching_roll_angle=180.0; diameter_growth_rate=0.008882; annual_no_new_nodes=17.8257; avg_internode_length=0.0589
   growth_rate_eqn = GrowthRate.Linear
   #rgr_r_range_min = 0.000001
   #rgr_r_range_max = 0.0001
@@ -174,7 +174,7 @@ elif species.name is 'SS':
   sympodialBranching = False
   soleProximalBud = False
   proximal_tropism = (0,0,1,0.04)  #orthotropic
-  distal_tropism = (0,0,-1,0.002)   #plagiotropic
+  distal_tropism = (0,0,-1,0.001)   #plagiotropic
   leaf_tropism = (0,0,-1,0.2)
   pruningDiameter = 0.05    #unit: m, prune away branches smaller than x m
 elif species.name is 'PP':
@@ -241,7 +241,7 @@ elif species.name is 'HO':
   pruningDiameter = 0.1    #unit: m, prune away branches smaller than x m
 elif species.name is 'SMa':
   if predefineParamValues is True:
-     age=20; trunk_pitch_angle=2.0; trunk_height=3.111; no_first_ord_branches=1; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.003302; annual_no_new_nodes=23.3672; avg_internode_length=0.02584
+     age=18; trunk_pitch_angle=2.0; trunk_height=3.111; no_first_ord_branches=1; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.003302; annual_no_new_nodes=23.3672; avg_internode_length=0.02584
   growth_rate_eqn = GrowthRate.Linear
   #rgr_r_range_min = 0.000001
   #rgr_r_range_max = 0.0001
@@ -471,48 +471,58 @@ pruningStart = False    #flag to start pruning at the end of simulation
 #-----------------------------------------------------------
 
 #all RGR functions in switchGrowthRateEqn are based on per time unit of 1 step. Functions return the new diameter after 1 step.
+def calc_growth(d, rgr):
+  return d*math.exp(366.0/steps*rgr)
+
 def linearRGR(d):
-  if d > 0.007:
+  d0 = 0.007
+  if d > d0:
     #print 'd=', d, 'math.log(d)=', math.log(d), 'rgr_vars[r]=', rgr_vars['r'], 'return=', math.exp(math.log(d)+366.0/steps*rgr_vars['r']/(d*100))
-    return d*math.exp(366.0/steps*rgr_vars['r']/(d*100))
+    return calc_growth(d, rgr_vars['r']/(d*100))
   else:
-    return 0.007*math.exp(366.0/steps*rgr_vars['r']/0.7)
+    return calc_growth(d0, rgr_vars['r']/(d0*100))
 
 def exponentialRGR(d):
-  if d > 0.01:
-    return math.exp(math.log(d)+366.0/steps*rgr_vars['r'])
+  d0 = 0.01
+  if d > d0:
+    return calc_growth(d, rgr_vars['r'])
   else:
-    return 0.01*math.exp(366.0/steps*rgr_vars['r'])
+    return calc_growth(d0, rgr_vars['r'])
 
 def powerlawRGR(d):
-  if d > 0.01:
-    return math.exp(pow(1+rgr_vars['r'],366.0/steps)*(math.log(d)+rgr_vars['r']*pow(d*100,rgr_vars['beta']-1)))
+  d0 = 0.01
+  if d > d0:
+    return calc_growth(d, rgr_vars['r']*pow(d*100,rgr_vars['beta']-1))
   else:
-    return math.exp(pow(1+rgr_vars['r'],366.0/steps)*(math.log(0.01)+rgr_vars['r']*pow(1,rgr_vars['beta']-1)))
+    return calc_growth(d0, rgr_vars['r']*pow(d0*100,rgr_vars['beta']-1))
 
 def monomolecularRGR(d):
-  if d > 0.001:
-    return math.exp(math.log(d)+rgr_vars['r']*366.0/steps*(rgr_vars['K']/(d*100)-1))
+  d0 = 0.001
+  if d > d0:
+    return calc_growth(d, rgr_vars['r']*(rgr_vars['K']-(d*100))/(d*100))
   else:
-    return math.exp(math.log(0.001)+rgr_vars['r']*366.0/steps*(rgr_vars['K']/0.1-1))
+    return calc_growth(d0, rgr_vars['r']*(rgr_vars['K']-(d0*100))/(d0*100))
 
 def threeparamlogRGR(d):
-  if d > 0.001:
-    return math.exp(math.log(d)+366.0/steps*rgr_vars['r']*(1-d*100/rgr_vars['K']))
+  d0 = 0.001
+  if d > d0:
+    return calc_growth(d, rgr_vars['r']*(1-d*100/rgr_vars['K']))
   else:
-    return math.exp(math.log(0.001)+366.0/steps*rgr_vars['r']*(1-d*100/rgr_vars['K']))
+    return calc_growth(d0, rgr_vars['r']*(1-d0*100/rgr_vars['K']))
 
 def fourparamlogRGR(d):
-  if d > 0.001:
-    return math.exp(math.log(d)+366.0/steps*rgr_vars['r']*(1-rgr_vars['L']/(d*100))*(rgr_vars['K']-d*100)/(rgr_vars['K']-rgr_vars['L']))
+  d0 = 0.001
+  if d > d0:
+    return calc_growth(d, rgr_vars['r']*(d*100-rgr_vars['L'])/(d*100)*(rgr_vars['K']-d*100)/(rgr_vars['K']-rgr_vars['L']))
   else:
-    return math.exp(math.log(0.001)+366.0/steps*rgr_vars['r']*(1-rgr_vars['L']/0.1)*(rgr_vars['K']-0.1)/(rgr_vars['K']-rgr_vars['L']))
+    return calc_growth(d0, rgr_vars['r']*(d0*100-rgr_vars['L'])/(d0*100)*(rgr_vars['K']-d0*100)/(rgr_vars['K']-rgr_vars['L']))
 
 def gombertzRGR(d):
-  if d > 0.001:
-    return math.exp(math.log(d)+366.0/steps*rgr_vars['r']*math.log(rgr_vars['K']/(d*100)))
+  d0 = 0.001
+  if d > d0:
+    return calc_growth(d, rgr_vars['r']*math.log(rgr_vars['K']/(d*100)))
   else:
-    return math.exp(math.log(0.001)+366.0/steps*rgr_vars['r']*math.log(rgr_vars['K']/0.1))
+    return calc_growth(d0, rgr_vars['r']*math.log(rgr_vars['K']/(d0*100)))
 
 
 switchGrowthRateEqn = { GrowthRate.Linear:linearRGR,

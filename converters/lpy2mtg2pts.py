@@ -57,7 +57,7 @@ def lsystem_run(species=Species.Unspecified, age=10,
     parameter_dict['no_first_ord_branches'] = no_first_ord_branches   #number of first order branches
     parameter_dict['branching_pitch_angle'] = branching_pitch_angle
     parameter_dict['branching_roll_angle'] = branching_roll_angle
-    parameter_dict['diameter_growth_rate'] = diameter_growth_rate  #m/year? relative growth rate?
+    parameter_dict['diameter_growth_rate'] = diameter_growth_rate  #r of diameter growth rate RGR (relative growth rate) equation model
     parameter_dict['annual_no_new_nodes'] = annual_no_new_nodes  #number of new buds per year
     parameter_dict['avg_internode_length'] = avg_internode_length #unit: m
 
@@ -94,7 +94,7 @@ def lsystem_run(species=Species.Unspecified, age=10,
 
 
 if __name__ == "__main__":
-    lsystem_run(species=Species.SMa, age=35,
+    lsystem_run(species=Species.SP, age=35,
                 trunk_pitch_angle=0.64, trunk_roll_angle=-0.47, trunk_height=2.03,
                 no_first_ord_branches=1,
                 branching_pitch_angle=76.95, branching_roll_angle=148.02,
