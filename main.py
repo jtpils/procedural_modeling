@@ -29,9 +29,9 @@ def suppress():
 def allow():
     sys.stdout = oldstdout
 
-def write_optimums(fname,opt_params,params,err):
+def write_optimums(fname,opt_params,params,err,gsf):
   f = open(fname,"w")
-  hstr = '# Optimum parameter configuration: E=%f\n' % err
+  hstr = '# Optimum parameter configuration: E=%f\n\\# Growth space file: %s' % (err,gsf)
   f.write(hstr)
   for i in range(len(params)):
     ostr = '{:<6.2f}\t# {}\n'.format(opt_params[i],params[i])
@@ -164,7 +164,7 @@ def main():
 	  error = results[:,-1]; results = results[:,0:10]; total_pop_size = len(error);
 	  print "\tSelecting %i best performing and %i random individuals from population of %i" % (numbest, numrandom, total_pop_size)
 	  parent_sample_points, parent_errors = opt.select_from_population(results,error,numbest,numrandom)
-	  write_optimums(opt_name,parent_sample_points[0],params,parent_errors[0])
+	  write_optimums(opt_name,parent_sample_points[0],params,parent_errors[0],xml_filename)
   	  print "\tMinimum error in parent population is %f" % min(parent_errors)
 	  print "\tMaximum error in parent population is %f" % max(parent_errors)
 	  clean_parent_sample_points = opt.check_population(parent_sample_points,ranges)
@@ -185,7 +185,7 @@ def main():
 	results = numpy.loadtxt(ef_name,delimiter='\t',usecols=(0,1,2,3,4,5,6,7,8,9,10))
 	error = results[:,-1]; results = results[:,0:10]; total_pop_size = len(error);
 	parent_sample_points, parent_errors = opt.select_from_population(results,error,5,0)
-	write_optimums(opt_name,parent_sample_points[0],params,parent_errors[0])
+	write_optimums(opt_name,parent_sample_points[0],params,parent_errors[0],xml_filename)
 	print "------------------------------------------------"
 	print "Optimisation complete in %d minutes" % ((t3-t0)/60);
 	print "Optimum parameter configuration from %i tested parameter combinations is:" % len(error)
