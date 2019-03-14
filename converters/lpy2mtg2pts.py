@@ -13,6 +13,8 @@ from openalea.mtg.io import *
 from openalea.mtg.aml import *
 from openalea.mtg.util import *
 from openalea.plantgl.scenegraph._pglsg import *
+import cStringIO
+import optimisation.read_xml as rxml
 
 class Species(Enum):
     Unspecified = 0
@@ -35,9 +37,9 @@ def lsystem_run(species=Species.Unspecified, age=10,
                 diameter_growth_rate=0.1, annual_no_new_nodes=30.0, avg_internode_length=0.03):
     'Pass known parameter values into L-system rules to produce Lstring output'
     flag_printString = False
-    flag_animate = True
+    flag_animate = False
     flag_plot = False
-    flag_writeToFile = False
+    flag_writeToFile = True
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     input_file = os.path.join(current_path, '../lsystem/rules.lpy')
@@ -93,11 +95,77 @@ def lsystem_run(species=Species.Unspecified, age=10,
     return mtg_string_output
 
 
+def mtg2obj(mtg_string):
+    output = cStringIO.StringIO()
+    output.write('#This OBJ file was generated from MTG file.\n')
+
+    buffer = cStringIO.StringIO(mtg_string)
+    for line in buffer:
+        if line.startswith(('/', '+', '^', '\t')):
+            pieces = line.split('\t')
+            print >>output, 'v', pieces[len(pieces)-3], pieces[len(pieces)-4], pieces[len(pieces)-1],
+
+    obj_string = output.getvalue()
+    output.close()
+
+    return obj_string
+
+
+def test_mtg2obj():
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    input_file = os.path.join(current_path, './mtg/test.mtg')
+    input_file = os.path.abspath(os.path.realpath(input_file))
+    output_file = os.path.join(current_path, './obj/'+str(datetime.now().strftime('%Y%m%d%H%M%S'))+'_test_mtg.obj')
+
+    with open(input_file, 'r') as in_file:
+        mtg_string = in_file.read()
+
+    obj_string = mtg2obj(mtg_string)
+
+    f = open(output_file, 'w')
+    f.write(obj_string)
+    f.close()
+
+
+def xmlgrowthspace2obj(xml_filename):
+    output = cStringIO.StringIO()
+    output.write('#This OBJ file was generated from XML growth space file.\n')
+
+    voxel_size, coords = rxml.rxml_growthspace(xml_filename)
+
+    for point in coords:
+        print >>output, 'v', voxel_size*point[0], voxel_size*point[1], voxel_size*point[2]
+
+    obj_string = output.getvalue()
+    output.close()
+
+    return obj_string
+
+
+def test_xmlgrowthspace2obj():
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    input_file = os.path.join(current_path, './xml/test.xml')
+    input_file = os.path.abspath(os.path.realpath(input_file))
+    output_file = os.path.join(current_path, './obj/'+str(datetime.now().strftime('%Y%m%d%H%M%S'))+'_test_xmlgrowthspace.obj')
+
+    #with open(input_file, 'r') as in_file:
+    #        xml_string = in_file.read()
+
+    obj_string = xmlgrowthspace2obj(input_file)
+
+    f = open(output_file, 'w')
+    f.write(obj_string)
+    f.close()
+
+
 if __name__ == "__main__":
-    lsystem_run(species=Species.SP, age=35,
-                trunk_pitch_angle=0.64, trunk_roll_angle=-0.47, trunk_height=2.03,
-                no_first_ord_branches=1,
-                branching_pitch_angle=76.95, branching_roll_angle=148.02,
-                diameter_growth_rate=0.06, annual_no_new_nodes=22, avg_internode_length=0.02)
+    #lsystem_run(species=Species.PP, age=35,
+    #            trunk_pitch_angle=0.64, trunk_roll_angle=-0.47, trunk_height=2.03,
+    #            no_first_ord_branches=1,
+    #            branching_pitch_angle=76.95, branching_roll_angle=148.02,
+    #            diameter_growth_rate=0.06, annual_no_new_nodes=22, avg_internode_length=0.02)
     #print 'Program finished'
-    raw_input()
+    #raw_input()
+
+    test_mtg2obj()
+    #test_xmlgrowthspace2obj()
