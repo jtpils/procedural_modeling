@@ -39,7 +39,7 @@ def lsystem_run(species=Species.Unspecified, age=10,
     flag_printString = False
     flag_animate = False
     flag_plot = False
-    flag_writeToFile = True
+    flag_writeToFile = False
 
     current_path = os.path.dirname(os.path.abspath(__file__))
     input_file = os.path.join(current_path, '../lsystem/rules.lpy')
