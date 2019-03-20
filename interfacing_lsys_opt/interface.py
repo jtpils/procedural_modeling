@@ -9,17 +9,21 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def estimate_age(species, tree_height, tree_dbs):
+def estimate_age(species, tree_height=0.0, tree_dbs=0.0):
     'Estimate tree age based on scanned size of tree of certain species'
     #todo - estimate based on species, lookup table for tree size/height/dimension vs age range
-    height_based_age = tree_height / (annual_no_new_nodes*internode_length)
-    #dbs_based_age = tree_dbs / ee
+    min_age = 0
+    max_age = 999
+
+    height_based_age = tree_height / (max_annual_no_new_nodes*max_internode_length) #estimate min_age based on expected maximum height
+    dbs_based_age = tree_dbs / 
     if dbs_based_age < height_based_age:
         min_age = dbs_based_age
-        max_age = height_based_age
     else:
         min_age = height_based_age
-        max_age = dbs_based_age
+
+
+
     return min_age, max_age
 
 

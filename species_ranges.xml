@@ -1,6 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <species_data>
 
+  <species name="Template" code="Tmp">
+    <age> <!-- unit: years -->
+      <min>0.0</min>
+      <max>100.0</max>
+    </age>
+    <trunk_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
+    </trunk_pitch_angle>
+    <trunk_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </trunk_roll_angle>
+    <trunk_height> <!-- unit: meter -->
+      <min>0.0</min>
+      <max>100.0</max>
+    </trunk_height>
+    <no_first_ord_branches> <!-- unit: nil -->
+      <min>0</min>
+      <max>10</max>
+    </no_first_ord_branches>
+    <branching_pitch_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>180.0</max>
+    </branching_pitch_angle>
+    <branching_roll_angle> <!-- unit: degrees -->
+      <min>0.0</min>
+      <max>360.0</max>
+    </branching_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
+    <diameter_growth_rate_r> <!-- linear growth: RGR = r/DBH, exponential growth: RGR = r, power-law growth: RGR = r*DBH^(beta-1), monomolecular growth: RGR = r*(K-DBH)/DBH, 3-param-log growth: RGR = r*(1-DBH/K), 4-param-log growth: RGR = r*(DBH-L)/DBH*(K-DBH)/(K-L) -->
+      <min>0.000001</min>
+      <max>1.0</max>
+    </diameter_growth_rate_r>
+    <!--<diameter_growth_rate_beta>
+      <min>-100.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate_beta>
+    <diameter_growth_rate_K>
+      <min>0.000001</min>
+      <max>5.0</max>
+    </diameter_growth_rate_K>
+    <diameter_growth_rate_L>
+      <min>0.000001</min>
+      <max>5.0</max>
+    </diameter_growth_rate_L>-->
+    <annual_number_new_nodes> <!-- number of new nodes per bud per year -->
+      <min>1.0</min>
+      <max>400.0</max>
+    </annual_number_new_nodes>
+    <average_internode_length> <!-- unit: meter -->
+      <min>0.001</min>
+      <max>0.30</max>
+    </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
+  </species>
+
   <species name="Unspecified" code="UN">
     <age> <!-- unit: years -->
       <min>0.0</min>
@@ -54,6 +158,52 @@
       <min>0.001</min>
       <max>0.30</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Archontophoenix alexandrae" code="AA">
@@ -97,6 +247,52 @@
       <min>0.01</min>
       <max>0.2</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Samanea saman" code="SS">
@@ -140,6 +336,52 @@
       <min>0.0001</min>
       <max>0.1326338</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Peltophorum pterocarpum" code="PP">
@@ -183,6 +425,52 @@
       <min>0.0001</min>
       <max>0.0982345</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Hopea odorata" code="HO">
@@ -226,6 +514,52 @@
       <min>0.0001</min>
       <max>0.0460965</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Swietenia macrophylla" code="SMa">
@@ -269,6 +603,52 @@
       <min>0.0001</min>
       <max>0.0715557</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Khaya senegalensis" code="KS">
@@ -312,6 +692,52 @@
       <min>0.0001</min>
       <max>0.0644022</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Syzygium grande" code="SG">
@@ -359,6 +785,52 @@
       <min>0.0001</min>
       <max>0.1518353</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Tabebuia rosea" code="TR">
@@ -402,6 +874,52 @@
       <min>0.0001</min>
       <max>0.1404652</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Syzygium myrtifolium" code="SMy">
@@ -449,6 +967,52 @@
       <min>0.0001</min>
       <max>0.0538436</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
   <species name="Sterculia parviflora" code="SP">
@@ -492,6 +1056,52 @@
       <min>0.0001</min>
       <max>0.0436831</max>
     </average_internode_length>
+    <leaf_compound_size> <!-- unit: meter -->
+      <min>0.01</min>
+      <max>5</max>
+    </leaf_compound_size>
+    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
+      1
+    </leaf_arrangement>
+    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
+      90
+    </phyllotaxis_angle>
+    <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
+      0
+    </bud_lifespan>
+    <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
+      0
+    </rhythmic_growth_period>
+    <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
+      0
+    </growth_unit_shape>
+    <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
+      1
+    </branching_rhythm>
+    <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+    </rhythmic_branching_pattern>
+    <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
+      1
+    </terminal_or_lateral_branching>
+    <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
+      0
+    </branching_delay>
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+      1
+    </monopodial_or_sympodial_branching>
+    <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
+      <proximal>1</proximal>
+      <distal>2</distal>
+      <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <x>0</x>
+        <y>0</y>
+        <z>-1</z>
+      </plagiotropic_tropism> <!-- angle from up vector, unit:degrees -->
+    </axis_morphology>
+    <pruning> <!-- define means of pruning here, e.g., by pruning branches with diameter smaller than a certain size, pruning branches to fit a certain boundary box, etc. -->
+      <diameter>0</diameter> <!-- 0 if no pruning, unit: meter -->
+    </pruning>
   </species>
 
 </species_data>
