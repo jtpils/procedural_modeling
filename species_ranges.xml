@@ -61,12 +61,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -91,10 +89,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -162,12 +164,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -192,10 +192,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -223,17 +227,17 @@
       <min>0.00001</min>
       <max>12.796293</max>
     </trunk_height>
-    <first_order_branches>
-      <min>0</min>
-      <max>0</max>
+    <first_order_branches> <!-- especially for palm, first order branches will fall soon enough to form scar on each node -->
+      <min>1</min>
+      <max>1</max>
     </first_order_branches>
     <branch_pitch_angle> <!-- unit: degrees -->
       <min>0.0</min>
-      <max>0.0</max>
+      <max>10.0</max>
     </branch_pitch_angle>
     <branch_roll_angle> <!-- unit: degrees -->
       <min>0.0</min>
-      <max>0.0</max>
+      <max>360.0</max>
     </branch_roll_angle>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.000001</min>
@@ -248,15 +252,13 @@
       <max>0.2</max>
     </average_internode_length>
     <leaf_compound_size> <!-- unit: meter -->
-      <min>0.01</min>
-      <max>5</max>
+      <min>0.4</min>
+      <max>4</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>3</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>8</denominator> <!-- phyllotaxis rank, or number of vertical rows of leaves or orthostichies around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -267,10 +269,10 @@
       0
     </growth_unit_shape>
     <branching_rhythm> <!-- option: 0=continuous, 1=rhythmic, 2=diffuse -->
-      1
+      0
     </branching_rhythm>
     <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
-      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+      0
     </rhythmic_branching_pattern>
     <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
       1
@@ -281,10 +283,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.001</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -314,7 +320,7 @@
     </trunk_height>
     <first_order_branches>
       <min>1</min>
-      <max>3</max>
+      <max>10</max>
     </first_order_branches>
     <branch_pitch_angle> <!-- unit: degrees -->
       <min>0.0</min>
@@ -338,16 +344,14 @@
     </average_internode_length>
     <leaf_compound_size> <!-- unit: meter -->
       <min>0.01</min>
-      <max>5</max>
+      <max>0.2</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>6</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>6</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
-      0
+      10
     </bud_lifespan>
     <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
       0
@@ -359,21 +363,25 @@
       1
     </branching_rhythm>
     <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
-      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
     </rhythmic_branching_pattern>
     <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
       1
     </terminal_or_lateral_branching>
     <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
-      0
+      3
     </branching_delay>
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      2
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.001</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -391,7 +399,7 @@
     </age>
     <trunk_pitch_angle> <!-- unit: degrees -->
       <min>0.0</min>
-      <max>180.0</max>
+      <max>90.0</max>
     </trunk_pitch_angle>
     <trunk_roll_angle> <!-- unit: degrees -->
       <min>0.0</min>
@@ -403,7 +411,7 @@
     </trunk_height>
     <first_order_branches>
       <min>1</min>
-      <max>3</max>
+      <max>10</max>
     </first_order_branches>
     <branch_pitch_angle> <!-- unit: degrees -->
       <min>0.0</min>
@@ -426,20 +434,18 @@
       <max>0.0982345</max>
     </average_internode_length>
     <leaf_compound_size> <!-- unit: meter -->
-      <min>0.01</min>
-      <max>5</max>
+      <min>0.3</min>
+      <max>0.6</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>3</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>8</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
-      0
+      20
     </bud_lifespan>
     <rhythmic_growth_period> <!-- period of rhythmic growth, 0 if continuous (non-rhythmic) growth, unit: year -->
-      0
+      2
     </rhythmic_growth_period>
     <growth_unit_shape> <!-- option: 0=unspecified, 1=acrotonic, 2=mesotonic, 3=basitonic -->
       0
@@ -448,21 +454,25 @@
       1
     </branching_rhythm>
     <rhythmic_branching_pattern> <!-- binary pattern of 0s and 1s, 0 for no-branch and 1 for branch -->
-      0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
     </rhythmic_branching_pattern>
     <terminal_or_lateral_branching> <!-- 1=lateral branching, 2=terminal branching -->
       1
     </terminal_or_lateral_branching>
     <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
-      0
+      1
     </branching_delay>
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
-      1
+      2
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      2
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.001</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -518,12 +528,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -548,10 +556,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -607,12 +619,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -637,10 +647,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -696,12 +710,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -726,10 +738,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -789,12 +805,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -819,10 +833,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -878,12 +896,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -908,10 +924,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -971,12 +991,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -1001,10 +1019,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
@@ -1060,12 +1082,10 @@
       <min>0.01</min>
       <max>5</max>
     </leaf_compound_size>
-    <leaf_arrangement> <!-- option: 1=alternate, 2=opposite, n=whorled -->
-      1
-    </leaf_arrangement>
-    <phyllotaxis_angle> <!-- smallest angles between leaves on 2 consecutive nodes, unit: degrees -->
-      90
-    </phyllotaxis_angle>
+    <phyllotaxis> <!-- leaf or branch arrangement -->
+      <numerator>1</numerator> <!-- number of circles between 2 consecutive leaves on the same orthostichy (vertical row) -->
+      <denominator>2</denominator> <!-- phyllotaxis rank, or number of leaves or orthostichies in 1 cycle around the stem -->
+    </phyllotaxis>
     <bud_lifespan> <!-- determinate growth life of a bud, 0 if indeterminate, unit: year -->
       0
     </bud_lifespan>
@@ -1090,10 +1110,14 @@
     <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
       1
     </monopodial_or_sympodial_branching>
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+      1
+    </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic  -->
       <proximal>1</proximal>
       <distal>2</distal>
       <plagiotropic_tropism> <!-- vector pointing towards/against the stimuli source position for positive/negative tropism, e.g., towards gravity (0,0,-1), against gravity (0,0,1) -->
+        <elasticity>0.0</elasticity> <!-- ease to bend towards/against the stimuli until aligned with/against the stimuli, 0 for plastic (zero bending), 1 for most elastic (fastest bending) -->
         <x>0</x>
         <y>0</y>
         <z>-1</z>
