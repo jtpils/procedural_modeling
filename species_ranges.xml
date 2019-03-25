@@ -137,6 +137,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branching_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- linear growth model: RGR = r/DBH -->
       <min>0.000001</min>
       <max>1.0</max>
@@ -241,6 +244,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.000001</min>
       <max>1.0</max>
@@ -333,6 +339,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.005732</min>
       <max>0.012032</max>
@@ -425,6 +434,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.001175</min>
       <max>0.008159</max>
@@ -517,6 +529,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.0036414</min>
       <max>0.0062366</max>
@@ -609,6 +624,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.0014222</min>
       <max>0.0051814</max>
@@ -701,6 +719,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      1
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.002928</min>
       <max>0.009608</max>
@@ -793,6 +814,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      3
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Power law model: RGR (relative growth unit) = r*DBH^(beta-1) -->
       <min>-3.7189</min>
       <max>5.7775</max>
@@ -889,6 +913,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      2
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Exponential model: RGR (relative growth unit) = r -->
       <min>0.0002028</min>
       <max>0.0007808</max>
@@ -981,6 +1008,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      4
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Monomolecular growth model: RGR = r*(K-DBH)/DBH -->
       <min>-0.0027213</min>
       <max>-0.0000957</max>
@@ -1077,6 +1107,9 @@
       <min>0.0</min>
       <max>360.0</max>
     </branch_roll_angle>
+    <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
+      2
+    </diameter_growth_model>
     <diameter_growth_rate_r> <!-- Exponential model: RGR (relative growth unit) = r -->
       <min>0.0004287</min>
       <max>0.0009187</max>
