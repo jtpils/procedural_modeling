@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <species_data>
 
-  <species name="Template" code="Tmp">
+  <species name="Template" code="Tmp"> <!-- name is for species' scientific name, code is a two or three letter acronym for the species -->
     <age> <!-- unit: years -->
       <min>0.0</min>
       <max>100.0</max>
@@ -33,6 +33,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- linear growth: RGR = r/DBH, exponential growth: RGR = r, power-law growth: RGR = r*DBH^(beta-1), monomolecular growth: RGR = r*(K-DBH)/DBH, 3-param-log growth: RGR = r*(1-DBH/K), 4-param-log growth: RGR = r*(DBH-L)/DBH*(K-DBH)/(K-L) -->
       <min>0.000001</min>
       <max>1.0</max>
@@ -140,6 +144,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- linear growth model: RGR = r/DBH -->
       <min>0.000001</min>
       <max>1.0</max>
@@ -247,6 +255,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.000001</min>
       <max>1.0</max>
@@ -342,6 +354,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.005732</min>
       <max>0.012032</max>
@@ -437,6 +453,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.001175</min>
       <max>0.008159</max>
@@ -532,6 +552,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.0036414</min>
       <max>0.0062366</max>
@@ -627,6 +651,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.0014222</min>
       <max>0.0051814</max>
@@ -722,6 +750,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       1
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
       <min>0.002928</min>
       <max>0.009608</max>
@@ -817,6 +849,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       3
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Power law model: RGR (relative growth unit) = r*DBH^(beta-1) -->
       <min>-3.7189</min>
       <max>5.7775</max>
@@ -916,6 +952,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       2
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Exponential model: RGR (relative growth unit) = r -->
       <min>0.0002028</min>
       <max>0.0007808</max>
@@ -1011,6 +1051,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       4
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Monomolecular growth model: RGR = r*(K-DBH)/DBH -->
       <min>-0.0027213</min>
       <max>-0.0000957</max>
@@ -1110,6 +1154,10 @@
     <diameter_growth_model> <!-- options: 1=linear, 2=exponential, 3=power-law, 4=monomolecular, 5=three-param-logistic, 6=four-param-logistic, 7=gombertz -->
       2
     </diameter_growth_model>
+    <diameter_growth_rate> <!-- do not change the values! 1D normalised growth rate in range of [0,1], which will be mapped to appropriate growth model's r,beta,K,L values (multidimentional values) -->
+      <min>0.0</min>
+      <max>1.0</max>
+    </diameter_growth_rate>
     <diameter_growth_rate_r> <!-- Exponential model: RGR (relative growth unit) = r -->
       <min>0.0004287</min>
       <max>0.0009187</max>

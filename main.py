@@ -83,15 +83,15 @@ def main():
     ranges_xml = ET.parse('species_ranges.xml')
     for specs in ranges_xml.findall('species'):
       if specs.get('name')==species:
-	for elem in specs:
-	  if elem.tag in xml_params:
-	    index = xml_params.index(elem.tag)
-	    ranges[index][0] = float(elem.find('min').text)
-	    ranges[index][1] = float(elem.find('max').text)
+    	for elem in specs:
+    	  if elem.tag in xml_params:
+    	    index = xml_params.index(elem.tag)
+    	    ranges[index][0] = float(elem.find('min').text)
+    	    ranges[index][1] = float(elem.find('max').text)
 
     # Reset trunk height range from growth space
     ranges[3][0] = 0.975*th; ranges[3][1]=1.025*th;
-	    
+
     tpts = lgs.xml_file_gs(xml_filename,split)
 
     ###
@@ -111,7 +111,7 @@ def main():
 
     ef_id = 0
     ef_name = 'func_spid' + str(species_id) + '.dat'
-    
+
     if os.path.isfile(ef_name):
 	read_flag = int(raw_input("Read data from existing file? (1=Yes, 0=No): "))
 	if read_flag==1:
@@ -121,9 +121,9 @@ def main():
 	  total_pop_size = len(error);
 	else:
 	  os.remove(ef_name)
-    
+
     opt_name = "opt_params_spid" + str(species_id) + ".dat"
-    
+
     print "Error file will be output to\t\t: %s" % ef_name
     print "Optimum parameters will be output to\t: %s" % opt_name
     print "------------------------------------------------"

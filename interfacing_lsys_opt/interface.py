@@ -16,7 +16,7 @@ def estimate_age(species, tree_height=0.0, tree_dbs=0.0):
     max_age = 999
 
     height_based_age = tree_height / (max_annual_no_new_nodes*max_internode_length) #estimate min_age based on expected maximum height
-    dbs_based_age = tree_dbs / 
+    dbs_based_age = tree_dbs / #estimate age based on growth model 
     if dbs_based_age < height_based_age:
         min_age = dbs_based_age
     else:

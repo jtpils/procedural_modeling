@@ -1,7 +1,9 @@
+import os
 import random
 import numpy
 import math
 from enum import Enum
+import xml.etree.ElementTree as xmlParser
 
 
 predefineParamValues = False
@@ -114,6 +116,41 @@ rgr_r_range_min = 0.0  #determined by confidence interval of r for specific spec
 rgr_r_range_max = 1.0  #determined by confidence interval of r for specific species
 #-----------------------------------------------------------
 # Adjustments for species
+# Read from species profile from species_ranges.xml
+current_path = os.path.dirname(os.path.abspath(__file__))
+profile_input = os.path.abspath(os.path.realpath(os.path.join(current_path, '../species_ranges.xml')))
+species_profile = xmlParser.parse(profile_input)
+for aProfile in species_profile.findall('.//species'):
+  #print 'DEBUG: aProfile.attrib.get(''code'')=', aProfile.attrib.get('code')
+  if aProfile.attrib.get('code') == species.name:
+    growth_rate_eqn = GrowthRate(int(aProfile.find('diameter_growth_model').text))
+    #print 'DEBUG growth_rate_eqn=', growth_rate_eqn
+
+    if predefineParamValues is True:
+      age=15; trunk_pitch_angle=0.0; trunk_roll_angle=0.0; branching_pitch_angle=10.0; branching_roll_angle=0.0
+      trunk_height = 0.5*(float(aProfile.find('trunk_height/min').text)+float(aProfile.find('trunk_height/max').text))
+      no_first_ord_branches = 0.5*(float(aProfile.find('no_first_ord_branches/min').text)+float(aProfile.find('no_first_ord_branches/max').text))
+      diameter_growth_rate = 0.5*(float(aProfile.find('diameter_growth_rate/min').text)+float(aProfile.find('diameter_growth_rate/max').text))
+      annual_no_new_nodes =  0.5*(float(aProfile.find('annual_number_new_nodes/min').text)+float(aProfile.find('annual_number_new_nodes/max').text))
+      avg_internode_length = 0.5*(float(aProfile.find('average_internode_length/min').text)+float(aProfile.find('average_internode_length/max').text))
+
+    if growth_rate_eqn.name in ['Linear', 'Exponential']:
+      rgr_vars['r'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_r/min').text)+float(aProfile.find('diameter_growth_rate_r/max').text))
+    elif growth_rate_eqn.name is 'PowerLaw':
+      rgr_vars['r'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_r/min').text)+float(aProfile.find('diameter_growth_rate_r/max').text))
+      rgr_vars['beta'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_beta/min').text)+float(aProfile.find('diameter_growth_rate_beta/max').text))
+    elif growth_rate_eqn.name is 'FourParameterLogistic':
+      rgr_vars['r'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_r/min').text)+float(aProfile.find('diameter_growth_rate_r/max').text))
+      rgr_vars['K'] = diameter_growth_rate*(float(aProfile.find('K/min').text)+float(aProfile.find('K/max').text))
+      rgr_vars['L'] = diameter_growth_rate*(float(aProfile.find('L/min').text)+float(aProfile.find('L/max').text))
+    else:   # Monomolecular, ThreeParameterLogistic, Gompertz
+      rgr_vars['r'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_r/min').text)+float(aProfile.find('diameter_growth_rate_r/max').text))
+      rgr_vars['K'] = diameter_growth_rate*(float(aProfile.find('K/min').text)+float(aProfile.find('K/max').text))
+    #  print 'DEBUG rgr_vars['r']=', rgr_vars['r']
+
+
+    break
+
 if species.name is 'AA':
   if predefineParamValues is True:
      age=15; trunk_pitch_angle=5.0; trunk_height=20.0; no_first_ord_branches=10; branching_pitch_angle=10.0; branching_roll_angle=30.0; diameter_growth_rate=0.005; annual_no_new_nodes=7.0; avg_internode_length=0.10
