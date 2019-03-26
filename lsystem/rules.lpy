@@ -23,15 +23,15 @@ class Species(Enum):
 
 class BranchingProcess(Enum):
    Unspecified = 0
-   Continuous = 1
-   Rhythmic = 2
-   Diffuse = 3
-   Acrotonic = 4
-   Mesotonic = 5
-   Basitonic = 6
-   Epitonic = 7
-   Amphitonic = 8
-   Hypotonic = 9
+   Acrotonic = 1
+   Mesotonic = 2
+   Basitonic = 3
+   Epitonic = 4
+   Amphitonic = 5
+   Hypotonic = 6
+   Continuous = 7
+   Rhythmic = 8
+   Diffuse = 9
 
 class GrowthRate(Enum):
    Linear = 1
@@ -96,7 +96,7 @@ if rhythmic_growth is False:
 rhythmic_branching = BranchingProcess.Rhythmic   #choices: BranchingProcess.Continuous, BranchingProcess.Rhythmic, BranchingProcess.Diffuse, BranchingProcess.Unspecified
 rhythmic_branching_pattern = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]    #1 cycle of n new nodes with pattern of producing axillary bud (1) or not producing axillary bud (0)
 branching_diffusion = 0.1        #skewness of branching pattern (number x in range [0,1] refers to threshold to generate axillary buds if random number <x)
-phyllotaxis_angle = 60           #unit: degrees, angle between first leaf on an internode and first leaf on later internode along the same stem
+phyllotaxis_angle = 60           #unit: degrees, angular divergence, i.e., angle between first leaf on an internode and first leaf on later internode along the same stem
 branch_length_ratio = 0.8        #ratio of child to parent branch length; from one experiment: 0.666
 maximumBranchOrder = 10
 leafMaxLength = 0.2              #unit: m
@@ -134,6 +134,7 @@ for aProfile in species_profile.findall('.//species'):
       annual_no_new_nodes =  0.5*(float(aProfile.find('annual_number_new_nodes/min').text)+float(aProfile.find('annual_number_new_nodes/max').text))
       avg_internode_length = 0.5*(float(aProfile.find('average_internode_length/min').text)+float(aProfile.find('average_internode_length/max').text))
 
+    #to do!
     if growth_rate_eqn.name in ['Linear', 'Exponential']:
       rgr_vars['r'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_r/min').text)+float(aProfile.find('diameter_growth_rate_r/max').text))
     elif growth_rate_eqn.name is 'PowerLaw':
@@ -146,8 +147,73 @@ for aProfile in species_profile.findall('.//species'):
     else:   # Monomolecular, ThreeParameterLogistic, Gompertz
       rgr_vars['r'] = diameter_growth_rate*(float(aProfile.find('diameter_growth_rate_r/min').text)+float(aProfile.find('diameter_growth_rate_r/max').text))
       rgr_vars['K'] = diameter_growth_rate*(float(aProfile.find('K/min').text)+float(aProfile.find('K/max').text))
-    #  print 'DEBUG rgr_vars['r']=', rgr_vars['r']
+    print 'DEBUG rgr_vars=', rgr_vars
 
+    leafMaxLength = float(aProfile.find('leaf_compound_size/max').text)
+
+    no_second_ord_branches = int(aProfile.find('phyllotaxis/denominator').text)
+    phyllotaxis_angle = (360.0/no_second_ord_branches) % 360.0
+    cyclic_flag = int(aProfile.find('phyllotaxis/numerator').text)
+
+    #fix invalid input combinations
+    if cyclic_flag <= 0:  #invalid input
+      cyclic_flag = 1
+    if no_second_ord_branches <= 0: #invalid input
+      no_second_ord_branches = 1
+    if cyclic_flag > no_second_ord_branches:  #invalid input
+      cyclic_flag = no_second_ord_branches
+
+    if cyclic_flag == 1:
+      if no_second_ord_branches > 1: #cyclic phyllotaxy
+        phyllotaxis_angle = 0.0
+      #else: if no_second_ord_branches == 1:  #acyclic phyllotaxy
+      #  pass  #no change to phyllotaxis_angle and no_second_ord_branches
+    else:   #if cyclic_flag > 1:
+      if cyclic_flag == no_second_ord_branches: #acyclic phyllotaxy
+        no_second_ord_branches = 1
+      else:   #if cyclic_flag < no_second_ord_branches:
+        if no_second_ord_branches % cyclic_flag == 0: #cyclic phyllotaxy
+          no_second_ord_branches = no_second_ord_branches / cyclic_flag
+        else: #acyclic phyllotaxy
+          phyllotaxis_angle = (360.0*cyclic_flag/no_second_ord_branches) % 360.0
+
+    determinate_bud_lifespan = int(aProfile.find('bud_lifespan').text)
+    if determinate_bud_lifespan > 0:
+      determinate_growth = True
+    else:
+      determinate_growth = False
+    rhythmic_growth_period = int(aProfile.find('rhythmic_growth_period').text)
+      if rhythmic_growth_period > 0:
+        rhythmic_growth = True
+      else:
+        rhythmic_growth = False
+    growth_unit_shape = BranchingProcess(int(aProfile.find('growth_unit_shape').text))
+    rhythmic_branching = BranchingProcess(int(aProfile.find('branching_rhythm').text)+7)
+    if rhythmic_branching.name is 'Rhythmic':
+      rhythmic_branching_pattern = aProfile.find('rhythmic_branching_pattern').text.split(",")
+    if int(aProfile.find('terminal_or_lateral_branching').text) == 1:
+      terminalBranching = False
+    else:
+      terminalBranching = True
+    branchingDelay = int(aProfile.find('branching_delay').text)
+    if branchingDelay > 0:
+      delayedBranching = True
+    else:
+      delayedBranching = False
+    if int(aProfile.find('monopodial_or_sympodial_branching').text) == 1:
+      sympodialBranching = False
+    else:
+      sympodialBranching = True
+    if int(aProfile.find('number_of_apices').text) == 1:
+      soleProximalBud = True
+    else:
+      soleProximalBud = False
+
+    #axis morphology ....
+    #todo
+
+    #pruning ...
+    #todo
 
     break
 
@@ -167,7 +233,7 @@ if species.name is 'AA':
   rhythmic_growth = False
   #rhythmic_growth_period = 1
   growth_unit_shape = BranchingProcess.Unspecified
-  rhythmic_branching = BranchingProcess.Unspecified
+  rhythmic_branching = BranchingProcess.Continuous
   rhythmic_branching_pattern = [1]
   phyllotaxis_angle = 45.0
   leafMaxLength = 8

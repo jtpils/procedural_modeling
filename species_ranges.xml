@@ -90,10 +90,10 @@
     <branching_delay> <!-- 0 for immediate branching, non-zero for delayed branching, unit: year -->
       0
     </branching_delay>
-    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2=sympodial -->
+    <monopodial_or_sympodial_branching> <!-- 1=monopodial, 2 or not1=sympodial,  -->
       1
     </monopodial_or_sympodial_branching>
-    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 for multiple -->
+    <number_of_apices> <!-- sole or multiple dominant apical buds which succeed after an aborting apical bud, 1 for sole, 2 or not1 for multiple -->
       1
     </number_of_apices>
     <axis_morphology> <!-- option: 1=orthotropic, 2=plagiotropic, +=positive tropism, -=negative tropism  -->
