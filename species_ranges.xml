@@ -18,10 +18,10 @@
       <min>0.0</min>
       <max>100.0</max>
     </trunk_height>
-    <no_first_ord_branches> <!-- unit: nil -->
+    <first_order_branches> <!-- unit: nil -->
       <min>0</min>
       <max>10</max>
-    </no_first_ord_branches>
+    </first_order_branches>
     <branching_pitch_angle> <!-- unit: degrees -->
       <min>0.0</min>
       <max>180.0</max>
@@ -129,10 +129,10 @@
       <min>0.0</min>
       <max>100.0</max>
     </trunk_height>
-    <no_first_ord_branches> <!-- unit: nil -->
+    <first_order_branches> <!-- unit: nil -->
       <min>0</min>
       <max>10</max>
-    </no_first_ord_branches>
+    </first_order_branches>
     <branching_pitch_angle> <!-- unit: degrees -->
       <min>0.0</min>
       <max>180.0</max>
