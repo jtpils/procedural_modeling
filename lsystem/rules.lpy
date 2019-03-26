@@ -183,10 +183,10 @@ for aProfile in species_profile.findall('.//species'):
     else:
       determinate_growth = False
     rhythmic_growth_period = int(aProfile.find('rhythmic_growth_period').text)
-      if rhythmic_growth_period > 0:
-        rhythmic_growth = True
-      else:
-        rhythmic_growth = False
+    if rhythmic_growth_period > 0:
+      rhythmic_growth = True
+    else:
+      rhythmic_growth = False
     growth_unit_shape = BranchingProcess(int(aProfile.find('growth_unit_shape').text))
     rhythmic_branching = BranchingProcess(int(aProfile.find('branching_rhythm').text)+7)
     if rhythmic_branching.name is 'Rhythmic':
