@@ -44,7 +44,7 @@ def main():
 	'Branch roll angle', 'Diameter growth rate', 'Annual no. new nodes',\
 	  'Average internode length']
     xml_params = ['age','trunk_pitch_angle','trunk_roll_angle','trunk_height','first_order_branches',\
-      'branch_pitch_angle','branch_roll_angle','diameter_growth_rate','annual_number_new_nodes',\
+      'branch_pitch_angle','branch_roll_angle','diameter_growth_rate_r','annual_number_new_nodes',\
 	'average_internode_length']
 
     default_ranges = [\

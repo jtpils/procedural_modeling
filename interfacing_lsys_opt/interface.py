@@ -27,7 +27,7 @@ def generate_lsystem_tree_points(species_id, params):
     'Wrapper function to map params array to individual variables'
     'Note: all parameters are optional with default values'
 
-    return ngenerate_lsystem_tree_points(   species=Species(species_id).name,
+    return ngenerate_lsystem_tree_points(   species=Species(species_id),
                                             age=int(params[0]),
                                             trunk_pitch_angle=params[1],
                                             trunk_roll_angle=params[2],

@@ -203,7 +203,7 @@ def map_error(species_id,points,tpoints,tg,fname):
 	    p.append(points[i,:])
 	    #print "\tError: ", err
 	    signal.alarm(0)
-	    pstr = '%i\t%0.2f\t%0.2f\t%2.2f\t%i\t%2.2f\t%2.2f\t%0.2f\t%i\t%0.2f\t%f\t%s\n' % \
+	    pstr = '%i\t%0.2f\t%0.2f\t%2.2f\t%i\t%2.4f\t%2.2f\t%0.3f\t%i\t%0.4f\t%f\t%s\n' % \
 	      (points[i,0], points[i,1], points[i,2], points[i,3], points[i,4], points[i,5], \
 		points[i,6], points[i,7], points[i,8], points[i,9], err, comments)
 	    with open(fname,'a+') as f:

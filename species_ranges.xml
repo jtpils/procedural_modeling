@@ -144,44 +144,44 @@
 
   <species name="Peltophorum pterocarpum" code="PP">
     <age> <!-- unit: years -->
-      <min></min>
-      <max></max>
+      <min>18</min>
+      <max>22</max>
     </age>
     <trunk_pitch_angle> <!-- unit: degrees -->
-      <min>0.0</min>
-      <max>180.0</max>
+      <min>1.5</min>
+      <max>2.5</max>
     </trunk_pitch_angle>
     <trunk_roll_angle> <!-- unit: degrees -->
       <min>0.0</min>
-      <max>360.0</max>
+      <max>0.25</max>
     </trunk_roll_angle>
     <trunk_height> <!-- unit: meter -->
-      <min>0.0001</min>
-      <max>5.9135990</max>
+      <min>2.8</min>
+      <max>2.9</max>
     </trunk_height>
     <first_order_branches>
       <min>1</min>
       <max>3</max>
     </first_order_branches>
     <branch_pitch_angle> <!-- unit: degrees -->
-      <min>0.0</min>
-      <max>180.0</max>
+      <min>30.0</min>
+      <max>50.0</max>
     </branch_pitch_angle>
     <branch_roll_angle> <!-- unit: degrees -->
-      <min>0.0</min>
-      <max>360.0</max>
+      <min>160.0</min>
+      <max>200.0</max>
     </branch_roll_angle>
     <diameter_growth_rate_r> <!-- Linear model: RGR (relative growth unit) = r/DBH -->
-      <min>0.001175</min>
-      <max>0.008159</max>
+      <min>0.023</min>
+      <max>0.024</max>
     </diameter_growth_rate_r>
     <annual_number_new_nodes>
-      <min>2.4318128</min>
-      <max>79.875486</max>
+      <min>42</min>
+      <max>46</max>
     </annual_number_new_nodes>
     <average_internode_length> <!-- unit: meter -->
-      <min>0.0001</min>
-      <max>0.0982345</max>
+      <min>0.03</min>
+      <max>0.04</max>
     </average_internode_length>
   </species>
 
