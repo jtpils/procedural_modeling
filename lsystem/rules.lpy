@@ -844,9 +844,17 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
   global idGenerator
   generateBudFlag = 1  #a node will definitely produce new bud(s) for continuous branching
   if isProximal is True:
-    nproduce @Tp(proximal_tropism[0], proximal_tropism[1], proximal_tropism[2])@Ts(proximal_tropism[3])
+    if proximal_tropism[4] == 0.0:
+      nproduce @Tp(proximal_tropism[0], proximal_tropism[1], proximal_tropism[2])@Ts(proximal_tropism[3])
+    else:
+      #calculate plagiotropy
+      #....
   else:
-    nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
+    if distal_tropism[4] == 0.0:
+      nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
+    else:
+      #calculate plagiotropy
+      #...
   for i in range(eff_new_nodes):
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
@@ -1049,7 +1057,13 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, 
     #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and leaves
       #print 'Debug N', i,
-      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)@Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,False)]
+      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)
+      if distal_tropism[4] == 0.0:
+        nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
+      else:
+        #calculate plagiotropy
+        #...
+      nproduce I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,False)]
   #else:
     #for i in range(no_branches):    #node transforms into nothing (no bud, no leaf)
       #print 'Debug N', i,
