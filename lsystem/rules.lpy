@@ -67,7 +67,7 @@ rgr_vars = {'r':0.006268, 'beta':-1.73, 'L':1, 'K':1}
 #)syzygium myrtifolium SMy:age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
 
 
-#predefineParamValues = True         #set True to use predefined param values for specific species
+predefineParamValues = True         #set True to use predefined param values for specific species
 #----------------------------------------------------------
 #species = Species.SP
 #---------------Parameters for Optimisation-----------------
@@ -603,6 +603,7 @@ if rhythmic_growth is True:
   #print 'growth_unit_length=', growth_unit_length
 pruningOn = False         #True to allow pruning in the simulation (only applied at end of simulation)
 pruningStart = False    #flag to start pruning at the end of simulation
+save_orientation_x=0; save_orientation_y=0; save_orientation_z=0
 #-----------------------------------------------------------
 
 #all RGR functions in switchGrowthRateEqn are based on per time unit of 1 step. Functions return the new diameter after 1 step.
@@ -847,9 +848,9 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
     if proximal_tropism[4] == 0.0:
       nproduce @Tp(proximal_tropism[0], proximal_tropism[1], proximal_tropism[2])@Ts(proximal_tropism[3])
     else:
-      #calculate plagiotropy
-      #print ?H(x,y,z)
-      pass
+      #calculate plagiotropy to modify proximal tropism direction
+      nproduce ?H
+      #pass
   else:
     if distal_tropism[4] == 0.0:
       nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
@@ -1027,6 +1028,7 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
 decomposition:
 
 N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, ownId, generateBudFlag):      #node
+  global save_orientation_x, save_orientation_y, save_orientation_z
   #print 'Debug N',
   #print 'generateBudFlag=', generateBudFlag
   no_branches = 1       #default
@@ -1058,7 +1060,8 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, 
     #elif branchingSignal is 2:  #branchingSignal = 2 will signal node to grow leaf and dormant axillary bud
     for i in range(no_branches):    #node transforms into buds and leaves
       #print 'Debug N', i,
-      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)
+      nproduce [/(phyllotaxisPosition+branching_roll_angle+(i*branch_spacing_angle)-90)&(branching_pitch_angle)@Tp(leaf_tropism[0], leaf_tropism[1], leaf_tropism[2])@Ts(leaf_tropism[3])L(leafStatus,0,0)?H(save_orientation_x, save_orientation_y, save_orientation_z)
+      print 'DEBUG current turtles head direction=', save_orientation_x, ',', save_orientation_y, ',', save_orientation_z
       if distal_tropism[4] == 0.0:
         nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
       else:
