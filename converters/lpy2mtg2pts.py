@@ -159,11 +159,11 @@ def test_xmlgrowthspace2obj():
 
 
 if __name__ == "__main__":
-    lsystem_run(species=Species.TR, age=35,
-                trunk_pitch_angle=0.64, trunk_roll_angle=-0.47, trunk_height=2.03,
-                no_first_ord_branches=1,
-                branching_pitch_angle=76.95, branching_roll_angle=148.02,
-                diameter_growth_rate=0.06, annual_no_new_nodes=22, avg_internode_length=0.02)
+    lsystem_run(species=Species.AA, age=25,
+                trunk_pitch_angle=-0.39, trunk_roll_angle=-0.37, trunk_height=7.67,
+                no_first_ord_branches=0,
+                branching_pitch_angle=0.0, branching_roll_angle=0.0,
+                diameter_growth_rate=0.6125, annual_no_new_nodes=7, avg_internode_length=0.1537)
     print 'Program finished'
     raw_input()
 

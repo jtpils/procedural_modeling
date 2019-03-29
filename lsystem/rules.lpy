@@ -67,7 +67,7 @@ rgr_vars = {'r':0.006268, 'beta':-1.73, 'L':1, 'K':1}
 #)syzygium myrtifolium SMy:age=20; trunk_pitch_angle=0.0; trunk_height=1.174; no_first_ord_branches=2; branching_pitch_angle=45.0; branching_roll_angle=180.0; diameter_growth_rate=0.10/age; annual_no_new_nodes=12.0; avg_internode_length=0.02358
 
 
-predefineParamValues = True         #set True to use predefined param values for specific species
+#predefineParamValues = True         #set True to use predefined param values for specific species
 #----------------------------------------------------------
 #species = Species.SP
 #---------------Parameters for Optimisation-----------------
@@ -848,13 +848,14 @@ I(order, distanceFromGroundToBase, distanceFromBase, phyllotaxisPosition, length
       nproduce @Tp(proximal_tropism[0], proximal_tropism[1], proximal_tropism[2])@Ts(proximal_tropism[3])
     else:
       #calculate plagiotropy
-      #....
+      #print ?H(x,y,z)
+      pass
   else:
     if distal_tropism[4] == 0.0:
       nproduce @Tp(distal_tropism[0], distal_tropism[1], distal_tropism[2])@Ts(distal_tropism[3])
     else:
       #calculate plagiotropy
-      #...
+      pass
   for i in range(eff_new_nodes):
     cur_distanceFromBase = distanceFromBase+(i+1)*internode_length
     nproduce I(order, distanceFromGroundToBase, cur_distanceFromBase, phyllotaxisPosition, internode_length, cur_radius)
@@ -1063,6 +1064,7 @@ N(order, distanceFromGround, phyllotaxisPosition, branchingSignal, successorId, 
       else:
         #calculate plagiotropy
         #...
+        pass
       nproduce I(order+1,distanceFromGround,0.0,0,0.0,0.0)B(ownId,successorId,order+1,budStatus,growthDelay,timeLeft,distanceFromGround,0.0,0,False)]
   #else:
     #for i in range(no_branches):    #node transforms into nothing (no bud, no leaf)
